@@ -1,0 +1,7 @@
+{
+  "name": "nox.handoff_host",
+  "description": "Tab Handoff native messaging host",
+  "path": "/home/nox/.local/bin/handoff_host.py",
+  "type": "stdio",
+  "allowed_extensions": ["tab-handoff@nox"]
+}

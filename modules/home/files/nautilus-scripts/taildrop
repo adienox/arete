@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# Exit if tailscale is not available
+if ! command -v tailscale &>/dev/null; then
+    yad --error --text="Tailscale is not installed or not in PATH." --center
+    exit 1
+fi
+
+taildrop() {
+    local file="$1"
+    local device="$2"
+
+    # Check if the provided argument is a valid file
+    if [ ! -f "$file" ]; then
+        echo "Error: File '$file' not found!" >&2
+        return 1
+    fi
+
+    # Send the file using taildrop
+    if tailscale file cp "$file" "$device:"; then
+        notify-send "Taildrop" "File(s) sent to $device successfully."
+    else
+        echo "Error: Failed to send the file." >&2
+        return 1
+    fi
+}
+
+# Read selected file paths
+IFS=$'\n' read -d '' -r -a FILES <<<"$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+
+# List available Tailscale devices
+DEVICE=$(tailscale file cp --targets | awk '{print $2}' | sort -u |
+    yad --list --title="Select Tailscale Device" \
+        --column="Device" --height=300 --width=400 --center --single-click --separator="" --hide-header)
+
+# Exit if user cancelled
+if [ -z "$DEVICE" ]; then
+    exit 0
+fi
+
+# Send each selected file or folder
+for FILE in "${FILES[@]}"; do
+    if [ -d "$FILE" ]; then
+        BASE_NAME="$(basename "$FILE")"
+        TEMP_ZIP="/tmp/$BASE_NAME.zip"
+
+        # create a zip file
+        zip -r "$TEMP_ZIP" "$BASE_NAME"
+        # Send the zip file
+        taildrop "$TEMP_ZIP" "$DEVICE"
+        # Remove the zip file
+        rm "$TEMP_ZIP"
+    else
+        # Send individual file
+        taildrop "$FILE" "$DEVICE"
+    fi
+done

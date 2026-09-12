@@ -1,0 +1,113 @@
+# ~/.XCompose
+# Include default locale compositions
+include "%L"
+
+
+# ── Emojis ────────────────────────────────────────────────────────────────────
+<Multi_key> <e> <c>                     : "😭"
+<Multi_key> <e> <k>                     : "😘"
+<Multi_key> <e> <w>                     : "😩"
+<Multi_key> <e> <l>                     : "😂"
+<Multi_key> <e> <f>                     : "🤭"
+<Multi_key> <e> <p>                     : "🥺"
+<Multi_key> <e> <s>                     : "😁"
+<Multi_key> <e> <h>                     : "❤️"
+
+# ── Typography ────────────────────────────────────────────────────────────────
+<Multi_key> <minus> <minus> <minus>     : "—"  # em dash
+<Multi_key> <minus> <minus> <period>    : "–"  # en dash
+<Multi_key> <period> <period>           : "…"  # ellipsis
+<Multi_key> <less> <less>               : "«"  # left guillemet
+<Multi_key> <greater> <greater>         : "»"  # right guillemet
+<Multi_key> <less> <period>             : "‹"  # single left guillemet
+<Multi_key> <greater> <period>          : "›"  # single right guillemet
+<Multi_key> <apostrophe> <apostrophe>   : "\u201C"  # left double quote "
+<Multi_key> <apostrophe> <comma>        : "\u201D"  # right double quote "
+<Multi_key> <comma> <comma>             : "\u2018"  # left single quote '
+<Multi_key> <comma> <period>            : "\u2019"  # right single quote '
+<Multi_key> <exclam> <exclam>           : "¡"  # inverted exclamation
+<Multi_key> <question> <question>       : "¿"  # inverted question mark
+
+# ── Math ──────────────────────────────────────────────────────────────────────
+<Multi_key> <plus> <minus>              : "±"  # plus-minus
+<Multi_key> <minus> <plus>              : "∓"  # minus-plus
+<Multi_key> <x> <x>                     : "×"  # multiplication
+<Multi_key> <slash> <slash>             : "÷"  # division
+<Multi_key> <equal> <equal>             : "≡"  # identical to
+<Multi_key> <exclam> <equal>            : "≠"  # not equal
+<Multi_key> <less> <equal>              : "≤"  # less than or equal
+<Multi_key> <greater> <equal>           : "≥"  # greater than or equal
+<Multi_key> <asciitilde> <equal>        : "≈"  # approximately equal
+<Multi_key> <slash> <equal>             : "≠"  # not equal (alt)
+<Multi_key> <1> <2>                     : "½"  # one half
+<Multi_key> <1> <3>                     : "⅓"  # one third
+<Multi_key> <1> <4>                     : "¼"  # one quarter
+<Multi_key> <3> <4>                     : "¾"  # three quarters
+<Multi_key> <2> <3>                     : "⅔"  # two thirds
+<Multi_key> <s> <q>                     : "√"  # square root
+<Multi_key> <i> <n> <f>                 : "∞"  # infinity
+<Multi_key> <s> <u> <m>                 : "∑"  # summation
+<Multi_key> <p> <i>                     : "π"  # pi
+<Multi_key> <d> <e> <g>                 : "°"  # degree sign
+<Multi_key> <s> <u> <p> <2>             : "²"  # superscript 2
+<Multi_key> <s> <u> <p> <3>             : "³"  # superscript 3
+
+# ── Arrows ────────────────────────────────────────────────────────────────────
+<Multi_key> <minus> <greater>           : "→"  # right arrow
+<Multi_key> <less> <minus>              : "←"  # left arrow
+<Multi_key> <minus> <less>              : "↔"  # left-right arrow
+<Multi_key> <equal> <greater>           : "⇒"  # right double arrow
+<Multi_key> <less> <equal> <greater>    : "⟺"  # iff
+<Multi_key> <u> <p>                     : "↑"  # up arrow
+<Multi_key> <d> <n>                     : "↓"  # down arrow
+
+# ── Currency ──────────────────────────────────────────────────────────────────
+<Multi_key> <e> <equal>                 : "€"  # euro
+<Multi_key> <l> <minus>                 : "£"  # pound
+<Multi_key> <y> <equal>                 : "¥"  # yen
+<Multi_key> <c> <equal>                 : "₡"  # colon sign
+<Multi_key> <r> <s>                     : "₹"  # rupee
+<Multi_key> <b> <t> <c>                 : "₿"  # bitcoin
+
+# ── Greek letters ─────────────────────────────────────────────────────────────
+<Multi_key> <g> <a>                     : "α"  # alpha
+<Multi_key> <g> <b>                     : "β"  # beta
+<Multi_key> <g> <g>                     : "γ"  # gamma
+<Multi_key> <g> <d>                     : "δ"  # delta
+<Multi_key> <g> <e>                     : "ε"  # epsilon
+<Multi_key> <g> <l>                     : "λ"  # lambda
+<Multi_key> <g> <m>                     : "μ"  # mu
+<Multi_key> <g> <p>                     : "φ"  # phi
+<Multi_key> <g> <s>                     : "σ"  # sigma
+<Multi_key> <g> <t>                     : "θ"  # theta
+<Multi_key> <g> <o>                     : "ω"  # omega
+<Multi_key> <g> <D>                     : "Δ"  # Delta (capital)
+<Multi_key> <g> <G>                     : "Γ"  # Gamma (capital)
+<Multi_key> <g> <L>                     : "Λ"  # Lambda (capital)
+<Multi_key> <g> <P>                     : "Φ"  # Phi (capital)
+<Multi_key> <g> <S>                     : "Σ"  # Sigma (capital)
+<Multi_key> <g> <O>                     : "Ω"  # Omega (capital)
+
+# ── Logic & Set theory ────────────────────────────────────────────────────────
+<Multi_key> <ampersand> <ampersand>     : "∧"  # logical and
+<Multi_key> <bar> <bar>                 : "∨"  # logical or
+<Multi_key> <exclam> <asciitilde>       : "¬"  # logical not
+<Multi_key> <A> <A>                     : "∀"  # for all
+<Multi_key> <E> <E>                     : "∃"  # there exists
+<Multi_key> <i> <n>                     : "∈"  # element of
+<Multi_key> <n> <i>                     : "∉"  # not element of
+<Multi_key> <c> <u>                     : "∪"  # union
+<Multi_key> <c> <i>                     : "∩"  # intersection
+<Multi_key> <c> <s>                     : "⊆"  # subset of
+<Multi_key> <e> <s>                     : "∅"  # empty set
+
+# ── Misc symbols ──────────────────────────────────────────────────────────────
+<Multi_key> <c> <o>                     : "©"  # copyright
+<Multi_key> <r> <o>                     : "®"  # registered
+<Multi_key> <t> <m>                     : "™"  # trademark
+<Multi_key> <s> <s>                     : "§"  # section sign
+<Multi_key> <p> <p>                     : "¶"  # pilcrow
+<Multi_key> <asterisk> <asterisk>       : "•"  # bullet
+<Multi_key> <d> <a> <g>                 : "†"  # dagger
+<Multi_key> <d> <d> <g>                 : "‡"  # double dagger
+<Multi_key> <space> <space>             : "\u00A0"  # non-breaking space

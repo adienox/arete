@@ -1,0 +1,34 @@
+[config]
+
+[templates.emacs-ansi-color]
+input_path  = '/home/nox/.config/matugen/templates/emacs-ansi-color.el'
+output_path = '/home/nox/.config/emacs/themes/dank-ansi-color.el'
+
+[templates.emacs-diredfl]
+input_path  = '/home/nox/.config/matugen/templates/emacs-diredfl.el'
+output_path = '/home/nox/.config/emacs/themes/dank-diredfl.el'
+
+[templates.dank-emacs]
+input_path  = '/home/nox/.config/matugen/templates/dank-emacs-theme.el'
+output_path = '/home/nox/.config/emacs/themes/dank-emacs-theme.el'
+
+[templates.vicinae]
+input_path = '/home/nox/.config/matugen/templates/vicinae.toml'
+output_path = '/home/nox/.local/share/vicinae/themes/matugen.toml'
+post_hook = 'vicinae theme set matugen'
+
+[templates.starship]
+input_path = '/home/nox/.config/matugen/templates/starship.toml'
+output_path = '/home/nox/.config/starship.toml'
+
+[templates.mpv]
+input_path = "/home/nox/.config/matugen/templates/mpv-colors.conf"
+output_path = "/home/nox/.config/mpv/mpv-colors.conf"
+
+[templates.tridactyl]
+input_path = '/home/nox/.config/matugen/templates/tridactyl.css'
+output_path = '/home/nox/.config/tridactyl/themes/matugen.css'
+
+[templates.btop]
+input_path = '/home/nox/.config/matugen/templates/btop.theme'
+output_path = '/home/nox/.config/btop/themes/dankcolors.theme'

@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+# make sure that you only enable wireless debug
+# in your local network and only give permission
+# to devices that you trust
+
+HOST="hawk"
+PORT="5555"
+
+# Check if host is reachable
+if ! ping -c 1 -W 1 "$HOST" &>/dev/null; then
+    notify-send -a "Phone Connect" "$HOST is unreachable."
+    exit 0
+fi
+
+adb connect "$HOST:$PORT"
+
+# If no arguments are passed, run default scrcpy
+if [ $# -eq 0 ]; then
+    notify-send -a "Phone Connect" "Connecting to $HOST"
+
+    scrcpy --tcpip="${HOST}:${PORT}" \
+        --screen-off-timeout=300 \
+        --window-title="Hawk"
+
+    exit 0
+fi
+
+# Defaults
+WINDOW_TITLE="$HOST"
+START_APP=""
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        --title=*) WINDOW_TITLE="${arg#*=}" ;;
+        --package=*) START_APP="${arg#*=}" ;;
+        --name=*)
+            NAME="${arg#*=}"
+            WINDOW_TITLE="$NAME"
+            START_APP="?$NAME"
+            ;;
+        *) echo "Unknown argument: $arg" ;;
+    esac
+done
+
+notify-send -a "$WINDOW_TITLE" "Connecting to hawk"
+
+# Run scrcpy with the proper start-app logic
+scrcpy --new-display --keyboard=uhid \
+    --tcpip="${HOST}:${PORT}" \
+    --window-title="$WINDOW_TITLE" \
+    ${START_APP:+--start-app="$START_APP"} \
+    --screen-off-timeout=300 \
+    --power-off-on-close

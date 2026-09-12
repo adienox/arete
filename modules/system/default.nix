@@ -1,0 +1,24 @@
+{
+  imports = [
+    ./networking.nix
+    ./locale.nix
+    ./fonts.nix
+    ./audio.nix
+    ./audio-devices.nix
+    ./desktop
+    ./ssh.nix
+    ./security.nix
+    ./xremap.nix
+    ./bluetooth.nix
+    ./monitor.nix
+    ./nvidia.nix
+    ./nvidia-otg.nix
+    ./nix-ld.nix
+    ./tailscale.nix
+    ./environment.nix
+    ./hardware-tuning.nix
+    ./services.nix
+    ./users.nix
+    ./wireshark.nix
+  ];
+}

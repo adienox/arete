@@ -1,0 +1,118 @@
+@media (-moz-pref("nox.custom.coloredcontainertab")) {
+    tab {
+        --identity-icon-color: none !important;
+    }
+
+    /* Selected-Tabs Theme */
+    .tabbrowser-tab:is([selected], [visuallyselected], [multiselected])
+        .tab-background {
+        background-color: color-mix(
+            in srgb,
+            var(
+                    --identity-tab-color,
+                    var(
+                        --tab-group-color-gray-invert,
+                        light-dark(rgb(190, 190, 190), rgb(120, 120, 120))
+                    )
+                )
+                15%,
+            transparent
+        ) !important;
+        opacity: 0.8 !important;
+        /* Selected-Non-essentials-Tabs Theme */
+        &:not(.zen-essentials-container .tab-background) {
+            border: 2.5px solid
+                color-mix(
+                    in srgb,
+                    var(
+                            --identity-tab-color,
+                            var(
+                                --tab-group-color-gray-invert,
+                                light-dark(
+                                    rgb(190, 190, 190),
+                                    rgb(120, 120, 120)
+                                )
+                            )
+                        )
+                        20%,
+                    transparent
+                ) !important;
+            border-left: 32px solid
+                color-mix(
+                    in srgb,
+                    var(
+                            --identity-tab-color,
+                            var(
+                                --tab-group-color-gray-invert,
+                                light-dark(
+                                    rgb(190, 190, 190),
+                                    rgb(120, 120, 120)
+                                )
+                            )
+                        )
+                        20%,
+                    transparent
+                ) !important;
+        }
+    }
+
+    .tab-stack .tab-content .tab-label-container {
+        margin-left: 2px;
+    }
+}
+
+@media (-moz-pref("uc.essentials.box-like-corners")) {
+    .tabbrowser-tab[zen-essential="true"] .tab-stack .tab-background::before,
+    .tabbrowser-tab[zen-essential="true"] .tab-stack .tab-background {
+        border-radius: 5px !important;
+    }
+}
+
+/* URLBar Background Blur */
+@media (-moz-pref("nox.custom.urlblur")) {
+    #browser:has(#urlbar[open][zen-floating-urlbar="true"]) .browserContainer {
+        pointer-events: none;
+        filter: blur(10px) brightness(70%) saturate(50%) opacity(70%) !important;
+        scale: 1.1 !important;
+    }
+
+    #browser .browserContainer {
+        transition: all 0.2s ease-in-out !important;
+    }
+}
+
+/* Transparent Background */
+@media (-moz-pref("zen.widget.linux.transparency")) {
+    body {
+        background: light-dark(#ffffff66, #00000000) !important;
+    }
+
+    #tabbrowser-tabpanels {
+        background: transparent !important;
+        box-shadow:
+            0px 16px 48px -2px rgba(0, 0, 0, 0.36),
+            0px 6px 17px -1px rgba(0, 0, 0, 0.25) !important;
+        border-radius: 10px !important;
+    }
+
+    .browserStack {
+        & > browser {
+            background-color: light-dark(
+                rgba(255, 255, 255, 0.1),
+                rgba(0, 0, 0, 0.1)
+            ) !important;
+        }
+    }
+}
+
+@media (-moz-pref("nox.custom.glance")) {
+    .zen-glance-background {
+        filter: blur(10px) brightness(70%) saturate(50%) opacity(70%) !important;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+
+    .zen-glance-overlay > .browserContainer {
+        background: light-dark(#f5f4f0, #1a1918) !important;
+    }
+}

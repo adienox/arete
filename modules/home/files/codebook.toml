@@ -1,0 +1,8 @@
+words = [
+    "dct",
+    "fastapi",
+    "niri",
+    "pydantic",
+    "uvicorn",
+    "xdg",
+]

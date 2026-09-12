@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+target="${1:-$HOME}"
+target="$(realpath "$target")"
+
+emacsclient -c \
+  -F '((title . "emacs-dired"))' \
+  --eval "(progn
+             (dirvish \"$target\")
+             (set-window-dedicated-p (selected-window) t))"

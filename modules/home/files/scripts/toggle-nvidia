@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SPECIALIZATION="on-the-go"
+NVIDIA_PCI="01:00.0"
+
+notify() {
+  notify-send --urgency="$1" -a "Nvidia Toggle" "$2"
+}
+
+# Get current generation number
+GENERATION=$(nixos-rebuild list-generations | awk '/True/ {print $1}')
+
+if [ -z "$GENERATION" ]; then
+  notify critical "Could not determine current generation number"
+  exit 1
+fi
+
+SPEC_CONF="nixos-generation-${GENERATION}-specialisation-${SPECIALIZATION}.conf"
+BASE_CONF="nixos-generation-${GENERATION}.conf"
+
+NVIDIA_DRIVER="/sys/bus/pci/devices/0000:${NVIDIA_PCI}/driver"
+
+if [ -L "$NVIDIA_DRIVER" ]; then
+  TARGET_CONF="$SPEC_CONF"
+  notify normal "Nvidia is active. Rebooting to disable it..."
+else
+  TARGET_CONF="$BASE_CONF"
+  notify normal "Nvidia is inactive. Rebooting to enable it..."
+fi
+
+exec systemctl reboot --boot-loader-entry="$TARGET_CONF"
