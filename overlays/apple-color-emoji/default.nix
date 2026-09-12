@@ -6,11 +6,11 @@
 }:
 stdenv.mkDerivation {
   name = "apple-color-emoji";
-  version = "macos-26";
+  version = "macos-26-20260722-484daf4e";
 
   src = fetchurl {
-    url = "https://github.com/samuelngs/apple-emoji-ttf/releases/latest/download/AppleColorEmoji-Linux.ttf";
-    sha256 = "sha256:U1oEOvBHBtJEcQWeZHRb/IDWYXraLuo0NdxWINwPUxg=";
+    url = "https://github.com/samuelngs/apple-emoji-ttf/releases/download/${version}/AppleColorEmoji-Linux.ttf";
+    hash = "sha256-0vsihaj3vxjp8lrl70vfjvcpd9q9c7l6bg2pdnps1i2s4vv7lz73";
   };
 
   dontUnpack = true;
