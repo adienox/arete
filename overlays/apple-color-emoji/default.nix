@@ -4,7 +4,7 @@
   fetchurl,
   ...
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "apple-color-emoji";
   version = "macos-26-20260722-484daf4e";
 
