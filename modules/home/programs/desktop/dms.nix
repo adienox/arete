@@ -1,8 +1,8 @@
 {
   inputs,
   pkgs,
-  lib,
-  config,
+  helpers,
+  vars,
   ...
 }:
 let
@@ -54,5 +54,14 @@ in
         "wpblur"
       ];
     };
+  };
+
+  home.file = helpers.mkFiles {
+    symlinked = [
+      {
+        target = ".config/DankMaterialShell/settings.json";
+        source = "${vars.paths.homeFiles}/dms-settings.json";
+      }
+    ];
   };
 }
