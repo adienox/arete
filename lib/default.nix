@@ -9,6 +9,7 @@
     {
       hostname,
       system ? "x86_64-linux",
+      profile ? "personal",
     }:
     nixpkgs.lib.nixosSystem {
       inherit system;
@@ -28,6 +29,23 @@
         ../hosts/${hostname}
         ../modules/system
         inputs.vicinae.nixosModules.default
+	home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = {
+            inherit inputs;
+            vars = import ./variables.nix;
+          };
+          home-manager.users.nox.imports = [
+            inputs.vicinae.homeManagerModules.default
+            inputs.nix-index-database.homeModules.default
+            inputs.sops-nix.homeManagerModules.sops
+            ./helpers-module.nix
+            ../modules/home
+            ../modules/home/profiles/${profile}.nix
+          ];
+        }
       ];
     };
   mkHome =
@@ -36,14 +54,6 @@
       profile ? "personal",
     }:
     home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-      extraSpecialArgs = {
-        inherit inputs;
-        vars = import ./variables.nix;
-      };
       modules = [
         {
           nixpkgs.overlays = overlays;

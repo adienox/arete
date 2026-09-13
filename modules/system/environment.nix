@@ -5,16 +5,6 @@
 {
   nix = {
     settings = {
-      extra-substituters = [
-        "https://nix-community.cachix.org"
-        "https://vicinae.cachix.org"
-        "https://niri-epireyn.cachix.org"
-      ];
-      extra-trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
-        "niri-epireyn.cachix.org-1:tlVyFN7CtsDT+ZcLPS+ekFWeT1X6X4OqvWqbBMyIzFA="
-      ];
       warn-dirty = false;
       auto-optimise-store = true;
       experimental-features = [

@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://github.com/samuelngs/apple-emoji-ttf/releases/download/${version}/AppleColorEmoji-Linux.ttf";
-    hash = "0vsihaj3vxjp8lrl70vfjvcpd9q9c7l6bg2pdnps1i2s4vv7lz73";
+    hash = "sha256-43x69iZaxKCvbVe8ZehhCad22ZZug0MzRVf2PaSCUW8=";
   };
 
   dontUnpack = true;

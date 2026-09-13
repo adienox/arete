@@ -1,6 +1,19 @@
 {
   description = "NixOS configuration";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://vicinae.cachix.org"
+      "https://niri-epireyn.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+      "niri-epireyn.cachix.org-1:tlVyFN7CtsDT+ZcLPS+ekFWeT1X6X4OqvWqbBMyIzFA="
+    ];
+ };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -14,7 +27,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # just for the home manager config, package is from nixos
     niri = {
       url = "github:epireyn/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -82,11 +94,6 @@
       nixosConfigurations = {
         anomaly = lib.mkHost {
           hostname = "anomaly";
-        };
-      };
-      homeConfigurations = {
-        nox = lib.mkHome {
-          profile = "personal";
         };
       };
     };

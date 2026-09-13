@@ -20,17 +20,51 @@
             };
           };
           root = {
-            size = "459.4G";
+            size = "100%";
             content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/";
-            };
-          };
-          swap = {
-            size = "16.5G";
-            content = {
-              type = "swap";
+              type = "btrfs";
+              extraArgs = [ "-f" ]; # force overwrite existing signatures
+              subvolumes = {
+                "@" = {
+                  mountpoint = "/";
+                  mountOptions = [
+                    "compress=zstd"
+                    "noatime"
+                  ];
+                };
+                "@home" = {
+                  mountpoint = "/home";
+                  mountOptions = [
+                    "compress=zstd"
+                    "noatime"
+                  ];
+                };
+                "@nix" = {
+                  mountpoint = "/nix";
+                  mountOptions = [
+                    "compress=zstd"
+                    "noatime"
+                  ];
+                };
+                "@log" = {
+                  mountpoint = "/var/log";
+                  mountOptions = [
+                    "compress=zstd"
+                    "noatime"
+                  ];
+                };
+                "@snapshots" = {
+                  mountpoint = "/.snapshots";
+                  mountOptions = [
+                    "compress=zstd"
+                    "noatime"
+                  ];
+                };
+                "@swap" = {
+                  mountpoint = "/swap";
+                  swap.swapfile.size = "16G";
+                };
+              };
             };
           };
         };
