@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  security.polkit.enable = true;
+
   systemd = {
     user.services.polkit-gnome-authentication-agent-1 = {
       description = "Gnome PolicyKit Authentication Agent";

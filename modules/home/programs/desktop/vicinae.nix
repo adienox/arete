@@ -2,10 +2,13 @@
   inputs,
   pkgs,
   vars,
+  config,
   ...
 }:
 let
-  extensions = inputs.vicinae-extensions.packages.${pkgs.stdenv.hostPlatform.system};
+  system = pkgs.stdenv.hostPlatform.system;
+  extensions = inputs.vicinae-extensions.packages.${system};
+  mkRayCastExtension = inputs.vicinae.lib.${system}.mkRayCastExtension;
 in
 {
   home.packages = with pkgs; [
@@ -15,6 +18,7 @@ in
 
   programs.vicinae = {
     enable = true;
+
     systemd = {
       enable = true;
       autoStart = true;
@@ -22,8 +26,8 @@ in
         EMOJI_FONT = vars.fonts.emoji;
       };
     };
-    settings = {
 
+    settings = {
       favicon_service = "twenty";
       pop_to_root_on_close = false;
       search_files_in_root = false;
@@ -37,11 +41,11 @@ in
       };
       theme = {
         dark = {
-          name = "matugen";
+          name = if config.programs.dank-material-shell.enable then "matugen" else "vicinae-dark";
           icon_theme = "Papirus";
         };
         light = {
-          name = "matugen";
+          name = if config.programs.dank-material-shell.enable then "matugen" else "vicinae-light";
           icon_theme = "Papirus";
         };
       };
@@ -51,19 +55,17 @@ in
       };
       favorites = [
         "clipboard:history"
-        "@mattisssa/store.raycast.spotify-player:yourLibrary"
-        "@tonka3000/store.raycast.homeassistant:lights"
-        "@knoopx/store.vicinae.nix:packages"
+        "@mattisssa/spotify-player:yourLibrary"
+        "@tonka3000/homeassistant:lights"
         "@rastsislaux/vicinae-extension-pulseaudio-0:outputDevices"
         "@leonkohli/vicinae-extension-process-manager-0:processes"
       ];
 
       fallbacks = [
-        "shortcuts:sct-f126be0e1d67" # Brave Search
-        "shortcuts:sct-75a4f4048446" # Youtube Search
-        "@mattisssa/store.raycast.spotify-player:search"
-        "@knoopx/store.vicinae.nix:packages"
-        "@knoopx/store.vicinae.nix:home-manager-options"
+        "files:search"
+        "@mattisssa/spotify-player:search"
+        "@knoopx/vicinae-extension-nix-0:packages"
+        "@knoopx/vicinae-extension-nix-0:home-manager-options"
       ];
 
       providers = {
@@ -91,7 +93,7 @@ in
           sponsor.enabled = false;
         };
 
-        "@tonka3000/store.raycast.homeassistant" = {
+        "@tonka3000/homeassistant" = {
           preferences = {
             camerarefreshinterval = "3000";
             ignorecerts = false;
@@ -130,22 +132,57 @@ in
             zones.enabled = false;
           };
         };
-        "@samlinville/store.raycast.tailscale" = {
+        "@samlinville/tailscale" = {
           preferences = {
             tailscalePath = "${pkgs.tailscale}/bin/tailscale";
+          };
+        };
+        "@mattisssa/spotify-player" = {
+          entrypoints = {
+            yourLibrary.preferences."Default-View" = "all";
+            search = {
+              preferences = {
+                musicOnly = true;
+                topView = "tracks";
+              };
+            };
+            startRadio.enable = true;
           };
         };
       };
     };
 
-    # only vicinae extensions for now
-    extensions = with extensions; [
-      bitwarden
-      nix
-      power-profile
-      pulseaudio
-      process-manager
-      timer
-    ];
+    extensions =
+      with extensions;
+      [
+        bitwarden
+        nix
+        power-profile
+        pulseaudio
+        process-manager
+        timer
+      ]
+      ++ (
+        let
+          raycastRev = "3c654737b0d566d3103fcdf72221a9f34664bdf2";
+        in
+        [
+          (mkRayCastExtension {
+            name = "homeassistant";
+            rev = raycastRev;
+            sha256 = "sha256-1C1rr2V/lGwsrt2T5WEF1I9GkHlxu3HtlVFFb93se4Q=";
+          })
+          (mkRayCastExtension {
+            name = "spotify-player";
+            rev = raycastRev;
+            sha256 = "sha256-V/CY8/0IHb38JmQhzLuRa6AHnnRk8O9G0zVBv9W/tiw=";
+          })
+          (mkRayCastExtension {
+            name = "tailscale";
+            rev = raycastRev;
+            sha256 = "sha256-RX2SyyPvG5RVxANGXymYIXEFzZq3koEcxWmPQcrPVig=";
+          })
+        ]
+      );
   };
 }

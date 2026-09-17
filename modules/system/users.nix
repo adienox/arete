@@ -20,6 +20,7 @@
       "wheel"
       "dialout"
       "wireshark"
+      "kvm"
     ];
   };
 }

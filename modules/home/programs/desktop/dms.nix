@@ -20,17 +20,26 @@ let
     desktopName = "Toggle Theme";
     terminal = false;
   };
+  dms-toggle-inhibit = pkgs.makeDesktopItem {
+    icon = "caffeine-cup-full";
+    name = "inhibit-toggle";
+    exec = "dms ipc call inhibit toggle";
+    desktopName = "Toggle Keep Awake";
+    terminal = false;
+  };
 in
 {
   imports = [
     inputs.dms.homeModules.dank-material-shell
     inputs.dms.homeModules.niri
+    inputs.dms-plugin-registry.nixosModules.default
   ];
 
   home.packages = with pkgs; [
     gpu-screen-recorder
     dms-wallpaper-selector
     dms-toggle-theme
+    dms-toggle-inhibit
   ];
 
   programs.dank-material-shell = {
@@ -54,13 +63,26 @@ in
         "wpblur"
       ];
     };
+
+    managePluginSettings = false;
+
+    plugins = {
+      dankKDEConnect.enable = true;
+      hiddenBar.enable = true;
+      systemMonitorPlus.enable = true;
+      wallpaperCarousel.enable = true;
+    };
   };
 
   home.file = helpers.mkFiles {
     symlinked = [
       {
         target = ".config/DankMaterialShell/settings.json";
-        source = "${vars.paths.homeFiles}/dms-settings.json";
+        source = "${vars.paths.homeFiles}/dms/settings.json";
+      }
+      {
+        target = ".config/DankMaterialShell/plugin_settings.json";
+        source = "${vars.paths.homeFiles}/dms/plugin_settings.json";
       }
     ];
   };

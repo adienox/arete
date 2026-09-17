@@ -6,6 +6,7 @@
     ./udiskie.nix
     ./nh.nix
     ./commands-api.nix
+    ./syncthing.nix
   ];
 
   home.packages = with pkgs; [

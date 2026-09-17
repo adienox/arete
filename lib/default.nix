@@ -2,8 +2,11 @@
   nixpkgs,
   home-manager,
   inputs,
-  overlays,
+  pkgs,
 }:
+let
+  vars = import ./variables.nix;
+in
 {
   mkHost =
     {
@@ -14,33 +17,42 @@
     nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit inputs;
-        vars = import ./variables.nix;
+        inherit inputs vars;
       };
       modules = [
         {
-          nixpkgs.overlays = overlays;
+          nixpkgs.overlays = [
+            inputs.niri.overlays.niri
+            inputs.emacs.overlays.default
+            inputs.nix-firefox-addons.overlays.default
+            (import ../overlays)
+          ];
           nixpkgs.config.allowUnfree = true;
         }
+
         inputs.disko.nixosModules.disko
+        inputs.vicinae.nixosModules.default
+        inputs.sops-nix.nixosModules.sops
+        inputs.determinate.nixosModules.default
+
         ../hosts/${hostname}/disko.nix
         ../hosts/${hostname}/hardware.nix
         ./helpers-module.nix
         ../hosts/${hostname}
         ../modules/system
-        inputs.vicinae.nixosModules.default
-	home-manager.nixosModules.home-manager
+
+        home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = {
-            inherit inputs;
-            vars = import ./variables.nix;
+            inherit inputs vars;
           };
           home-manager.users.nox.imports = [
             inputs.vicinae.homeManagerModules.default
             inputs.nix-index-database.homeModules.default
             inputs.sops-nix.homeManagerModules.sops
+
             ./helpers-module.nix
             ../modules/home
             ../modules/home/profiles/${profile}.nix
@@ -48,23 +60,19 @@
         }
       ];
     };
-  mkHome =
+  mkApp =
     {
-      system ? "x86_64-linux",
-      profile ? "personal",
+      name,
+      script,
+      runtimeInputs ? [ ],
     }:
-    home-manager.lib.homeManagerConfiguration {
-      modules = [
-        {
-          nixpkgs.overlays = overlays;
-          nixpkgs.config.allowUnfree = true;
+    {
+      type = "app";
+      program = "${
+        pkgs.writeShellApplication {
+          inherit name runtimeInputs;
+          text = builtins.readFile script;
         }
-        inputs.vicinae.homeManagerModules.default
-        inputs.nix-index-database.homeModules.default
-        inputs.sops-nix.homeManagerModules.sops
-        ./helpers-module.nix
-        ../modules/home
-        ../modules/home/profiles/${profile}.nix
-      ];
+      }/bin/${name}";
     };
 }

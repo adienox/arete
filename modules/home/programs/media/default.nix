@@ -5,6 +5,7 @@
     ./imv.nix
     ./mpv.nix
     ./easyeffects.nix
+    ./spotifyd.nix
   ];
 
   home.packages = with pkgs; [

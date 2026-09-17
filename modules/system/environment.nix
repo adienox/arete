@@ -6,7 +6,6 @@
   nix = {
     settings = {
       warn-dirty = false;
-      auto-optimise-store = true;
       experimental-features = [
         "nix-command"
         "flakes"
@@ -30,6 +29,7 @@
       gcc
       ripgrep
       fd
+      nautilus
     ];
     pathsToLink = [ "/share/applications" ];
     localBinInPath = true;

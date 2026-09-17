@@ -3,11 +3,6 @@
   ...
 }:
 {
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
-  };
-
   services.mysql = {
     enable = true;
     package = pkgs.mariadb;

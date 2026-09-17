@@ -51,8 +51,6 @@
   # services.dbus.packages = [ pkgs.gcr ];
 
   security = {
-    polkit.enable = true;
-
     pam.services.gtklock = {
       text = ''
         auth include login

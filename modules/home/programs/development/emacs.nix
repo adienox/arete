@@ -60,6 +60,8 @@ in
     texliveMedium
     vips
 
+    nixfmt
+
     # Mason & Apheleia
     nodejs-slim.npm
     nodejs-slim

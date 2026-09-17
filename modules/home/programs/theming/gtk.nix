@@ -25,6 +25,11 @@
       package = lib.mkForce pkgs.adw-gtk3;
     };
 
+    gtk3.theme = {
+      name = lib.mkForce "adw-gtk3";
+      package = lib.mkForce pkgs.adw-gtk3;
+    };
+
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;

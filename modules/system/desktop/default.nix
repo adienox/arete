@@ -14,8 +14,14 @@
 
     libinput.enable = true;
     ddccontrol.enable = true;
+  };
+  services = {
     gvfs.enable = true;
-    gnome.sushi.enable = true;
+    tumbler.enable = true;
+    gnome = {
+      sushi.enable = true;
+      localsearch.enable = true;
+    };
   };
 
   environment = {

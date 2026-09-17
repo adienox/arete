@@ -42,12 +42,6 @@
 
     kernelPackages = pkgs.linuxPackages_zen;
 
-    loader = {
-      efi.canTouchEfiVariables = true;
-      timeout = 3;
-      systemd-boot.enable = true;
-    };
-
     plymouth.enable = true;
   };
 

@@ -11,16 +11,14 @@ in
 {
   imports = [
     ./programs
-    ./secrets
+    ./secrets.nix
   ];
 
   programs.home-manager.enable = true;
-  services.syncthing.enable = true;
 
   home.packages = with pkgs; [
     gnome-calculator
     fuzzel
-    nautilus
     libtool
     ispell
     xclip
@@ -78,9 +76,6 @@ in
         target = ".config/tridactyl/.tridactylrc";
         source = "${homeFiles}/.tridactylrc";
       }
-    ];
-
-    copied = [
       {
         target = ".XCompose";
         source = "${homeFiles}/.XCompose";
@@ -96,8 +91,6 @@ in
 
   home = {
     enableNixpkgsReleaseCheck = false;
-    username = "nox";
-    homeDirectory = "/home/nox";
     stateVersion = "26.11";
   };
 }

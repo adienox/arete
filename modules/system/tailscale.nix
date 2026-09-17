@@ -1,6 +1,9 @@
 { config, ... }:
 {
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    authKeyFile = config.sops.secrets."services/tailscale".path;
+  };
 
   networking.nftables.enable = true;
 

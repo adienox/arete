@@ -3,6 +3,8 @@
   pkgs,
   lib,
   config,
+  helpers,
+  vars,
   ...
 }:
 let
@@ -16,7 +18,7 @@ in
     ./binds.nix
   ];
 
-  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
+  #nixpkgs.overlays = [ inputs.niri.overlays.niri ];
   home.packages = with pkgs; [
     wl-clipboard
     xwayland-satellite
@@ -61,7 +63,7 @@ in
         };
 
         warp-mouse-to-focus = {
-          enable = true;
+          enable = false;
           mode = "center-xy";
         };
 
@@ -156,8 +158,6 @@ in
 
       screenshot-path = "${config.xdg.userDirs.pictures}/Screenshots/%Y-%m-%d %H-%M-%S.png";
 
-      animations = { };
-
       debug = {
         honor-xdg-activation-with-invalid-serial = [ ];
         emulate-zero-presentation-time = [ ];
@@ -166,6 +166,19 @@ in
       };
 
       hotkey-overlay.skip-at-startup = true;
+
+      includes = with config.lib.niri.include; [
+        (optional "animations.kdl")
+      ];
     };
+  };
+
+  home.file = helpers.mkFiles {
+    symlinked = [
+      {
+        target = ".config/niri/animations.kdl";
+        source = "${vars.paths.homeFiles}/niri/directional-wipe.kdl";
+      }
+    ];
   };
 }

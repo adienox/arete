@@ -164,14 +164,6 @@
       ],
       "rightWidgets": [
         {
-          "id": "quickTote",
-          "enabled": true
-        },
-        {
-          "id": "dankPomodoroTimer",
-          "enabled": true
-        },
-        {
           "id": "notificationButton",
           "enabled": true
         },
@@ -290,50 +282,6 @@
     "hslLightness": 1,
     "valid": true
   },
-  "desktopWidgetInstances": [
-    {
-      "id": "dw_1780084383134_er29pa1h1",
-      "widgetType": "desktopClock",
-      "name": "Desktop Clock",
-      "enabled": true,
-      "config": {
-        "style": "analog",
-        "transparency": 0.8,
-        "colorMode": "primary",
-        "customColor": "#ffffff",
-        "showDate": true,
-        "showAnalogNumbers": false,
-        "showAnalogSeconds": true,
-        "displayPreferences": [
-          "all"
-        ],
-        "syncPositionAcrossScreens": true
-      },
-      "group": null
-    },
-    {
-      "id": "dw_1780084449057_6x1vejnh1",
-      "widgetType": "dankDesktopWeather",
-      "name": "Dank Desktop Weather",
-      "enabled": true,
-      "config": {
-        "displayPreferences": [
-          "all"
-        ],
-        "viewMode": "detailed",
-        "showWind": true,
-        "showPressure": true,
-        "showLocation": true,
-        "showFeelsLike": true,
-        "showForecast": false,
-        "showSunTimes": true,
-        "showPrecipitation": true,
-        "backgroundOpacity": 80,
-        "syncPositionAcrossScreens": false
-      },
-      "group": null
-    }
-  ],
   "builtInPluginSettings": {
     "dms_settings_search": {
       "trigger": "?"

@@ -1,0 +1,35 @@
+{
+  "dankKDEConnect": {
+    "enabled": true,
+    "selectedDeviceId": "f2742624e1dd45fc990f89026937b3f8",
+    "deviceImageMap": "{\"f2742624e1dd45fc990f89026937b3f8\":\"file:///home/nox/Documents/projects/arete/modules/home/files/dms/op-11.jpg\"}"
+  },
+  "hiddenBar": {
+    "enabled": true
+  },
+  "systemMonitorPlus": {
+    "enabled": true,
+    "cpuTempEnabled": true,
+    "ramUsageEnabled": true,
+    "cpuUsageVisualStyle": "gauge",
+    "cpuUsageShowText": false,
+    "cpuTempVisualStyle": "gauge",
+    "cpuTempShowText": false,
+    "ramUsageVisualStyle": "gauge",
+    "ramUsageShowText": false
+  },
+  "wallpaperCarousel": {
+    "enableHoldExpand": "true",
+    "enabled": true,
+    "expandMultiplier": 140,
+    "expandSelected": "true",
+    "holdDelay": 750,
+    "holdExpandRatio": 40,
+    "overlayOpacity": 55,
+    "borderWidth": 0,
+    "carouselMode": "wrap"
+  },
+  "dankHooks": {
+    "enabled": true
+  }
+}

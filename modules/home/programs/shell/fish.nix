@@ -44,7 +44,23 @@
           if ${pkgs.yt-dlp}/bin/yt-dlp $argv
             ${pkgs.libnotify}/bin/notify-send -a "yt-dlp" "Success" "yt-dlp has finished." --icon=youtube
           else
-            ${pkgs.libnotify}/bin/notify-send -a "yt-dlp" "Error" "yt-dlp has failed." --icon=youtube
+            ${pkgs.libnotify}/bin/notify-send -a "yt-dlp" "Error" "yt-dlp has failed." --icon=error
+          end
+        '';
+      };
+      taildrop = {
+        description = "Send files to another machine via Tailscale";
+        body = ''
+          set -l file $argv[1]
+          set -l target $argv[2]
+          if not set -q target[1]
+            set target hawk
+          end
+          string match -q -- "*:" "$target"; or set targetp "$target:"
+          if ${pkgs.tailscale}/bin/tailscale file cp "$file" "$targetp"
+            ${pkgs.libnotify}/bin/notify-send -a "Taildrop" "Success" "Sent $file to $target" --icon=network-transmit
+          else
+            ${pkgs.libnotify}/bin/notify-send -a "Taildrop" "Error" "Failed to send $file to $target" --icon=error
           end
         '';
       };

@@ -12,6 +12,7 @@ include "%L"
 <Multi_key> <e> <p>                     : "🥺"
 <Multi_key> <e> <s>                     : "😁"
 <Multi_key> <e> <h>                     : "❤️"
+<Multi_key> <e> <b>                     : "🫩"
 
 # ── Typography ────────────────────────────────────────────────────────────────
 <Multi_key> <minus> <minus> <minus>     : "—"  # em dash

@@ -17,7 +17,7 @@
       hotkey-overlay.title = "Open Browser: Zen";
     };
 
-    "Mod+P" = {
+    "Mod+Ctrl+P" = {
       action.spawn-sh = "${vars.paths.scripts}/pip.py same";
     };
     "Mod+Shift+P" = {
@@ -48,9 +48,13 @@
       action.spawn-sh = "vicinae vicinae://launch/core/search-emojis";
       hotkey-overlay.title = "Open Launcher: Emoji";
     };
+    "Mod+P" = {
+      action.spawn-sh = "vicinae vicinae://launch/@bl4zee1g/vicinae-extension-bitwarden-0/browse-vault";
+      hotkey-overlay.title = "Open Launcher: Bitwarden";
+    };
     "Mod+Shift+W" = {
       action.spawn-sh = "dms ipc wallpaperCarousel toggle";
-      hotkey-overlay.title = "Open Launcher: Emoji";
+      hotkey-overlay.title = "Open Launcher: Wallpaper";
     };
     "Ctrl+Alt+Delete" = {
       action.spawn-sh = "dms ipc call fullscreenPowerMenu toggle";

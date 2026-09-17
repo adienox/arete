@@ -20,5 +20,8 @@
     ./services.nix
     ./users.nix
     ./wireshark.nix
+    ./boot.nix
+    ./secrets.nix
+    ./virtualisation.nix
   ];
 }
