@@ -17,23 +17,22 @@ in
     nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
-        inherit inputs vars;
+        inherit inputs vars hostname;
       };
       modules = [
         {
           nixpkgs.overlays = [
-            inputs.niri.overlays.niri
-            inputs.emacs.overlays.default
             inputs.nix-firefox-addons.overlays.default
             (import ../overlays)
           ];
           nixpkgs.config.allowUnfree = true;
+          nix.registry.nixpkgs.flake = nixpkgs;
+          nix.nixPath = [ "nixpkgs=flake:nixpkgs" ];
         }
 
         inputs.disko.nixosModules.disko
         inputs.vicinae.nixosModules.default
         inputs.sops-nix.nixosModules.sops
-        inputs.determinate.nixosModules.default
 
         ../hosts/${hostname}/disko.nix
         ../hosts/${hostname}/hardware.nix
@@ -46,7 +45,7 @@ in
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = {
-            inherit inputs vars;
+            inherit inputs vars hostname;
           };
           home-manager.users.nox.imports = [
             inputs.vicinae.homeManagerModules.default

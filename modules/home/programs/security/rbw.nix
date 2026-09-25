@@ -13,12 +13,8 @@
     lock_timeout = 3600;
   };
 
-  home.file = helpers.mkFiles {
-    symlinked = [
-      {
-        target = ".config/rbw/config.json";
-        source = config.sops.templates."rbw-config.json".path;
-      }
-    ];
+  home.file = helpers.mkSymlinkedFile {
+    target = ".config/rbw/config.json";
+    source = config.sops.templates."rbw-config.json".path;
   };
 }

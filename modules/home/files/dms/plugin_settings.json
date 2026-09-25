@@ -31,5 +31,13 @@
   },
   "dankHooks": {
     "enabled": true
+  },
+  "fullscreenPowerMenu": {
+    "enabled": true,
+    "animationSpeed": 100,
+    "primaryTintEnabled": false,
+    "dimOpacity": 80,
+    "menuOpacity": 35,
+    "animationsEnabled": true
   }
 }

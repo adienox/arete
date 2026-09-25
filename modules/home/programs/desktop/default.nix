@@ -11,8 +11,8 @@ in
 {
   imports = [
     ./niri
+    ./vicinae
     ./dms.nix
-    ./vicinae.nix
     ./xremap.nix
   ];
 
@@ -21,4 +21,21 @@ in
   home.packages = [
     phone-connect
   ];
+
+  dconf.settings = {
+    "org/gnome/nautilus/preferences" = {
+      always-use-location-entry = true;
+      show-create-link = true;
+      show-delete-permanently = true;
+    };
+
+    "org/gnome/nautilus/icon-view" = {
+      default-zoom-level = "standard";
+    };
+
+    "org/gtk/gtk4/settings/file-chooser" = {
+      sort-directories-first = true;
+      show-hidden = true;
+    };
+  };
 }

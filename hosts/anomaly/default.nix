@@ -1,48 +1,23 @@
-{ config, pkgs, ... }:
 {
-  networking.hostName = "anomaly";
-  programs.gpu-screen-recorder.enable = true;
-  services.nvidia-otg.enable = true;
-  services.nvidia.enable = true;
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
+{
+  imports = [
+    inputs.nixos-hardware.nixosModules.lenovo-legion-15arh05h
+  ];
 
-  services.udev.packages = with pkgs; [ platformio-core.udev ];
+  boot.kernelPackages = pkgs.linuxPackages_zen;
 
-  boot = {
-    binfmt.emulatedSystems = [ "aarch64-linux" ];
-
-    extraModulePackages = with config.boot.kernelPackages; [
-      ddcci-driver
-      acpi_call
-    ];
-
-    kernelModules = [
-      "amdgpu"
-      "i2c-dev"
-      "ddcci_backlight"
-      "acpi_call"
-    ];
-
-    kernelParams = [
-      "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
-    ];
-
-    extraModprobeConfig = ''
-      options iwlwifi power_save=1
-      options iwlmvm power_scheme=3
-      options snd_hda_intel power_save=1
-      options nvidia NVreg_RegistryDwords="PowerMizerEnable=0x1; PowerMizerDefault=0x1; PowerMizerDefaultAC=0x1; PerfLevelSrc=0x2222"
-
-      blacklist sp5100_tco
-    '';
-
-    kernel.sysctl = {
-      "vm.dirty_writeback_centisecs" = 1500;
-      "vm.laptop_mode" = 5;
+  hardware.nvidia = {
+    enable = true;
+    prime = lib.mkForce {
+      amdgpuBusId = "PCI:5:0:0";
+      nvidiaBusId = "PCI:1:0:0";
     };
-
-    kernelPackages = pkgs.linuxPackages_zen;
-
-    plymouth.enable = true;
+    primeBatterySaverSpecialisation = true;
   };
 
   # sick and tired of these devices always switching names

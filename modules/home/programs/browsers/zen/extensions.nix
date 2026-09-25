@@ -1,5 +1,13 @@
-{ pkgs, config, ... }: {
+{ pkgs, inputs, ... }: {
   # nix run github:osipog/nix-firefox-addons#search-addon vimium
+  #nixpkgs.overlays = [ inputs.nix-firefox-addons.overlays.default ];
+
+  programs.zen-browser.nativeMessagingHosts = [
+    inputs.vicinae.packages.${pkgs.stdenv.hostPlatform.system}.default
+    pkgs.tridactyl-native
+    pkgs.tab-handoff.host
+  ];
+
   programs.zen-browser.profiles.default = {
     extensionButtons = {
       "nav-bar" = [
@@ -29,6 +37,7 @@
         tab-reloader
         youtube-unhook
         vicinae
+        pkgs.tab-handoff.xpi
       ];
 
       settings."uBlock0@raymondhill.net" = {
@@ -106,7 +115,79 @@
       settings."tridactyl.vim@cmcaine.co.uk" = {
         force = true;
         settings = {
-          theme = if config.programs.dank-material-shell.enable then "matugen" else "dark";
+          userconfig = {
+            configversion = "2.0";
+            hintfiltermode = "simple";
+            hintchars = "asdfjkl;gh";
+            nmaps = {
+              "j" = "scrollline 5";
+              "k" = "scrollline -5";
+              "d" = "composite tabclose";
+              "u" = "composite undo";
+              "gg" = "scrollto 0";
+              "G" = "scrollto 100";
+              "J" = "tabnext";
+              "K" = "tabprev";
+              "gd" = "tabdetach";
+              "gD" = "composite tabduplicate; tabdetach";
+              "gm" = "tabmove +1";
+              "gM" = "tabmove -1";
+              "gng" = "tabopen https://github.com";
+              "gog" = "open https://github.com";
+              "gwg" = "winopen https://github.com";
+              "gpg" = "winopen -private https://github.com";
+              "gnn" = "tabopen https://search.nixos.org/packages";
+              "gon" = "open https://search.nixos.org/packages";
+              "gwn" = "winopen https://search.nixos.org/packages";
+              "gpn" = "winopen -private https://search.nixos.org/packages";
+              "gno" = "tabopen https://search.nixos.org/options";
+              "goo" = "open https://search.nixos.org/options";
+              "gwo" = "winopen https://search.nixos.org/options";
+              "gpo" = "winopen -private https://search.nixos.org/options";
+              "gnh" = "tabopen https://home-manager-options.extranix.com";
+              "goh" = "open https://home-manager-options.extranix.com";
+              "gwh" = "winopen https://home-manager-options.extranix.com";
+              "gph" = "winopen -private https://home-manager-options.extranix.com";
+              ";s" = "composite fillcmdline open nixpkgs";
+              "ZZ" = "!s killall firefox";
+              ",r" = "reloadtheme";
+            };
+            editorcmd = "emacsclient -c";
+            searchengine = "google";
+            searchurls = {
+              nixpkgs = "https://search.nixos.org/packages?query=%s";
+              hmopts = "https://home-manager-options.extranix.com/?query=%s";
+              gh = "https://github.com/search?q=%s";
+            };
+            #bindurls
+            subconfigs = {
+              "news.ycombinator.com".nmaps = {
+                "f" = "hint -c span.titleline";
+              };
+              "youtube.com".nmaps = {
+                "f" =
+                  "hint -Jc a#video-title, ytd-channel-name#channel-name, h3.ytLockupMetadataViewModelHeadingReset, a.yt-simple-endpoint, div.ytTabShapeTab, button.ytp-button";
+              };
+              "search.brave.com".nmaps = {
+                "f" = "hint -Jc div.title, a.enrichment-card-item, button, textarea, input";
+              };
+            };
+            autocmds = {
+              DocStart = {
+                "docs.google.com" = "mode ignore";
+                "mail.google.com/mail" = "mode ignore";
+              };
+              TabEnter = {
+                ".*" = "reloadtheme";
+              };
+            };
+            allowautofocus = "false";
+            smoothscroll = "true";
+            tabsclosetoend = "false";
+            exaliases = {
+              reloadtheme = "composite colourscheme dark ; colourscheme matugen";
+            };
+          };
         };
       };
       settings."enhancerforyoutube@maximerf.addons.mozilla.org" = {

@@ -1,4 +1,4 @@
-{ ... }:
+{ hostname, ... }:
 {
   services.resolved.enable = true;
 
@@ -15,6 +15,7 @@
   };
 
   networking = {
+    hostName = hostname;
     networkmanager = {
       enable = true;
       wifi = {

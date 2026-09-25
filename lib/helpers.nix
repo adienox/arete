@@ -10,7 +10,7 @@ let
   inherit (lib) mkIf;
 in
 rec {
-  # Create a symlinked config file entry that points to a source in /nix/store
+  # Create a symlinked config file entry that points to a source outside /nix/store
   # This allows editing the source file without breaking the symlink
   #
   # Usage:
@@ -77,57 +77,24 @@ rec {
     }:
     mkSymlinkedFiles symlinked // mkConfigFiles copied;
 
-  # Return a set of environment variables, optionally conditional.
-  # Returns the bare attrset (not wrapped in `home.sessionVariables`) so it
-  # can be merged with other variables at the call site.
-  #
-  # Usage:
-  #   home.sessionVariables = mkEnvVars {
-  #     EDITOR = "nvim";
-  #     PAGER = "less";
-  #   } // otherVars;
-  #
-  # Or with condition:
-  #   home.sessionVariables = mkEnvVars
-  #     (mkIf (config.modules.nvim.enable) {
-  #       EDITOR = "nvim";
-  #     });
-  mkEnvVars = vars: vars;
-
   # Merge multiple enable options into a single config option, and enable
   # all of the given submodules whenever the group is enabled.
+  # Group defaults to true enabling all its modules.
   #
   # Usage:
-  #   mkModuleGroup "shell" [ "zsh" "starship" ]
+  # imports = [
+  #   (mkModuleGroup "shell"   [ "zsh" "starship" "git" ])
+  #   (mkModuleGroup "desktop" [ "hyprland" "waybar" "rofi" ])
+  #   (mkModuleGroup "dev"     [ "emacs" "python-dev" "direnv" ])
+  # ];
   mkModuleGroup = name: modules: {
     options.modules.${name}.enable = lib.mkEnableOption name // {
       default = true;
     };
-    config = mkIf config.modules.${name}.enable (
-      lib.genAttrs modules (m: {
-        modules.${m}.enable = lib.mkDefault true;
-      })
-    );
-  };
-
-  # Create a module with a standard enable option
-  # This is the recommended pattern for all modules
-  #
-  # Usage:
-  #   mkModule {
-  #     name = "nvim";
-  #     description = "Neovim editor";
-  #     default = true;
-  #   }
-  mkModule =
-    {
-      name,
-      description ? name,
-      default ? true,
-    }:
-    {
-      options.modules.${name}.enable = lib.mkEnableOption description // {
-        inherit default;
-      };
+    config = mkIf config.modules.${name}.enable {
+      modules = lib.genAttrs modules (_: {
+        enable = lib.mkDefault true;
+      });
     };
+  };
 }

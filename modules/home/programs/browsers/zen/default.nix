@@ -1,6 +1,5 @@
 {
   inputs,
-  pkgs,
   ...
 }:
 {
@@ -15,10 +14,9 @@
   programs.zen-browser = {
     enable = true;
 
-    nativeMessagingHosts = [
-      inputs.vicinae.packages.${pkgs.stdenv.hostPlatform.system}.default
-      pkgs.tridactyl-native
-    ];
+    env = {
+      GTK_THEME = "Adwaita";
+    };
 
     setAsDefaultBrowser = true;
     policies = {
@@ -45,6 +43,7 @@
     };
 
     profiles.default = {
+      presets.betterfox.enable = true;
       mods = [
         "f7c71d9a-bce2-420f-ae44-a64bd92975ab" # Better Unloaded Tabs
         "599a1599-e6ab-4749-ab22-de533860de2c" # Pimp your PiP

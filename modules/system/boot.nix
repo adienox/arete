@@ -20,4 +20,6 @@
       };
     };
   };
+
+  boot.plymouth.enable = true;
 }

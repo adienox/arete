@@ -8,6 +8,7 @@
       proc_tree = true;
       color_theme = if config.programs.dank-material-shell.enable then "dankcolors" else "default";
       theme_background = false;
+      disks_filter = "/"; # use with btrfs
     };
   };
 }

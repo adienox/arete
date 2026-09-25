@@ -5,14 +5,11 @@
   ...
 }:
 {
-  options.services.nvidia = {
+  options.hardware.nvidia = {
     enable = lib.mkEnableOption "nvidia";
   };
 
-  config = lib.mkIf config.services.nvidia.enable {
-    # Tell Xorg to use the nvidia driver
-    services.xserver.videoDrivers = [ "nvidia" ];
-
+  config = lib.mkIf config.hardware.nvidia.enable {
     hardware = {
       # Make sure opengl is enabled
       graphics = {

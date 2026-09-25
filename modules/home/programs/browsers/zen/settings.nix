@@ -11,6 +11,7 @@
     "zen.glance.activation-method" = "ctrl";
     "zen.glance.animation-duration" = 150;
     "zen.widget.linux.transparency" = true;
+    "zen.view.grey-out-inactive-windows" = false;
     "browser.tabs.allow_transparent_browser" = true;
     "zen.workspaces.show-workspace-indicator" = false;
 
@@ -44,5 +45,19 @@
     "nox.custom.glance" = true;
     "nox.custom.coloredcontainertab" = true;
     "xpinstall.signatures.required" = false;
+
+    # Natural Scrolling form smoothfox.js
+    "apz.overscroll.enabled" = true;
+    "general.smoothScroll" = true;
+    "general.smoothScroll.msdPhysics.continuousMotionMaxDeltaMS" = 12;
+    "general.smoothScroll.msdPhysics.enabled" = true;
+    "general.smoothScroll.msdPhysics.motionBeginSpringConstant" = 600;
+    "general.smoothScroll.msdPhysics.regularSpringConstant" = 650;
+    "general.smoothScroll.msdPhysics.slowdownMinDeltaMS" = 25;
+    "general.smoothScroll.msdPhysics.slowdownMinDeltaRatio" = "2";
+    "general.smoothScroll.msdPhysics.slowdownSpringConstant" = 250;
+    "general.smoothScroll.currentVelocityWeighting" = "1";
+    "general.smoothScroll.stopDecelerationWeighting" = "1";
+    "mousewheel.default.delta_multiplier_y" = 300;
   };
 }

@@ -4,7 +4,7 @@ _default:
 
 # rebuild NixOS and switch
 update:
-    @just _diff system
+    @just _diff
     @nh os switch
     #@git add --all
     #@gen=$(nixos-rebuild list-generations | awk '/True/ {print $1}');\
@@ -16,7 +16,7 @@ vm host:
 
 # rebuild NixOS for next boot
 update-at-boot:
-    @just _diff system
+    @just _diff
     @nh os boot
     @git add --all
     @gen=$(nixos-rebuild list-generations | awk '/True/ {print $1}');\

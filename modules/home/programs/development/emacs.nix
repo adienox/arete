@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-  emacsPkg = pkgs.emacs-unstable-pgtk;
+  emacsPkg = pkgs.emacs-pgtk;
 
   emacsclient-capture = pkgs.writeShellScriptBin "emacsclient-capture" ''
     emacsclient -c -F '((name . "emacs-capture"))' "$@"

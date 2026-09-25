@@ -3,12 +3,15 @@
   pkgs,
   vars,
   config,
+  osConfig,
   ...
 }:
 let
   system = pkgs.stdenv.hostPlatform.system;
   extensions = inputs.vicinae-extensions.packages.${system};
   mkRayCastExtension = inputs.vicinae.lib.${system}.mkRayCastExtension;
+  mkExtension = inputs.vicinae.lib.${system}.mkVicinaeExtension;
+  uwsm = osConfig != null && (osConfig.programs.uwsm.enable or false);
 in
 {
   home.packages = with pkgs; [
@@ -55,20 +58,25 @@ in
       };
       favorites = [
         "clipboard:history"
+        "@adienox/org-todos:list-tasks"
         "@mattisssa/spotify-player:yourLibrary"
-        "@tonka3000/homeassistant:lights"
-        "@rastsislaux/vicinae-extension-pulseaudio-0:outputDevices"
+        "@knoopx/home-assistant:home-assistant"
+        "@semyon_surkov/freshrss:index"
         "@leonkohli/vicinae-extension-process-manager-0:processes"
       ];
 
       fallbacks = [
+        "@adienox/org-todos:quick-add"
         "files:search"
         "@mattisssa/spotify-player:search"
+        "@knoopx/home-assistant:home-assistant"
+        "@adienox/fmhy:search"
         "@knoopx/vicinae-extension-nix-0:packages"
         "@knoopx/vicinae-extension-nix-0:home-manager-options"
       ];
 
       providers = {
+        applications.preferences.launchPrefix = if uwsm then "uwsm app --" else "";
         applications.entrypoints = {
           cups.enabled = false;
           gvim.enabled = false;
@@ -93,50 +101,18 @@ in
           sponsor.enabled = false;
         };
 
-        "@tonka3000/homeassistant" = {
-          preferences = {
-            camerarefreshinterval = "3000";
-            ignorecerts = false;
-            instance = "https://home.chipmunk-teeth.ts.net";
-            preferredapp = "browser";
-            showEntityId = false;
-            usePing = true;
-          };
-          entrypoints = {
-            assist.enabled = false;
-            attributes.enabled = false;
-            batteries.enabled = false;
-            binarysensors.enabled = false;
-            buttons.enabled = false;
-            calendar.enabled = false;
-            cameras.enabled = false;
-            climate.enabled = false;
-            covers.enabled = false;
-            customentities.enabled = false;
-            dashboard.enabled = false;
-            doors.enabled = false;
-            fans.enabled = false;
-            helpers.enabled = false;
-            index.enabled = false;
-            mediaplayers.enabled = false;
-            motions.enabled = false;
-            persons.enabled = false;
-            runService.enabled = false;
-            scenes.enabled = false;
-            sensors.enabled = false;
-            services.enabled = false;
-            updates.enabled = false;
-            vacuums.enabled = false;
-            weather.enabled = false;
-            windows.enabled = false;
-            zones.enabled = false;
-          };
-        };
         "@samlinville/tailscale" = {
           preferences = {
             tailscalePath = "${pkgs.tailscale}/bin/tailscale";
           };
         };
+
+        "@dagimg-dot/vicinae-extension-wifi-commander-0" = {
+          preferences = {
+            "network-cli-tool" = "nmcli";
+          };
+        };
+
         "@mattisssa/spotify-player" = {
           entrypoints = {
             yourLibrary.preferences."Default-View" = "all";
@@ -149,7 +125,17 @@ in
             startRadio.enable = true;
           };
         };
+        "@adienox/org-todos" = {
+          preferences = {
+            editorCommand = "emacsclient -c -F '((name . \"emacs-float\"))' +{line} {file}";
+            todoKeywords = "TODO NEXT WAIT | DONE NOPE";
+            todosFile = "~/Documents/notes/inbox/tasks.org";
+            extraFiles = "~/Documents/notes/inbox/auto.org";
+            archiveFile = "~/Documents/notes/inbox/archive.org";
+          };
+        };
       };
+      imports = [ config.sops.templates."vicinae-secrets.json".path ];
     };
 
     extensions =
@@ -160,18 +146,13 @@ in
         power-profile
         pulseaudio
         process-manager
-        timer
+        wifi-commander
       ]
       ++ (
         let
           raycastRev = "3c654737b0d566d3103fcdf72221a9f34664bdf2";
         in
         [
-          (mkRayCastExtension {
-            name = "homeassistant";
-            rev = raycastRev;
-            sha256 = "sha256-1C1rr2V/lGwsrt2T5WEF1I9GkHlxu3HtlVFFb93se4Q=";
-          })
           (mkRayCastExtension {
             name = "spotify-player";
             rev = raycastRev;
@@ -182,7 +163,47 @@ in
             rev = raycastRev;
             sha256 = "sha256-RX2SyyPvG5RVxANGXymYIXEFzZq3koEcxWmPQcrPVig=";
           })
+          (mkRayCastExtension {
+            name = "freshrss";
+            rev = raycastRev;
+            sha256 = "sha256-vKT6G0QcP5/A/jKPS803uCTPWwgvDNwS1+g5oAqGn+0=";
+          })
+          (mkExtension {
+            name = "fmhy";
+            version = "0.0.1";
+            src = ./extensions/fmhy;
+          })
+          (mkExtension {
+            name = "home-assistant";
+            version = "0.0.1";
+            src = ./extensions/home-assistant;
+          })
+          (mkExtension {
+            name = "org-todos";
+            version = "0.0.1";
+            src = ./extensions/org-todos;
+          })
         ]
       );
+  };
+
+  sops.templates = {
+    "vicinae-secrets.json".content = builtins.toJSON {
+      providers = {
+        "@knoopx/home-assistant" = {
+          preferences = {
+            url = "https://home.chipmunk-teeth.ts.net";
+            token = config.sops.placeholder."services/homeassistant";
+          };
+        };
+        "@semyon_surkov/freshrss" = {
+          preferences = {
+            baseUrl = "https://rss.adhk.dev";
+            username = "adienox";
+            apiPassword = config.sops.placeholder."services/freshrss";
+          };
+        };
+      };
+    };
   };
 }

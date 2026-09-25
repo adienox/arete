@@ -8,7 +8,6 @@
   services = {
     upower.enable = true;
     udisks2.enable = true;
-    fstrim.enable = true;
     smartd.enable = true;
     power-profiles-daemon.enable = true;
   };

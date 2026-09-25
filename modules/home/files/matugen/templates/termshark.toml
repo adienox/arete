@@ -1,0 +1,135 @@
+# Matugen template for termshark
+# Input:  /home/USER/.config/matugen/templates/termshark.toml
+# Output: /home/USER/.config/termshark/themes/matugen.toml
+
+[themes]
+
+# ---------------------------------------------------------------- dark palette
+[themes.matugen]
+bg      = "{{colors.surface.dark.hex}}"
+bg2     = "{{colors.surface_container_low.dark.hex}}"
+bg3     = "{{colors.surface_container.dark.hex}}"
+bg4     = "{{colors.surface_container_high.dark.hex}}"
+black   = "themes.matugen.bg"
+white   = "themes.matugen.fg"
+fg      = "{{colors.on_surface.dark.hex}}"
+fg2     = "{{colors.on_surface_variant.dark.hex}}"
+fg3     = "{{colors.outline.dark.hex}}"
+fg4     = "{{colors.outline_variant.dark.hex}}"
+comment = "{{colors.outline_variant.dark.hex}}"
+current = "{{colors.secondary_container.dark.hex}}"
+purple  = "{{colors.primary.dark.hex}}"
+pink    = "{{colors.secondary.dark.hex}}"
+cyan    = "{{colors.tertiary.dark.hex}}"
+red     = "{{colors.error.dark.hex}}"
+green   = "{{dank16.color2.dark.hex}}"
+yellow  = "{{dank16.color3.dark.hex}}"
+orange  = "{{dank16.color11.dark.hex}}"
+
+# --------------------------------------------------------------- light palette
+[themes.matugen_light]
+bg      = "{{colors.surface.light.hex}}"
+bg2     = "{{colors.surface_container_low.light.hex}}"
+bg3     = "{{colors.surface_container.light.hex}}"
+bg4     = "{{colors.surface_container_high.light.hex}}"
+black   = "themes.matugen_light.fg"
+white   = "themes.matugen_light.bg"
+fg      = "{{colors.on_surface.light.hex}}"
+fg2     = "{{colors.on_surface_variant.light.hex}}"
+fg3     = "{{colors.outline.light.hex}}"
+fg4     = "{{colors.outline_variant.light.hex}}"
+comment = "{{colors.outline.light.hex}}"
+current = "{{colors.secondary_container.light.hex}}"
+purple  = "{{colors.primary.light.hex}}"
+pink    = "{{colors.secondary.light.hex}}"
+cyan    = "{{colors.tertiary.light.hex}}"
+red     = "{{colors.error.light.hex}}"
+green   = "{{dank16.color2.light.hex}}"
+yellow  = "{{dank16.color3.light.hex}}"
+orange  = "{{dank16.color11.light.hex}}"
+
+[themes.rules]
+
+# ------------------------------------------------------------------ dark rules
+# In the dark palette: "black" = surface (dark), "white" = on_surface (light)
+[themes.rules.dark]
+button                    = ["themes.matugen.white",  "themes.matugen.bg2"]
+button-focus              = ["themes.matugen.black",  "themes.matugen.purple"]
+button-selected           = ["themes.matugen.white",  "themes.matugen.bg4"]
+cmdline                   = ["themes.matugen.black",  "themes.matugen.yellow"]
+cmdline-button            = ["themes.matugen.yellow", "themes.matugen.black"]
+copy-mode                 = ["themes.matugen.black",  "themes.matugen.yellow"]
+copy-mode-alt             = ["themes.matugen.yellow", "themes.matugen.black"]
+copy-mode-label           = ["themes.matugen.black",  "themes.matugen.red"]
+current-capture           = ["themes.matugen.white",  "themes.unused"]
+default                   = ["themes.matugen.white",  "themes.matugen.black"]
+dialog                    = ["themes.matugen.black",  "themes.matugen.yellow"]
+dialog-button             = ["themes.matugen.yellow", "themes.matugen.black"]
+filter-intermediate       = ["themes.matugen.black",  "themes.matugen.orange"]
+filter-invalid            = ["themes.matugen.black",  "themes.matugen.red"]
+filter-menu               = ["themes.matugen.white",  "themes.matugen.black"]
+filter-valid              = ["themes.matugen.black",  "themes.matugen.green"]
+hex-byte-selected         = ["themes.matugen.black",  "themes.matugen.purple"]
+hex-byte-unselected       = ["themes.matugen.white",  "themes.matugen.black"]
+hex-field-selected        = ["themes.matugen.black",  "themes.matugen.cyan"]
+hex-field-unselected      = ["themes.matugen.black",  "themes.matugen.fg2"]
+hex-interval-selected     = ["themes.matugen.white",  "themes.matugen.bg4"]
+hex-interval-unselected   = ["themes.matugen.white",  "themes.matugen.bg3"]
+hex-layer-selected        = ["themes.matugen.white",  "themes.matugen.bg4"]
+hex-layer-unselected      = ["themes.matugen.white",  "themes.matugen.bg3"]
+packet-list-cell-focus    = ["themes.matugen.black",  "themes.matugen.purple"]
+packet-list-cell-selected = ["themes.matugen.white",  "themes.matugen.bg4"]
+packet-list-row-focus     = ["themes.matugen.black",  "themes.matugen.cyan"]
+packet-list-row-selected  = ["themes.matugen.white",  "themes.matugen.bg3"]
+packet-struct-focus       = ["themes.matugen.black",  "themes.matugen.cyan"]
+packet-struct-selected    = ["themes.matugen.white",  "themes.matugen.bg4"]
+progress                  = ["themes.matugen.white",  "themes.matugen.black"]
+progress-complete         = ["themes.unused",         "themes.matugen.purple"]
+spinner                   = ["themes.matugen.yellow", "themes.matugen.black"]
+stream-client             = ["themes.matugen.black",  "themes.matugen.red"]
+stream-match              = ["themes.matugen.black",  "themes.matugen.yellow"]
+stream-search             = ["themes.matugen.black",  "themes.matugen.white"]
+stream-server             = ["themes.matugen.cyan",   "themes.matugen.bg4"]
+title                     = ["themes.matugen.red",    "themes.unused"]
+
+# ----------------------------------------------------------------- light rules
+# In the light palette: "black" = on_surface (dark text), "white" = surface (light)
+[themes.rules.light]
+button                    = ["themes.matugen_light.black",  "themes.matugen_light.bg3"]
+button-focus              = ["themes.matugen_light.white",  "themes.matugen_light.purple"]
+button-selected           = ["themes.matugen_light.black",  "themes.matugen_light.bg4"]
+cmdline                   = ["themes.matugen_light.white",  "themes.matugen_light.yellow"]
+cmdline-button            = ["themes.matugen_light.yellow", "themes.matugen_light.white"]
+copy-mode                 = ["themes.matugen_light.white",  "themes.matugen_light.yellow"]
+copy-mode-alt             = ["themes.matugen_light.yellow", "themes.matugen_light.white"]
+copy-mode-label           = ["themes.matugen_light.white",  "themes.matugen_light.red"]
+current-capture           = ["themes.matugen_light.black",  "themes.unused"]
+default                   = ["themes.matugen_light.black",  "themes.matugen_light.white"]
+dialog                    = ["themes.matugen_light.white",  "themes.matugen_light.yellow"]
+dialog-button             = ["themes.matugen_light.yellow", "themes.matugen_light.white"]
+filter-intermediate       = ["themes.matugen_light.white",  "themes.matugen_light.orange"]
+filter-invalid            = ["themes.matugen_light.white",  "themes.matugen_light.red"]
+filter-menu               = ["themes.matugen_light.black",  "themes.matugen_light.white"]
+filter-valid              = ["themes.matugen_light.white",  "themes.matugen_light.green"]
+hex-byte-selected         = ["themes.matugen_light.white",  "themes.matugen_light.purple"]
+hex-byte-unselected       = ["themes.matugen_light.black",  "themes.matugen_light.white"]
+hex-field-selected        = ["themes.matugen_light.white",  "themes.matugen_light.cyan"]
+hex-field-unselected      = ["themes.matugen_light.white",  "themes.matugen_light.fg2"]
+hex-interval-selected     = ["themes.matugen_light.black",  "themes.matugen_light.bg4"]
+hex-interval-unselected   = ["themes.matugen_light.black",  "themes.matugen_light.bg3"]
+hex-layer-selected        = ["themes.matugen_light.black",  "themes.matugen_light.bg4"]
+hex-layer-unselected      = ["themes.matugen_light.black",  "themes.matugen_light.bg3"]
+packet-list-cell-focus    = ["themes.matugen_light.white",  "themes.matugen_light.purple"]
+packet-list-cell-selected = ["themes.matugen_light.black",  "themes.matugen_light.bg4"]
+packet-list-row-focus     = ["themes.matugen_light.white",  "themes.matugen_light.cyan"]
+packet-list-row-selected  = ["themes.matugen_light.black",  "themes.matugen_light.bg3"]
+packet-struct-focus       = ["themes.matugen_light.white",  "themes.matugen_light.cyan"]
+packet-struct-selected    = ["themes.matugen_light.black",  "themes.matugen_light.bg4"]
+progress                  = ["themes.matugen_light.black",  "themes.matugen_light.white"]
+progress-complete         = ["themes.unused",               "themes.matugen_light.purple"]
+spinner                   = ["themes.matugen_light.yellow", "themes.matugen_light.white"]
+stream-client             = ["themes.matugen_light.white",  "themes.matugen_light.red"]
+stream-match              = ["themes.matugen_light.white",  "themes.matugen_light.yellow"]
+stream-search             = ["themes.matugen_light.white",  "themes.matugen_light.black"]
+stream-server             = ["themes.matugen_light.cyan",   "themes.matugen_light.bg4"]
+title                     = ["themes.matugen_light.red",    "themes.unused"]

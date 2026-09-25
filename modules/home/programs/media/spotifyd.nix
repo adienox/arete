@@ -1,3 +1,10 @@
-{
-  services.spotifyd.enable = true;
+{ hostname, ... }: {
+  services.spotifyd = {
+    enable = true;
+    settings = {
+      global = {
+        device_name = hostname;
+      };
+    };
+  };
 }

@@ -11,7 +11,7 @@ let
 in
 {
   programs.zen-browser.profiles.default.search = {
-    force = true; # Enforce declared search engines on each rebuild
+    force = true;
     default = "brave";
     engines = {
       nixpkgs = {
@@ -37,32 +37,39 @@ in
         icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
         definedAliases = [ "np" ];
       };
-      mynixos = {
-        name = "My NixOS";
+      home-manager = {
+        name = "Home Manager";
         urls = [
           {
-            template = "https://mynixos.com/search?q={searchTerms}";
+            template = "https://nix-community.github.io/home-manager/options/home-manager";
             params = [
               {
-                name = "query";
-                value = "searchTerms";
+                name = "search";
+                value = "{searchTerms}";
               }
             ];
           }
         ];
         icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-        definedAliases = [ "nx" ];
+        definedAliases = [ "hm" ];
       };
       github = {
         name = "GitHub Search";
         urls = [
           {
-            template = "https://github.com/search?q={searchTerms}";
+            template = "https://github.com/search";
+            params = [
+              {
+                name = "q";
+                value = "{searchTerms}";
+              }
+            ];
           }
         ];
-        definedAliases = [ "gh" ];
+        definedAliases = [ "gs" ];
       };
       youtube = {
+        name = "YouTube";
         urls = [
           {
             template = "https://www.youtube.com/results";
@@ -79,6 +86,7 @@ in
         definedAliases = [ "yt" ];
       };
       brave = {
+        name = "Brave";
         urls = [
           {
             template = "https://search.brave.com/search";

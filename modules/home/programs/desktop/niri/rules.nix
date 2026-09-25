@@ -1,211 +1,232 @@
-{ ... }:
-{
-  programs.niri.settings = {
-    window-rules = [
-      # Open picture-in-picture as floating
+[
+  {
+    window-rule._children = [
+      { match._props.title = "^Picture-in-Picture$"; }
+
       {
-        matches = [
-          {
-            title = "^Picture-in-Picture$";
-          }
-        ];
-        open-floating = true;
-
-        default-floating-position = {
-          x = 5;
-          y = 5;
-          relative-to = "bottom-right";
-        };
-
         default-column-width.fixed = 650;
         default-window-height.fixed = 365;
+        open-floating = true;
         open-focused = false;
-      }
-
-      {
-        background-effect = {
-          blur = true;
-          xray = true;
+        default-floating-position._props = {
+          relative-to = "bottom-right";
+          x = 5;
+          y = 5;
         };
       }
+    ];
+  }
 
-      # Mirror window
+  {
+    window-rule._children = [
+      { match._props.app-id = "at.yrlf.wl_mirror"; }
+
       {
-        matches = [
-          { app-id = "at.yrlf.wl_mirror"; }
-        ];
-        open-fullscreen = true;
         open-on-output = "HDMI-A-1";
+        open-fullscreen = true;
       }
+    ];
+  }
+
+  {
+    window-rule._children = [
+      { match._props.app-id = "yad"; }
+
+      { open-floating = true; }
+    ];
+  }
+
+  {
+    window-rule._children = [
+      { match._props.app-id = "org\\.kde\\.kdeconnect\\.daemon"; }
+
       {
-        matches = [
-          { app-id = "yad"; }
-        ];
-        open-floating = true;
-      }
-      # KDE Connect presentation remote
-      {
-        matches = [
-          { app-id = "org\\.kde\\.kdeconnect\\.daemon"; }
-        ];
-        open-floating = true;
         open-fullscreen = false;
-        default-floating-position = {
+        open-floating = true;
+        draw-border-with-background = false;
+        border.off = { };
+        focus-ring.off = { };
+        shadow.off = { };
+        opacity = 0.700000;
+        min-width = 1920;
+        min-height = 1080;
+        default-floating-position._props = {
+          relative-to = "top-left";
           x = 0;
           y = 0;
-          relative-to = "top-left";
         };
-        min-height = 1080;
-        min-width = 1920;
-        opacity = 0.7;
-        focus-ring.enable = false;
-        border.enable = false;
-        shadow.enable = false;
-        draw-border-with-background = false;
       }
-      {
-        matches = [
-          { app-id = "org.gnome.NautilusPreviewer"; }
-          { app-id = "com.gabm.satty"; }
-          { app-id = "imv"; }
-        ];
-        open-floating = true;
+    ];
+  }
 
+  {
+    window-rule._children = [
+      { match._props.app-id = "org.gnome.NautilusPreviewer"; }
+      { match._props.app-id = "com.gabm.satty"; }
+      { match._props.app-id = "imv"; }
+
+      {
         default-column-width.fixed = 1150;
         default-window-height.fixed = 800;
-      }
-      {
-        matches = [
-          {
-            app-id = "org.gnome.Calculator";
-          }
-        ];
         open-floating = true;
+      }
+    ];
+  }
 
+  {
+    window-rule._children = [
+      { match._props.app-id = "org.gnome.Calculator"; }
+
+      {
         default-column-width.fixed = 450;
         default-window-height.fixed = 760;
-      }
-      # floating info windows
-      {
-        matches = [
-          { title = "^agenda$"; }
-          { title = "^emacs-capture$"; }
-          {
-            app-id = "zen-twilight";
-            title = "Extension";
-          }
-        ];
         open-floating = true;
+      }
+    ];
+  }
 
+  {
+    window-rule._children = [
+      { match._props.title = "^agenda$"; }
+      { match._props.title = "^emacs-capture$"; }
+      { match._props.title = "^emacs-float$"; }
+
+      {
         default-column-width.fixed = 1100;
         default-window-height.fixed = 650;
-      }
-      # kdeconnect reply window
-      {
-        matches = [
-          { app-id = "org.kde.kdeconnect.daemon"; }
-        ];
         open-floating = true;
+      }
+    ];
+  }
 
+  {
+    window-rule._children = [
+      { match._props.app-id = "org.kde.kdeconnect.daemon"; }
+
+      {
         default-column-width.fixed = 380;
         default-window-height.fixed = 200;
-      }
-      # full width windows
-      {
-        matches = [
-          { app-id = "emacs"; }
-          { app-id = "spotify"; }
-          { app-id = "org.gnome.Nautilus"; }
-          { app-id = "org.freecad.FreeCAD"; }
-          { app-id = "Spotify"; }
-          { app-id = "zen-twilight"; }
-          { app-id = "org.pipewire.Helvum"; }
-        ];
-        excludes = [
-          { title = "Extension"; }
-        ];
-        open-maximized = true;
-      }
-      {
-        matches = [
-          { app-id = "zen-twilight"; }
-        ];
-        open-on-workspace = "web";
-        opacity = 0.9999;
-      }
-
-      {
-        matches = [
-          { app-id = ".scrcpy-wrapped"; }
-        ];
         open-floating = true;
+      }
+    ];
+  }
 
+  {
+    window-rule._children = [
+      { match._props.app-id = "emacs"; }
+      { match._props.app-id = "spotify"; }
+      { match._props.app-id = "org.gnome.Nautilus"; }
+      { match._props.app-id = "org.freecad.FreeCAD"; }
+      { match._props.app-id = "Spotify"; }
+      { match._props.app-id = "zen-twilight"; }
+      { match._props.app-id = "org.pipewire.Helvum"; }
+      { match._props.app-id = "btop.desktop"; }
+
+      { open-maximized = true; }
+    ];
+  }
+
+  {
+    window-rule._children = [
+      { match._props.app-id = "zen-twilight"; }
+
+      {
+        open-on-workspace = "web";
+        opacity = 0.999900;
+      }
+    ];
+  }
+
+  {
+    window-rule._children = [
+      { match._props.app-id = ".scrcpy-wrapped"; }
+
+      {
         default-column-width.fixed = 448;
         default-window-height.fixed = 1000;
+        open-floating = true;
       }
+    ];
+  }
+
+  {
+    window-rule._children = [
       {
-        matches = [
-          {
-            app-id = "emacs";
-            title = "emacs-main";
-          }
-        ];
-        open-on-workspace = "editor";
+        match._props = {
+          app-id = "emacs";
+          title = "emacs-main";
+        };
       }
+
+      { open-on-workspace = "editor"; }
+    ];
+  }
+
+  {
+    window-rule._children = [
+      { match._props.app-id = "obsidian"; }
+
       {
-        matches = [
-          { app-id = "obsidian"; }
-        ];
         open-on-workspace = "notes";
         open-focused = false;
       }
+    ];
+  }
+
+  {
+    window-rule._children = [
       {
-        matches = [
-          {
-            title = "^FreeCAD$";
-            app-id = "org.freecad.FreeCAD";
-          }
-        ];
-        open-floating = true;
+        match._props = {
+          app-id = "org.freecad.FreeCAD";
+          title = "^FreeCAD$";
+        };
+      }
+
+      {
         default-column-width.fixed = 580;
         default-window-height.fixed = 500;
-        shadow.enable = false;
+        open-floating = true;
+        shadow.off = { };
       }
-      # screencasted window with red shadow
+    ];
+  }
+
+  {
+    window-rule._children = [
+      { match._props.is-window-cast-target = true; }
+
       {
-        matches = [
-          {
-            is-window-cast-target = true;
-          }
-        ];
         shadow.color = "#7d0d2d70";
         tab-indicator = {
-          active.color = "#f38ba8";
-          inactive.color = "#7d0d2d";
+          active-color = "#f38ba8";
+          inactive-color = "#7d0d2d";
         };
       }
-      # Rounded corners for all windows
-      {
-        geometry-corner-radius =
-          let
-            r = 12.0;
-          in
-          {
-            top-left = r;
-            top-right = r;
-            bottom-left = r;
-            bottom-right = r;
-          };
-        clip-to-geometry = true;
-      }
     ];
+  }
 
-    layer-rules = [
-      {
-        background-effect = {
-          xray = false;
-        };
-      }
+  {
+    window-rule = {
+      geometry-corner-radius = [
+        12.000000
+        12.000000
+        12.000000
+        12.000000
+      ];
+      clip-to-geometry = true;
+      background-effect = {
+        blur = true;
+        xray = true;
+      };
+    };
+  }
+
+  { layer-rule.background-effect.xray = false; }
+
+  {
+    layer-rule._children = [
+      { match._props.namespace = "dms:blurwallpaper"; }
+      { place-within-backdrop = true; }
     ];
-  };
-}
+  }
+]

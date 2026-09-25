@@ -32,3 +32,12 @@ output_path = '/home/nox/.config/tridactyl/themes/matugen.css'
 [templates.btop]
 input_path = '/home/nox/.config/matugen/templates/btop.theme'
 output_path = '/home/nox/.config/btop/themes/dankcolors.theme'
+
+[templates.termshark]
+input_path  = "/home/nox/.config/matugen/templates/termshark.toml"
+output_path = "/home/nox/.config/termshark/themes/matugen.toml"
+
+[templates.bat]
+input_path  = "/home/nox/.config/matugen/templates/bat.tmTheme"
+output_path = "/home/nox/.config/bat/themes/dank.tmTheme"
+post_hook = 'bat cache --build'

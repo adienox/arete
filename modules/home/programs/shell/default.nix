@@ -9,6 +9,7 @@
     ./lsd.nix
     ./fish.nix
     ./btop.nix
+    ./ssh.nix
   ];
 
   home.shell.enableFishIntegration = true;
@@ -38,5 +39,7 @@
     nsh = "${pkgs.nh}/bin/nh search";
 
     jq = "${pkgs.gojq}/bin/gojq";
+
+    man = "${pkgs.bat-extras.batman}/bin/batman";
   };
 }

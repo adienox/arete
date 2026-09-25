@@ -12,7 +12,6 @@
     ./bluetooth.nix
     ./monitor.nix
     ./nvidia.nix
-    ./nvidia-otg.nix
     ./nix-ld.nix
     ./tailscale.nix
     ./environment.nix
@@ -23,5 +22,6 @@
     ./boot.nix
     ./secrets.nix
     ./virtualisation.nix
+    ./platformio.nix
   ];
 }

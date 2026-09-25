@@ -33,7 +33,9 @@ def main():
         msg = read_message()
         url = msg.get("url", "").strip()
         if url:
-            OUT.write_text(url + "\n")
+            tmp = OUT.with_suffix(".tmp")
+            tmp.write_text(url + "\n")
+            tmp.replace(OUT)
         write_message({"status": "ok"})
     except Exception as e:
         write_message({"status": "error", "error": str(e)})

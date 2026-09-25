@@ -9,7 +9,7 @@ let
   dms-wallpaper-selector = pkgs.makeDesktopItem {
     icon = "preferences-desktop-wallpaper";
     name = "wallpaper-selector";
-    exec = "dms ipc wallpaperCarousel toggle";
+    exec = "dms ipc call dash toggle wallpaper";
     desktopName = "Select Wallpaper";
     terminal = false;
   };
@@ -31,7 +31,6 @@ in
 {
   imports = [
     inputs.dms.homeModules.dank-material-shell
-    inputs.dms.homeModules.niri
     inputs.dms-plugin-registry.nixosModules.default
   ];
 
@@ -50,19 +49,19 @@ in
       restartIfChanged = true;
     };
 
-    niri.includes = {
-      enable = true;
-      override = true;
-      originalFileName = "home-manager";
-      filesToInclude = [
-        "alttab"
-        "binds"
-        "colors"
-        "layout"
-        "outputs"
-        "wpblur"
-      ];
-    };
+    # niri.includes = {
+    #   enable = true;
+    #   override = true;
+    #   originalFileName = "home-manager";
+    #   filesToInclude = [
+    #     "alttab"
+    #     "binds"
+    #     "colors"
+    #     "layout"
+    #     "outputs"
+    #     "wpblur"
+    #   ];
+    # };
 
     managePluginSettings = false;
 
@@ -71,19 +70,18 @@ in
       hiddenBar.enable = true;
       systemMonitorPlus.enable = true;
       wallpaperCarousel.enable = true;
+      fullscreenPowerMenu.enable = true;
     };
   };
 
-  home.file = helpers.mkFiles {
-    symlinked = [
-      {
-        target = ".config/DankMaterialShell/settings.json";
-        source = "${vars.paths.homeFiles}/dms/settings.json";
-      }
-      {
-        target = ".config/DankMaterialShell/plugin_settings.json";
-        source = "${vars.paths.homeFiles}/dms/plugin_settings.json";
-      }
-    ];
-  };
+  home.file = helpers.mkSymlinkedFiles [
+    {
+      target = ".config/DankMaterialShell/settings.json";
+      source = "${vars.paths.homeFiles}/dms/settings.json";
+    }
+    {
+      target = ".config/DankMaterialShell/plugin_settings.json";
+      source = "${vars.paths.homeFiles}/dms/plugin_settings.json";
+    }
+  ];
 }

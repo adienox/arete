@@ -6,13 +6,11 @@
       "https://nix-community.cachix.org"
       "https://vicinae.cachix.org"
       "https://niri-epireyn.cachix.org"
-      "https://install.determinate.systems"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
       "niri-epireyn.cachix.org-1:tlVyFN7CtsDT+ZcLPS+ekFWeT1X6X4OqvWqbBMyIzFA="
-      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
     ];
   };
 
@@ -24,15 +22,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    niri = {
-      url = "github:epireyn/niri-flake";
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -50,16 +46,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    xremap.url = "github:xremap/nix-flake";
+    niri.url = "github:epireyn/niri-flake";
+
+    xremap = {
+      url = "github:xremap/nix-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
 
     nix-firefox-addons.url = "github:osipog/nix-firefox-addons";
-
-    emacs = {
-      url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -74,7 +70,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    disko.url = "github:nix-community/disko";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -122,6 +121,9 @@
       nixosConfigurations = {
         anomaly = lib.mkHost {
           hostname = "anomaly";
+        };
+        axiom = lib.mkHost {
+          hostname = "axiom";
         };
       };
     };

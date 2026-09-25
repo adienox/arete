@@ -36,6 +36,7 @@ in
     just
     tesseract
     qbittorrent
+    sony-device-center
   ];
 
   home.file = helpers.mkFiles {
@@ -65,16 +66,8 @@ in
         source = "${homeFiles}/hyprlock.conf";
       }
       {
-        target = ".mozilla/native-messaging-hosts/nox.handoff_host.json";
-        source = "${homeFiles}/nox.handoff_host.json";
-      }
-      {
         target = ".config/codebook/codebook.toml";
         source = "${homeFiles}/codebook.toml";
-      }
-      {
-        target = ".config/tridactyl/.tridactylrc";
-        source = "${homeFiles}/.tridactylrc";
       }
       {
         target = ".XCompose";

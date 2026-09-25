@@ -6,7 +6,6 @@
       options = {
         fullscreen = false;
         upscaling_method = "linear";
-        downscaling_method = "linear";
         loop_input = true;
       };
       binds = {

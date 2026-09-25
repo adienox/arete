@@ -25,6 +25,13 @@
       package = lib.mkForce pkgs.adw-gtk3;
     };
 
+    gtk3.bookmarks = [
+      "file://${config.home.homeDirectory}/Documents"
+      "file://${config.home.homeDirectory}/Documents/projects Projects"
+      "sftp://impel/home/nox Impel"
+      "sftp://hawk:8022/data/data/com.termux/files/home/storage/shared Hawk"
+    ];
+
     gtk3.theme = {
       name = lib.mkForce "adw-gtk3";
       package = lib.mkForce pkgs.adw-gtk3;
