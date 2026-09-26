@@ -204,8 +204,8 @@
     "media": {
       "animatedArt": true,
       "artStyle": "square",
-      "titleFont": "ui",
-      "deviceName": false
+      "deviceName": false,
+      "titleFont": "ui"
     },
     "calendar": {
       "weekends": true
@@ -295,9 +295,11 @@
   "lockScreenNotificationMode": 2,
   "notificationCompactMode": true,
   "notificationShowTimeoutBar": true,
+  "notificationHistoryMaxAgeDays": 3,
   "notificationFocusedMonitor": true,
   "osdAlwaysShowValue": true,
   "osdPosition": 0,
+  "osdMediaPlaybackEnabled": true,
   "osdPowerProfileEnabled": true,
   "connectedFrameBarStyleBackups": {
     "default": {

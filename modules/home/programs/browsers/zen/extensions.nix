@@ -37,6 +37,7 @@
         tab-reloader
         youtube-unhook
         vicinae
+        floccus
         pkgs.tab-handoff.xpi
       ];
 

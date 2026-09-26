@@ -5,7 +5,7 @@
 }:
 {
   imports = [
-    # ./screenshot-url-tag.nix
+    ./screenshot-url-tag.nix
     ./binds.nix
     ./settings.nix
   ];

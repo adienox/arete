@@ -64,6 +64,12 @@
           end
         '';
       };
+      get-url = {
+        description = "Print the URL tagged on the screenshot's Comment field";
+        body = ''
+          ${pkgs.exiftool}/bin/exiftool -s3 -Comment $argv
+        '';
+      };
     };
   };
 }

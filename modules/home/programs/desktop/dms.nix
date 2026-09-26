@@ -49,20 +49,6 @@ in
       restartIfChanged = true;
     };
 
-    # niri.includes = {
-    #   enable = true;
-    #   override = true;
-    #   originalFileName = "home-manager";
-    #   filesToInclude = [
-    #     "alttab"
-    #     "binds"
-    #     "colors"
-    #     "layout"
-    #     "outputs"
-    #     "wpblur"
-    #   ];
-    # };
-
     managePluginSettings = false;
 
     plugins = {

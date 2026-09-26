@@ -1,4 +1,10 @@
-{ config, hostname, ... }: {
+{
+  config,
+  hostname,
+  vars,
+  ...
+}:
+{
   services.syncthing = {
     enable = true;
 
@@ -57,7 +63,7 @@
           "impel"
         ];
         id = "notes";
-        path = "~/Documents/notes";
+        path = vars.paths.notes;
       };
       "state" = {
         devices = [

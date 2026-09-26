@@ -1,12 +1,7 @@
 {
   config,
-  pkgs,
-  vars,
   ...
 }:
-let
-  scripts = vars.paths.scripts;
-in
 {
   wayland.windowManager.niri.settings = {
     screenshot-path = "${config.xdg.userDirs.pictures}/Screenshots/%Y-%m-%d %H-%M-%S.png";
@@ -100,11 +95,6 @@ in
 
     hotkey-overlay.skip-at-startup = { };
 
-    include = {
-      _args = [ "animations.kdl" ];
-      _props.optional = true;
-    };
-
     _children = [
       {
         output = {
@@ -172,11 +162,12 @@ in
 
       {
         workspace = {
-          _args = [ "notes" ];
+          _args = [ "media" ];
           open-on-output = "HDMI-A-1";
         };
       }
     ]
-    ++ (import ./rules.nix);
+    ++ (import ./rules.nix)
+    ++ (import ./includes.nix { inherit config; });
   };
 }

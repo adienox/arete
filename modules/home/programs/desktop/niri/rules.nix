@@ -164,12 +164,9 @@
 
   {
     window-rule._children = [
-      { match._props.app-id = "obsidian"; }
+      { match._props.app-id = "spotify"; }
 
-      {
-        open-on-workspace = "notes";
-        open-focused = false;
-      }
+      { open-on-workspace = "media"; }
     ];
   }
 
