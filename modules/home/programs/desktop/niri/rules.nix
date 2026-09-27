@@ -121,6 +121,7 @@
       { match._props.app-id = "zen-twilight"; }
       { match._props.app-id = "org.pipewire.Helvum"; }
       { match._props.app-id = "btop.desktop"; }
+      { match._props.app-id = "com.danklinux.dankcalendar"; }
 
       { open-maximized = true; }
     ];
@@ -165,6 +166,7 @@
   {
     window-rule._children = [
       { match._props.app-id = "spotify"; }
+      { match._props.app-id = "com.danklinux.dankcalendar"; }
 
       { open-on-workspace = "media"; }
     ];

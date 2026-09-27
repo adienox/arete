@@ -1,3 +1,4 @@
+
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
@@ -17,23 +18,23 @@
   "display": {
     "separator": "  ",
     "color": {
-      "keys": "38;2;51;55;63"
+      "keys": "38;2;139;145;156"
     },
     "key": { "width": 10 }
   },
   "modules": [
     "break",
-    { "type": "custom", "format": "\u001b[38;2;51;55;63m── system ──────────────" },
-    { "type": "os", "key": "  os", "format": "{pretty-name}" },
-    { "type": "kernel", "key": "  kernel", "format": "{release}" },
-    { "type": "uptime", "key": "  up" },
-    { "type": "disk", "key": "  disk", "format": "{size-used}" },
+    { "type": "custom", "format": "\u001b[38;2;91;102;120m── system ──────────────" },
+    { "type": "os", "key": " os", "format": "{pretty-name}" },
+    { "type": "kernel", "key": " kernel", "format": "{release}" },
+    { "type": "uptime", "key": " up", "format": "{days}d {hours}h" },
+    { "type": "disk", "key": " disk", "format": "{size-used}" },
     "break",
-    { "type": "custom", "format": "\u001b[38;2;51;55;63m── rice ────────────────" },
-    { "type": "wm", "key": "  wm", "format": "{pretty-name}" },
-    { "type": "shell", "key": "  shell", "format": "{exe-name}" },
-    { "type": "terminal", "key": "  term", "format": "{pretty-name}" },
-    { "type": "command", "key": "  ts", "text": "n=$(tailscale status --active 2>/dev/null | wc -l); echo \"$n device$([ \"$n\" != 1 ] && echo s)\"" },
+    { "type": "custom", "format": "\u001b[38;2;91;102;120m── rice ────────────────" },
+    { "type": "wm", "key": " wm", "format": "{pretty-name}" },
+    { "type": "shell", "key": " shell", "format": "{exe-name}" },
+    { "type": "terminal", "key": " term", "format": "{pretty-name}" },
+    { "type": "command", "key": " ts", "text": "if tailscale status >/dev/null 2>&1; then n=$(tailscale status --active 2>/dev/null | wc -l); echo \"$n device$([ \"$n\" != 1 ] && echo s)\"; else echo down; fi" },
     "break",
     { "type": "colors", "symbol": "circle", "paddingLeft": 2 },
     "break"

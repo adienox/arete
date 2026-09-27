@@ -31,6 +31,7 @@
       pop_to_root_on_close = false;
       search_files_in_root = false;
       close_on_focus_loss = true;
+
       font = {
         rendering = "native";
         normal = {
@@ -38,6 +39,7 @@
           size = 12.5;
         };
       };
+
       theme =
         let
           dms = config.programs.dank-material-shell.enable;
@@ -52,10 +54,12 @@
             icon_theme = "Papirus";
           };
         };
+
       launcher_window = {
         opacity = 0.7;
         layer_shell.layer = "overlay";
       };
+
       favorites = [
         "clipboard:history"
         "@adienox/org-todos:list-tasks"

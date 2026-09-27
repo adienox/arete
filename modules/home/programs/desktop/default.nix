@@ -13,6 +13,7 @@ in
     ./niri
     ./vicinae
     ./dms.nix
+    ./dcal.nix
     ./xremap.nix
   ];
 

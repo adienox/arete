@@ -4,7 +4,8 @@
   "clockFormat": "24h",
   "blurBorderEnabled": true,
   "fontFamily": "Readex Pro",
-  "monoFontFamily": "CaskaydiaCove NF",
+  "monoFontFamily": "Maple Mono NF",
+  "textRenderQuality": 4,
   "dockConfigs": [
     {
       "id": "dock",

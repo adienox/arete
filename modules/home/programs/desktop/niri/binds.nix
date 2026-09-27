@@ -47,6 +47,9 @@ let
     "Mod+Shift+W" = titled "Open Launcher: Wallpaper" {
       spawn-sh = [ "dms ipc call dash toggle wallpaper" ];
     };
+    "Mod+Shift+O" = titled "Open Launcher: Overview" {
+      spawn-sh = [ "dms ipc call dash toggle overview" ];
+    };
     "Ctrl+Alt+Delete" = titled "Open Launcher: Session Menu" {
       spawn-sh = [ "dms ipc call fullscreenPowerMenu toggle" ];
     };
