@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   ...
 }:
 {
@@ -16,8 +17,13 @@
         "@wheel"
       ];
       accept-flake-config = true;
+      access-tokens = "!include ${config.sops.templates."access-tokens.conf".path}";
     };
   };
+
+  sops.templates."access-tokens.conf".content = "github.com=${
+    config.sops.placeholder."services/github"
+  }";
 
   environment = {
     systemPackages = with pkgs; [
