@@ -14,6 +14,26 @@ in
       system ? "x86_64-linux",
       profile ? "personal",
     }:
+    let
+      repoHw = ../hosts/${hostname}/hardware.nix;
+      etcHw = /etc/nixos/hardware-configuration.nix;
+
+      hwPath =
+        if builtins.pathExists repoHw then
+          repoHw
+        else if builtins.pathExists etcHw then
+          etcHw
+        else
+          throw ''
+            No hardware-configuration.nix found for host "${hostname}".
+            Checked:
+              - ${toString repoHw}
+              - ${toString etcHw}
+            Run `nixos-generate-config` on the target machine, then either
+            commit the result into hosts/${hostname}/, or re-run the install
+            (it will pick up /etc/nixos/hardware-configuration.nix).
+          '';
+    in
     nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
@@ -35,7 +55,7 @@ in
         inputs.sops-nix.nixosModules.sops
 
         ../hosts/${hostname}/disko.nix
-        ../hosts/${hostname}/hardware.nix
+        hwPath
         ./helpers-module.nix
         ../hosts/${hostname}
         ../modules/system
