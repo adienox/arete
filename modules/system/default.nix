@@ -23,5 +23,6 @@
     ./secrets.nix
     ./virtualisation.nix
     ./platformio.nix
+    ./nixpkgs.nix
   ];
 }

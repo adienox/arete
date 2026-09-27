@@ -65,6 +65,5 @@
     ${pkgs.trash-cli}/bin/trash "$file"
   '';
 
-  nixpkgs.config.allowUnfree = true;
   system.stateVersion = "26.11";
 }
