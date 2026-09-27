@@ -18,6 +18,22 @@
     "dank-qml-common": {
       "flake": false,
       "locked": {
+        "lastModified": 1790212412,
+        "narHash": "sha256-K42tXEVWy8EoeuZf2YL5frZnK3rtxPUG5r8vw6HH0q8=",
+        "owner": "AvengeMedia",
+        "repo": "dank-qml-common",
+        "rev": "971aa3d326cb01e174d34f4dc843719386c6464f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "repo": "dank-qml-common",
+        "type": "github"
+      }
+    },
+    "dank-qml-common_2": {
+      "flake": false,
+      "locked": {
         "lastModified": 1790214571,
         "narHash": "sha256-rlwViEfbY6cxb5u/cvvr2UIcusqHoVgXabYLhs/HYJ4=",
         "owner": "AvengeMedia",
@@ -28,6 +44,25 @@
       "original": {
         "owner": "AvengeMedia",
         "repo": "dank-qml-common",
+        "type": "github"
+      }
+    },
+    "dcal": {
+      "inputs": {
+        "dank-qml-common": "dank-qml-common",
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1790214656,
+        "narHash": "sha256-dIXQuotufps/E5AMtDhh7k2nacS4BhqZgUd0rycie/w=",
+        "owner": "AvengeMedia",
+        "repo": "dankcalendar",
+        "rev": "161be60696e2dc2b80147eb51b46a7a75517d772",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "repo": "dankcalendar",
         "type": "github"
       }
     },
@@ -53,9 +88,9 @@
     },
     "dms": {
       "inputs": {
-        "dank-qml-common": "dank-qml-common",
+        "dank-qml-common": "dank-qml-common_2",
         "flake-compat": "flake-compat",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1790214671,
@@ -183,7 +218,7 @@
       "inputs": {
         "niri-stable": "niri-stable",
         "niri-unstable": "niri-unstable",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "nixpkgs-stable": "nixpkgs-stable",
         "xwayland-satellite-stable": "xwayland-satellite-stable",
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
@@ -238,7 +273,7 @@
     "nix-firefox-addons": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs_3"
+        "nixpkgs": "nixpkgs_4"
       },
       "locked": {
         "lastModified": 1790236250,
@@ -297,11 +332,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1787135253,
-        "narHash": "sha256-RD2kNWCG+Bjo6h+JVjWVNntZs2GtRoeY2xHjts/FNkA=",
+        "lastModified": 1782723713,
+        "narHash": "sha256-oPXCU/SSUokcGaJREHibG1CBX3+s/W7orDWQOZDsEeQ=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ffb3c9b700e759be2ef13237c9d8f953b32a1e46",
+        "rev": "b5aa0fbd538984f6e3d201be0005b4463d8b09f8",
         "type": "github"
       },
       "original": {
@@ -360,6 +395,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1787135253,
+        "narHash": "sha256-RD2kNWCG+Bjo6h+JVjWVNntZs2GtRoeY2xHjts/FNkA=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "ffb3c9b700e759be2ef13237c9d8f953b32a1e46",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1790185690,
         "narHash": "sha256-xJ+X4hBtOcAFGBOe5nAMyMUeF9foJBmIOu3NjBqBycU=",
         "owner": "NixOS",
@@ -374,7 +425,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_3": {
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1755615617,
         "narHash": "sha256-HMwfAJBdrr8wXAkbGhtcby1zGFvs+StOp19xNsbqdOg=",
@@ -390,7 +441,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_4": {
+    "nixpkgs_5": {
       "locked": {
         "lastModified": 1790185690,
         "narHash": "sha256-xJ+X4hBtOcAFGBOe5nAMyMUeF9foJBmIOu3NjBqBycU=",
@@ -406,7 +457,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_5": {
+    "nixpkgs_6": {
       "locked": {
         "lastModified": 1789921291,
         "narHash": "sha256-uLLUj+TLUmBc6KrUzx76KZdPi5ZkI1ORR9A6lJUIZlo=",
@@ -419,7 +470,7 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
-    "nixpkgs_6": {
+    "nixpkgs_7": {
       "locked": {
         "lastModified": 1789684949,
         "narHash": "sha256-ZKhUe/2IJUq1JhKxKMu8rbkgSGmPP2ZCqlIPn40aGCM=",
@@ -459,6 +510,7 @@
     },
     "root": {
       "inputs": {
+        "dcal": "dcal",
         "disko": "disko",
         "dms": "dms",
         "dms-plugin-registry": "dms-plugin-registry",
@@ -467,7 +519,7 @@
         "nix-firefox-addons": "nix-firefox-addons",
         "nix-index-database": "nix-index-database",
         "nixos-hardware": "nixos-hardware",
-        "nixpkgs": "nixpkgs_4",
+        "nixpkgs": "nixpkgs_5",
         "sops-nix": "sops-nix",
         "spicetify-nix": "spicetify-nix",
         "vicinae": "vicinae",
@@ -520,7 +572,7 @@
     },
     "spicetify-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_5",
+        "nixpkgs": "nixpkgs_6",
         "systems": "systems_2"
       },
       "locked": {
@@ -599,7 +651,7 @@
     },
     "vicinae": {
       "inputs": {
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_7",
         "numen": "numen",
         "soulver-cpp": "soulver-cpp",
         "systems": "systems_3"
