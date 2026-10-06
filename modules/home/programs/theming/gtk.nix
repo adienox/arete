@@ -29,7 +29,8 @@
       "file://${config.home.homeDirectory}/Documents"
       "file://${config.home.homeDirectory}/Documents/projects Projects"
       "sftp://impel/home/nox Impel"
-      "sftp://hawk:8022/data/data/com.termux/files/home/storage/shared Hawk"
+      "sftp://hawk/data/data/com.termux/files/home/storage/shared Hawk"
+      "sftp://kindle/mnt/us/koreader Kindle"
     ];
 
     gtk3.theme = {

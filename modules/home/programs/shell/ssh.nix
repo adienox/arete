@@ -20,6 +20,27 @@
         User = "u0_a141";
         Port = 8022;
       };
+
+      "koreader" = {
+        HostName = "kindle";
+        User = "root";
+        Port = 2222;
+        RemoteCommand = "cd /mnt/us/koreader && bash -l";
+        RequestTTY = "yes";
+      };
+
+      "services" = {
+        HostName = "impel";
+        User = "nox";
+        RemoteCommand = "cd /home/nox/services && fish -l";
+        RequestTTY = "yes";
+      };
+
+      "kindle" = {
+        HostName = "kindle";
+        User = "root";
+        Port = 2222;
+      };
     };
   };
 
