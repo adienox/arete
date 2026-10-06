@@ -39,6 +39,11 @@ let
     "Mod+I" = titled "Open Launcher: Emoji" {
       spawn-sh = [ "vicinae vicinae://launch/core/search-emojis" ];
     };
+    "Mod+Backslash" = titled "Open Emacs: Journal" {
+      spawn-sh = [
+        "emacsclient -c -F '((name . \"emacs-float\"))' -e '(denote-journal-new-or-existing-entry)'"
+      ];
+    };
     "Mod+P" = titled "Open Launcher: Bitwarden" {
       spawn-sh = [
         "vicinae vicinae://launch/@bl4zee1g/vicinae-extension-bitwarden-0/browse-vault"

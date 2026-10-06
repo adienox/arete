@@ -98,7 +98,7 @@
     _children = [
       {
         output = {
-          _args = [ "HDMI-A-1" ];
+          _args = [ "PNP(DHI) DHI-LM27-E331 0x00000001" ];
           scale = 1;
           focus-at-startup = { };
           transform = "normal";
@@ -163,7 +163,10 @@
       {
         workspace = {
           _args = [ "media" ];
-          open-on-output = "HDMI-A-1";
+          _children = [
+            { open-on-output = "eDP-1"; }
+            { open-on-output = "eDP-2"; }
+          ];
         };
       }
     ]
