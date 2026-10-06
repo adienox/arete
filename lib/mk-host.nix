@@ -61,9 +61,9 @@ nixpkgs.lib.nixosSystem {
     inputs.sops-nix.nixosModules.sops
 
     ../hosts/${hostname}/disko.nix
+    ../hosts/${hostname}
     hwPath
     ./helpers-module.nix
-    ../hosts/${hostname}
     ../modules/system
 
     home-manager.nixosModules.home-manager

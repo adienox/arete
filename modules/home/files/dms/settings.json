@@ -5,7 +5,7 @@
   "blurBorderEnabled": true,
   "fontFamily": "Readex Pro",
   "monoFontFamily": "Maple Mono NF",
-  "textRenderQuality": 4,
+  "textRenderType": 1,
   "dockConfigs": [
     {
       "id": "dock",
@@ -75,6 +75,9 @@
     }
   ],
   "currentThemeCategory": "dynamic",
+  "dmsWindowsFloatingSeeded": [
+    "niri"
+  ],
   "barElevationEnabled": false,
   "blurEnabled": true,
   "blurBorderSeeded": true,
@@ -446,7 +449,8 @@
       "useOverlayLayer": false,
       "hoverPopouts": false,
       "followInterfaceStyle": false,
-      "widgetStyle": "pills"
+      "widgetStyle": "pills",
+      "widgetFollowInterfaceStyle": false
     }
   ],
   "builtInPluginSettings": {
@@ -468,5 +472,5 @@
   "frameRounding": 12,
   "frameShowOnOverview": true,
   "frameBarInsetPadding": 8,
-  "configVersion": 29
+  "configVersion": 31
 }
