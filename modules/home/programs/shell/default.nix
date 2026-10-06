@@ -10,6 +10,7 @@
     ./fish.nix
     ./btop.nix
     ./ssh.nix
+    ./tealdeer.nix
   ];
 
   home.shell.enableFishIntegration = true;
