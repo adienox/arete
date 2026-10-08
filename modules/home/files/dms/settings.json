@@ -1,4 +1,185 @@
 {
+  "lockScreenWidgetInstances": [
+    {
+      "id": "lock_clock",
+      "widgetType": "desktopClock",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": false,
+        "style": "expressive",
+        "transparency": 0,
+        "weight": 0,
+        "twoTone": true,
+        "showDate": false,
+        "showDigitalSeconds": false,
+        "showAnalogNumbers": false,
+        "showAnalogSeconds": true,
+        "autoPosition": false,
+        "colorMode": "default",
+        "customColor": "#ffffff"
+      },
+      "name": "Clock"
+    },
+    {
+      "id": "lock_date",
+      "widgetType": "lockDate",
+      "enabled": false,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "format": "short",
+        "colorMode": "default",
+        "customColor": "#ffffff"
+      }
+    },
+    {
+      "id": "lock_auth",
+      "widgetType": "lockAuth",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "style": "expressive",
+        "profileVisibility": "always",
+        "passwordVisibility": "always"
+      }
+    },
+    {
+      "id": "lock_notifications",
+      "widgetType": "lockNotifications",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "mode": 2
+      }
+    },
+    {
+      "id": "lock_status",
+      "widgetType": "lockStatus",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "showMediaPlayer": true,
+        "showWeather": true,
+        "background": false
+      }
+    },
+    {
+      "id": "lock_power",
+      "widgetType": "lockPower",
+      "enabled": false,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "shape": "round"
+      }
+    }
+  ],
+  "greeterWidgetInstances": [
+    {
+      "id": "lock_clock",
+      "widgetType": "desktopClock",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": false,
+        "style": "expressive",
+        "transparency": 0,
+        "weight": 0,
+        "twoTone": true,
+        "showDate": false,
+        "showDigitalSeconds": false,
+        "showAnalogNumbers": false,
+        "showAnalogSeconds": true,
+        "autoPosition": false,
+        "colorMode": "default",
+        "customColor": "#ffffff"
+      },
+      "name": "Clock"
+    },
+    {
+      "id": "lock_date",
+      "widgetType": "lockDate",
+      "enabled": false,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "format": "short",
+        "colorMode": "default",
+        "customColor": "#ffffff"
+      }
+    },
+    {
+      "id": "lock_auth",
+      "widgetType": "lockAuth",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "style": "expressive",
+        "profileVisibility": "always",
+        "passwordVisibility": "always"
+      }
+    },
+    {
+      "id": "lock_status",
+      "widgetType": "lockStatus",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "showMediaPlayer": true,
+        "showWeather": true,
+        "background": false
+      }
+    },
+    {
+      "id": "lock_power",
+      "widgetType": "lockPower",
+      "enabled": false,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true,
+        "shape": "round"
+      }
+    },
+    {
+      "id": "greeter_session",
+      "widgetType": "greeterSession",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "syncPositionAcrossScreens": true
+      }
+    }
+  ],
   "currentThemeName": "dynamic",
   "radiusStrength": 38,
   "clockFormat": "24h",
@@ -54,6 +235,10 @@
       "showTrash": false,
       "trashFileManager": "default",
       "trashCustomCommand": "",
+      "magnification": false,
+      "magnificationScale": 130,
+      "magnificationProfile": "parabolic",
+      "magnificationExpand": false,
       "order": [],
       "widgets": [
         {
@@ -84,6 +269,33 @@
   "foregroundLayerTransparency": 0.7,
   "blurredWallpaperLayer": true,
   "controlCenterWidgets": [
+    {
+      "id": "user",
+      "enabled": true,
+      "w": 5,
+      "h": 1
+    },
+    {
+      "id": "settings",
+      "enabled": true,
+      "w": 1,
+      "h": 1,
+      "small": true
+    },
+    {
+      "id": "lock",
+      "enabled": true,
+      "w": 1,
+      "h": 1,
+      "small": true
+    },
+    {
+      "id": "power",
+      "enabled": true,
+      "w": 1,
+      "h": 1,
+      "small": true
+    },
     {
       "id": "volumeSlider",
       "enabled": true,
@@ -150,6 +362,22 @@
       "enabled": true,
       "w": 4,
       "h": 1
+    },
+    {
+      "id": "runningApps",
+      "enabled": true,
+      "w": 4,
+      "h": 1,
+      "footer": true
+    },
+    {
+      "id": "edit",
+      "enabled": true,
+      "w": 1,
+      "h": 1,
+      "small": true,
+      "footer": true,
+      "footerEnd": true
     }
   ],
   "scrollTitleEnabled": false,
@@ -296,7 +524,6 @@
   "lockBeforeSuspend": true,
   "matugenTemplateEmacs": false,
   "notificationOverlayEnabled": true,
-  "lockScreenNotificationMode": 2,
   "notificationCompactMode": true,
   "notificationShowTimeoutBar": true,
   "notificationHistoryMaxAgeDays": 3,
@@ -358,10 +585,6 @@
         }
       ],
       "rightWidgets": [
-        {
-          "id": "notificationButton",
-          "enabled": true
-        },
         {
           "id": "systemTray",
           "enabled": true
@@ -472,5 +695,5 @@
   "frameRounding": 12,
   "frameShowOnOverview": true,
   "frameBarInsetPadding": 8,
-  "configVersion": 31
+  "configVersion": 38
 }
