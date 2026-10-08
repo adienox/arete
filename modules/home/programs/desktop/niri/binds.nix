@@ -58,6 +58,11 @@ let
     "Ctrl+Alt+Delete" = titled "Open Launcher: Session Menu" {
       spawn-sh = [ "dms ipc call fullscreenPowerMenu toggle" ];
     };
+    "Ctrl+Return" = titled "Cursor movement" {
+      spawn-sh = [
+        "${pkgs.wl-kbptr}/bin/wl-kbptr"
+      ];
+    };
   };
 
   # ── session / compositor ───────────────────────────────────────────────
@@ -76,13 +81,51 @@ let
 
   # ── screenshots ────────────────────────────────────────────────────────
   screenshotBinds = {
-    "Print" = titled "Screenshot: Screen" { screenshot-screen = { }; };
-    "Shift+Print" = titled "Screenshot: Select Area" { screenshot = { }; };
-    "Alt+Print" = titled "Screenshot: Window" { screenshot-window = { }; };
-    "XF86SelectiveScreenshot" = titled "Screenshot: Select Area" {
-      screenshot = { };
+    "Print" = titled "Screenshot: region" {
+      spawn = [
+        "niri-snap"
+        "freeze"
+      ];
     };
-    "Ctrl+Alt+Comma" = titled "Annotate Last Screenshot" {
+    "Ctrl+Print" = titled "Screenshot: window" {
+      spawn = [
+        "niri-snap"
+        "window"
+      ];
+    };
+    "Alt+Print" = titled "Screenshot: screen" {
+      spawn = [
+        "niri-snap"
+        "screen"
+      ];
+    };
+    "Mod+Print" = titled "Screenshot: focused" {
+      spawn = [
+        "niri-snap"
+        "focused"
+        "save"
+      ];
+    };
+    "Mod+Shift+T" = titled "Screenshot: text" {
+      spawn = [
+        "niri-snap"
+        "text"
+      ];
+    };
+    "Mod+Shift+R" = titled "Screenshot: record region" {
+      spawn = [
+        "niri-snap"
+        "record"
+        "region"
+      ];
+    };
+    "XF86SelectiveScreenshot" = titled "Screenshot: Select Area" {
+      spawn = [
+        "niri-snap"
+        "freeze"
+      ];
+    };
+    "Ctrl+Alt+Comma" = titled "Screenshot: Annotate last" {
       spawn-sh = [ "${scripts}/screenshot-annotate.sh" ];
     };
   };
