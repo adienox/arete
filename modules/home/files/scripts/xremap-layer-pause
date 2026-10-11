@@ -1,0 +1,404 @@
+#!/usr/bin/env python3
+"""xremap-layer-pause: stop xremap while a layer-shell surface is open on niri.
+
+A launcher, a screenshot overlay or any other layer-shell UI that wants raw key presses gets them
+unremapped: the watcher polls niri for layer surfaces, and while one that matches is open it stops
+xremap, then starts it again as soon as the surface is gone.
+
+    xremap-layer-pause [watch] [options]    run the watcher (the default command)
+    xremap-layer-pause pause | resume       do it once, by hand
+    xremap-layer-pause status               what it sees, and how it would pause xremap
+
+What counts as a match (either is enough):
+    -n, --namespace GLOB    layer-shell namespace, fnmatch style, repeatable (default: niri-snap)
+    -x, --exclusive         any surface that takes the keyboard exclusively (launchers, lock screens)
+
+How xremap is stopped (first that applies):
+    --stop-cmd CMD          your own command, e.g. 'sudo -n systemctl stop xremap' (--start-cmd restores it)
+    systemd user unit       `systemctl --user stop/start UNIT` when UNIT is active (--service, default xremap.service)
+    process                 a process of yours named xremap (--process) is terminated, then relaunched with the
+                            same arguments, working directory and environment it had
+
+Run it from niri so it has NIRI_SOCKET:    spawn-at-startup "xremap-layer-pause" "-n" "niri-snap"
+
+Safety: xremap is always started again when the watcher exits (SIGTERM / SIGINT), when niri goes away, and
+on the next start of the watcher if it was killed while xremap was paused. `xremap-layer-pause resume` does
+it by hand. A quick flash of a surface (shorter than --pause-after polls) never touches xremap.
+"""
+import argparse
+import fnmatch
+import json
+import os
+import signal
+import socket
+import subprocess
+import sys
+import time
+
+STATE_DIR = os.path.join(os.environ.get("XDG_RUNTIME_DIR") or "/tmp", "xremap-layer-pause")
+STATE_FILE = os.path.join(STATE_DIR, "state.json")
+
+
+def log(message):
+    print("%s xremap-layer-pause: %s" % (time.strftime("%H:%M:%S"), message), file=sys.stderr, flush=True)
+
+
+# ---- niri ----------------------------------------------------------------------------------------
+
+class Niri:
+    """Minimal client for niri's IPC socket: one JSON request per line, one JSON reply per line."""
+
+    def __init__(self, path):
+        self.path = path
+        self.sock = None
+        self.buf = b""
+
+    def close(self):
+        if self.sock is not None:
+            try:
+                self.sock.close()
+            except OSError:
+                pass
+        self.sock = None
+        self.buf = b""
+
+    def request(self, name):
+        if self.sock is None:
+            s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            s.settimeout(2.0)
+            s.connect(self.path)
+            self.sock = s
+        try:
+            self.sock.sendall(json.dumps(name).encode() + b"\n")
+            while b"\n" not in self.buf:
+                chunk = self.sock.recv(65536)
+                if not chunk:
+                    raise ConnectionError("niri closed the connection")
+                self.buf += chunk
+            line, self.buf = self.buf.split(b"\n", 1)
+            reply = json.loads(line)
+        except Exception:
+            self.close()
+            raise
+        if "Ok" in reply:
+            return reply["Ok"]
+        raise RuntimeError("niri: %s" % reply.get("Err"))
+
+    def layers(self):
+        ok = self.request("Layers")
+        return ok.get("Layers", []) if isinstance(ok, dict) else []
+
+
+def first_match(layers, namespaces, exclusive):
+    """The first layer surface that should pause xremap, or None."""
+    for layer in layers:
+        namespace = layer.get("namespace", "")
+        if any(fnmatch.fnmatchcase(namespace, glob) for glob in namespaces):
+            return layer
+        if exclusive and layer.get("keyboard_interactivity") == "Exclusive":
+            return layer
+    return None
+
+
+# ---- xremap --------------------------------------------------------------------------------------
+
+def proc_alive(pid):
+    try:
+        with open("/proc/%d/stat" % pid) as f:
+            stat = f.read()
+    except OSError:
+        return False
+    return stat.rsplit(")", 1)[-1].split()[0] != "Z"
+
+
+def run(cmd, shell=False):
+    try:
+        return subprocess.run(cmd, shell=shell, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=15)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        log("could not run %s: %s" % (cmd, e))
+        return None
+
+
+class Remapper:
+    def __init__(self, service="xremap.service", process="xremap", stop_cmd=None, start_cmd=None):
+        self.service = service
+        self.process = process
+        self.stop_cmd = stop_cmd
+        self.start_cmd = start_cmd
+        self.warned = False
+
+    # -- state kept across runs, so an interrupted pause can always be undone
+    def paused(self):
+        return os.path.exists(STATE_FILE)
+
+    def _save(self, state):
+        os.makedirs(STATE_DIR, exist_ok=True)
+        tmp = STATE_FILE + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(state, f)
+        os.replace(tmp, STATE_FILE)
+
+    def _load(self):
+        try:
+            with open(STATE_FILE) as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            return None
+
+    # -- detection
+    def service_active(self):
+        r = run(["systemctl", "--user", "is-active", "--quiet", self.service])
+        return r is not None and r.returncode == 0
+
+    def find_pid(self):
+        me, uid = os.getpid(), os.getuid()
+        for entry in os.listdir("/proc"):
+            if not entry.isdigit() or int(entry) == me:
+                continue
+            try:
+                with open("/proc/%s/comm" % entry) as f:
+                    if f.read().strip() != self.process:
+                        continue
+                if os.stat("/proc/%s" % entry).st_uid == uid and proc_alive(int(entry)):
+                    return int(entry)
+            except OSError:
+                continue
+        return None
+
+    def other_user_pid(self):
+        for entry in os.listdir("/proc"):
+            if entry.isdigit():
+                try:
+                    with open("/proc/%s/comm" % entry) as f:
+                        if f.read().strip() == self.process and proc_alive(int(entry)):
+                            return int(entry)
+                except OSError:
+                    continue
+        return None
+
+    def method(self):
+        """(name, detail) of how xremap would be paused right now."""
+        if self.stop_cmd:
+            return "command", self.stop_cmd
+        if self.service_active():
+            return "service", self.service
+        pid = self.find_pid()
+        if pid:
+            return "process", "pid %d" % pid
+        other = self.other_user_pid()
+        if other:
+            return "foreign", "pid %d belongs to another user (use --stop-cmd / --start-cmd)" % other
+        return "none", "xremap is not running"
+
+    # -- actions
+    def pause(self):
+        if self.paused():
+            return True
+        name, detail = self.method()
+        if name == "command":
+            r = run(self.stop_cmd, shell=True)
+            ok = r is not None and r.returncode == 0
+            if ok:
+                self._save({"mode": "command"})
+                log("paused xremap (command)")
+            else:
+                log("stop command failed: %s" % (r.stderr.strip() if r else "not run"))
+            return ok
+        if name == "service":
+            r = run(["systemctl", "--user", "stop", self.service])
+            ok = r is not None and r.returncode == 0
+            if ok:
+                self._save({"mode": "service"})
+                log("paused xremap (systemd user unit %s)" % self.service)
+            else:
+                log("systemctl stop failed: %s" % (r.stderr.strip() if r else "not run"))
+            return ok
+        if name == "process":
+            return self._pause_process(self.find_pid())
+        if not self.warned:
+            log("not pausing: %s" % detail)
+            self.warned = True
+        return False
+
+    def _pause_process(self, pid):
+        try:
+            with open("/proc/%d/cmdline" % pid, "rb") as f:
+                argv = [os.fsdecode(a) for a in f.read().split(b"\0") if a]
+            cwd = os.readlink("/proc/%d/cwd" % pid)
+            with open("/proc/%d/environ" % pid, "rb") as f:
+                env = {}
+                for item in f.read().split(b"\0"):
+                    if b"=" in item:
+                        k, v = item.split(b"=", 1)
+                        env[os.fsdecode(k)] = os.fsdecode(v)
+        except OSError as e:
+            log("cannot read process %d: %s" % (pid, e))
+            return False
+        if not argv:
+            return False
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError as e:
+            log("cannot stop process %d: %s" % (pid, e))
+            return False
+        deadline = time.time() + 3.0
+        while proc_alive(pid) and time.time() < deadline:
+            time.sleep(0.02)
+        if proc_alive(pid):
+            os.kill(pid, signal.SIGKILL)
+            time.sleep(0.2)
+        self._save({"mode": "process", "argv": argv, "cwd": cwd, "env": env})
+        log("paused xremap (process %d)" % pid)
+        return True
+
+    def resume(self):
+        state = self._load()
+        if state is None:
+            if self.paused():  # unreadable state: nothing can be restored from it
+                os.remove(STATE_FILE)
+            return True
+        mode = state.get("mode")
+        ok = True
+        if mode == "command":
+            if self.start_cmd:
+                r = run(self.start_cmd, shell=True)
+                ok = r is not None and r.returncode == 0
+            else:
+                log("paused with --stop-cmd but no --start-cmd was given: start xremap yourself")
+                ok = False
+        elif mode == "service":
+            r = run(["systemctl", "--user", "start", self.service])
+            ok = r is not None and r.returncode == 0
+        elif mode == "process":
+            try:
+                subprocess.Popen(state["argv"], cwd=state.get("cwd") or None, env=state.get("env") or None,
+                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                 start_new_session=True)
+            except OSError as e:
+                log("could not relaunch xremap: %s" % e)
+                ok = False
+        try:
+            os.remove(STATE_FILE)
+        except OSError:
+            pass
+        log("resumed xremap (%s)%s" % (mode, "" if ok else ", but it reported a problem"))
+        return ok
+
+
+# ---- watcher -------------------------------------------------------------------------------------
+
+class Watcher:
+    def __init__(self, remapper, namespaces, exclusive, pause_after=2, resume_after=1):
+        self.remapper = remapper
+        self.namespaces = namespaces
+        self.exclusive = exclusive
+        self.pause_after = pause_after
+        self.resume_after = resume_after
+        self.on = 0
+        self.off = 0
+
+    def tick(self, layers):
+        """One poll's worth of layer surfaces. Returns the matching surface, if any."""
+        hit = first_match(layers, self.namespaces, self.exclusive)
+        if hit:
+            self.on, self.off = self.on + 1, 0
+            if self.on >= self.pause_after and not self.remapper.paused():
+                self.remapper.pause()
+        else:
+            self.on, self.off = 0, self.off + 1
+            if self.off >= self.resume_after and self.remapper.paused():
+                self.remapper.resume()
+        return hit
+
+
+def niri_socket():
+    path = os.environ.get("NIRI_SOCKET")
+    if not path:
+        sys.exit("NIRI_SOCKET is not set: run this from inside the niri session (e.g. spawn-at-startup)")
+    return path
+
+
+def cmd_watch(args, remapper):
+    niri = Niri(niri_socket())
+    watcher = Watcher(remapper, args.namespace, args.exclusive, args.pause_after, args.resume_after)
+    stopping = []
+    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(sig, lambda *_: stopping.append(1))
+    log("watching niri layers for %s%s" % (", ".join(args.namespace) or "no namespace",
+                                          " and any exclusive-keyboard surface" if args.exclusive else ""))
+    lost = False
+    while not stopping:
+        try:
+            layers = niri.layers()
+            if lost:
+                log("reconnected to niri")
+                lost = False
+        except (OSError, ValueError, RuntimeError) as e:
+            if not lost:
+                log("lost niri (%s); xremap is restored until it is back" % e)
+                lost = True
+            # With nothing to watch, never leave xremap stopped.
+            watcher.on = 0
+            if remapper.paused():
+                remapper.resume()
+            time.sleep(1.0)
+            continue
+        hit = watcher.tick(layers)
+        if args.verbose:
+            log("layers=%d match=%s paused=%s" % (len(layers), hit.get("namespace") if hit else "-", remapper.paused()))
+        time.sleep(args.interval)
+    if remapper.paused():
+        remapper.resume()
+    log("stopped")
+    return 0
+
+
+def cmd_status(args, remapper):
+    print("xremap:  %s (%s)" % remapper.method())
+    print("state:   %s" % ("PAUSED by this tool" if remapper.paused() else "not paused"))
+    path = os.environ.get("NIRI_SOCKET")
+    if not path:
+        print("niri:    NIRI_SOCKET is not set")
+        return 1
+    try:
+        layers = Niri(path).layers()
+    except (OSError, ValueError, RuntimeError) as e:
+        print("niri:    cannot read layers: %s" % e)
+        return 1
+    print("niri:    %d layer surface(s)" % len(layers))
+    hit = first_match(layers, args.namespace, args.exclusive)
+    for layer in layers:
+        mark = "*" if layer is hit else " "
+        print("  %s %-28s %-10s keyboard=%s output=%s" % (mark, layer.get("namespace"), layer.get("layer"),
+                                                         layer.get("keyboard_interactivity"), layer.get("output")))
+    print("match:   %s" % (hit.get("namespace") if hit else "none (xremap would run)"))
+    return 0
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(prog="xremap-layer-pause", description="Pause xremap while a niri layer-shell surface is open.")
+    p.add_argument("command", nargs="?", default="watch", choices=["watch", "pause", "resume", "status"])
+    p.add_argument("-n", "--namespace", action="append", metavar="GLOB", help="layer-shell namespace to react to (repeatable; default niri-snap)")
+    p.add_argument("-x", "--exclusive", action="store_true", help="also react to any surface with exclusive keyboard interactivity")
+    p.add_argument("--service", default="xremap.service", help="systemd user unit that runs xremap")
+    p.add_argument("--process", default="xremap", help="name of the xremap process")
+    p.add_argument("--stop-cmd", help="shell command that stops xremap (replaces the built-in methods)")
+    p.add_argument("--start-cmd", help="shell command that starts xremap again")
+    p.add_argument("--interval", type=float, default=0.08, help="seconds between polls (default 0.08)")
+    p.add_argument("--pause-after", type=int, default=2, help="polls with a match before pausing (default 2)")
+    p.add_argument("--resume-after", type=int, default=1, help="polls without a match before resuming (default 1)")
+    p.add_argument("-v", "--verbose", action="store_true")
+    args = p.parse_args(argv)
+    args.namespace = args.namespace or ["niri-snap"]
+    remapper = Remapper(args.service, args.process, args.stop_cmd, args.start_cmd)
+    if args.command == "watch":
+        return cmd_watch(args, remapper)
+    if args.command == "status":
+        return cmd_status(args, remapper)
+    if args.command == "pause":
+        return 0 if remapper.pause() else 1
+    return 0 if remapper.resume() else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

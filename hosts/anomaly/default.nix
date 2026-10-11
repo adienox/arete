@@ -19,6 +19,7 @@
     };
     primeBatterySaverSpecialisation = true;
   };
+  modules.xremap.enable = true;
 
   # sick and tired of these devices always switching names
   services.udev.extraRules = ''
