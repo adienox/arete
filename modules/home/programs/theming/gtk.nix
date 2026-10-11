@@ -28,6 +28,8 @@
     gtk3.bookmarks = [
       "file://${config.home.homeDirectory}/Documents"
       "file://${config.home.homeDirectory}/Documents/projects Projects"
+      "file://${config.home.homeDirectory}/Pictures/Screenshots Screenshots"
+      "file://${config.home.homeDirectory}/Videos/Recordings Recordings"
       "sftp://impel/home/nox Impel"
       "sftp://hawk/data/data/com.termux/files/home/storage/shared Hawk"
       "sftp://kindle/mnt/us/koreader Kindle"

@@ -13,29 +13,15 @@
         "transparency": 0,
         "weight": 0,
         "twoTone": true,
-        "showDate": false,
+        "showDate": true,
         "showDigitalSeconds": false,
         "showAnalogNumbers": false,
         "showAnalogSeconds": true,
         "autoPosition": false,
-        "colorMode": "default",
+        "colorMode": "secondary",
         "customColor": "#ffffff"
       },
       "name": "Clock"
-    },
-    {
-      "id": "lock_date",
-      "widgetType": "lockDate",
-      "enabled": false,
-      "config": {
-        "displayPreferences": [
-          "all"
-        ],
-        "syncPositionAcrossScreens": true,
-        "format": "short",
-        "colorMode": "default",
-        "customColor": "#ffffff"
-      }
     },
     {
       "id": "lock_auth",
@@ -72,9 +58,9 @@
           "all"
         ],
         "syncPositionAcrossScreens": true,
-        "showMediaPlayer": true,
+        "showMediaPlayer": false,
         "showWeather": true,
-        "background": false
+        "background": true
       }
     },
     {
@@ -87,6 +73,19 @@
         ],
         "syncPositionAcrossScreens": true,
         "shape": "round"
+      }
+    },
+    {
+      "id": "lw_1791473553263_3r23gepce",
+      "widgetType": "lockPower",
+      "name": "Power",
+      "enabled": true,
+      "config": {
+        "syncPositionAcrossScreens": true,
+        "displayPreferences": [
+          "all"
+        ],
+        "shape": "sunny"
       }
     }
   ],
@@ -104,29 +103,15 @@
         "transparency": 0,
         "weight": 0,
         "twoTone": true,
-        "showDate": false,
+        "showDate": true,
         "showDigitalSeconds": false,
         "showAnalogNumbers": false,
         "showAnalogSeconds": true,
         "autoPosition": false,
-        "colorMode": "default",
+        "colorMode": "secondary",
         "customColor": "#ffffff"
       },
       "name": "Clock"
-    },
-    {
-      "id": "lock_date",
-      "widgetType": "lockDate",
-      "enabled": false,
-      "config": {
-        "displayPreferences": [
-          "all"
-        ],
-        "syncPositionAcrossScreens": true,
-        "format": "short",
-        "colorMode": "default",
-        "customColor": "#ffffff"
-      }
     },
     {
       "id": "lock_auth",
@@ -151,9 +136,9 @@
           "all"
         ],
         "syncPositionAcrossScreens": true,
-        "showMediaPlayer": true,
+        "showMediaPlayer": false,
         "showWeather": true,
-        "background": false
+        "background": true
       }
     },
     {
@@ -166,6 +151,19 @@
         ],
         "syncPositionAcrossScreens": true,
         "shape": "round"
+      }
+    },
+    {
+      "id": "lw_1791473553263_3r23gepce",
+      "widgetType": "lockPower",
+      "name": "Power",
+      "enabled": true,
+      "config": {
+        "syncPositionAcrossScreens": true,
+        "displayPreferences": [
+          "all"
+        ],
+        "shape": "sunny"
       }
     },
     {
@@ -186,6 +184,7 @@
   "blurBorderEnabled": true,
   "fontFamily": "Readex Pro",
   "monoFontFamily": "Maple Mono NF",
+  "displayFontFamily": "Readex Pro SemiBold",
   "textRenderType": 1,
   "dockConfigs": [
     {
@@ -208,9 +207,9 @@
       "transparency": 1,
       "followInterfaceStyle": true,
       "autoHide": false,
-      "smartAutoHide": false,
+      "smartAutoHide": true,
       "useOverlayLayer": false,
-      "editOnRightClick": false,
+      "editOnRightClick": true,
       "showOnFullscreen": false,
       "openOnOverview": false,
       "groupByApp": false,
@@ -273,102 +272,135 @@
       "id": "user",
       "enabled": true,
       "w": 5,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 0
     },
     {
       "id": "settings",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 5,
+      "row": 0
     },
     {
       "id": "lock",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 6,
+      "row": 0
     },
     {
       "id": "power",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 7,
+      "row": 0
     },
     {
       "id": "volumeSlider",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 1
     },
     {
       "id": "brightnessSlider",
       "enabled": true,
       "deviceName": "ddc:i2c-6",
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 4,
+      "row": 1
     },
     {
       "id": "wifi",
       "enabled": true,
       "w": 2,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 2
     },
     {
       "id": "bluetooth",
       "enabled": true,
       "w": 2,
-      "h": 1
+      "h": 1,
+      "col": 2,
+      "row": 2
     },
     {
       "id": "audioInput",
       "enabled": true,
       "w": 2,
-      "h": 1
+      "h": 1,
+      "col": 4,
+      "row": 2
     },
     {
       "id": "audioOutput",
       "enabled": true,
       "w": 2,
-      "h": 1
+      "h": 1,
+      "col": 6,
+      "row": 2
     },
     {
       "id": "nightMode",
       "enabled": true,
       "w": 2,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 3
     },
     {
       "id": "plugin_dankKDEConnect",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 2,
+      "row": 3
     },
     {
       "id": "darkMode",
       "enabled": true,
       "w": 2,
-      "h": 1
+      "h": 1,
+      "col": 6,
+      "row": 3
     },
     {
       "id": "builtin_tailscale",
       "enabled": true,
       "w": 4,
-      "h": 1
-    },
-    {
-      "id": "idleInhibitor",
-      "enabled": true,
-      "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 4
     },
     {
       "id": "runningApps",
       "enabled": true,
       "w": 4,
       "h": 1,
-      "footer": true
+      "footer": true,
+      "footerW": 6,
+      "footerFill": true
+    },
+    {
+      "id": "idleInhibitor",
+      "enabled": true,
+      "w": 4,
+      "h": 1,
+      "col": 4,
+      "row": 4,
+      "footerW": 1
     },
     {
       "id": "edit",
@@ -377,7 +409,7 @@
       "h": 1,
       "small": true,
       "footer": true,
-      "footerEnd": true
+      "footerW": 1
     }
   ],
   "scrollTitleEnabled": false,
@@ -435,9 +467,9 @@
   "dashOptions": {
     "media": {
       "animatedArt": true,
-      "artStyle": "square",
       "deviceName": false,
-      "titleFont": "ui"
+      "artStyle": "square",
+      "titleFont": "display"
     },
     "calendar": {
       "weekends": true
@@ -449,7 +481,8 @@
           "id": "conditions",
           "w": 2,
           "h": 2,
-          "graphics": true,
+          "tone": "primary",
+          "city": false,
           "col": 0,
           "row": 0
         },
@@ -457,7 +490,7 @@
           "id": "hourly",
           "w": 2,
           "h": 2,
-          "graphics": true,
+          "forecast": "chart",
           "col": 2,
           "row": 2
         },
@@ -465,7 +498,7 @@
           "id": "sun",
           "w": 1,
           "h": 2,
-          "graphics": true,
+          "tone": "",
           "col": 0,
           "row": 2
         },
@@ -473,7 +506,7 @@
           "id": "moon",
           "w": 1,
           "h": 2,
-          "graphics": true,
+          "tone": "",
           "col": 1,
           "row": 2
         },
@@ -482,6 +515,7 @@
           "w": 1,
           "h": 2,
           "graphics": true,
+          "tone": "",
           "col": 3,
           "row": 0
         },
@@ -489,7 +523,10 @@
           "id": "precipitation",
           "w": 1,
           "h": 2,
-          "graphics": true
+          "graphics": true,
+          "tone": "",
+          "col": 2,
+          "row": 0
         }
       ]
     },
@@ -519,14 +556,38 @@
   "acLockTimeout": 300,
   "acSuspendTimeout": 1800,
   "acSuspendBehavior": 2,
+  "acProfileName": "1",
   "acPostLockMonitorTimeout": 30,
+  "batteryProfileName": "0",
   "batteryCriticalNotificationType": 0,
+  "batteryAutoPowerSaver": true,
+  "lowerDisplayRefreshRateOnBattery": true,
   "lockBeforeSuspend": true,
   "matugenTemplateEmacs": false,
   "notificationOverlayEnabled": true,
   "notificationCompactMode": true,
   "notificationShowTimeoutBar": true,
   "notificationHistoryMaxAgeDays": 3,
+  "notificationRules": [
+    {
+      "enabled": true,
+      "field": "appName",
+      "pattern": "niri-snap",
+      "matchType": "exact",
+      "action": "no_history",
+      "urgency": "default",
+      "bypassDnd": true
+    },
+    {
+      "enabled": true,
+      "field": "appName",
+      "pattern": "Emacs",
+      "matchType": "contains",
+      "action": "no_history",
+      "urgency": "critical",
+      "bypassDnd": true
+    }
+  ],
   "notificationFocusedMonitor": true,
   "osdAlwaysShowValue": true,
   "osdPosition": 0,
@@ -581,6 +642,10 @@
         },
         {
           "id": "music",
+          "enabled": true
+        },
+        {
+          "id": "smartTimer",
           "enabled": true
         }
       ],

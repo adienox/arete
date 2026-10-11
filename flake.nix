@@ -43,7 +43,7 @@
 
     dcal.url = "github:AvengeMedia/dankcalendar";
 
-    dms-plugin-registry = {
+    dms-plugin = {
       url = "github:AvengeMedia/dms-plugin-registry";
       inputs.nixpkgs.follows = "nixpkgs";
     };

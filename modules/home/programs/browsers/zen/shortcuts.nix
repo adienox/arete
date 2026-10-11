@@ -57,7 +57,7 @@
     ];
     # In order to avoid breaking changes here, sometimes when you upgrade you
     # should be asked to bump this version
-    keyboardShortcutsVersion = 20;
+    keyboardShortcutsVersion = 21;
   };
 }
 # Find shortcut IDs in ~/.config/zen/default/zen-keyboard-shortcuts.json

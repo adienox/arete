@@ -39,5 +39,13 @@
     "dimOpacity": 80,
     "menuOpacity": 35,
     "animationsEnabled": true
+  },
+  "smartTimer": {
+    "enabled": true,
+    "noTrigger": true,
+    "tick": true,
+    "sound": "custom",
+    "customSound": "/home/nox/.local/share/assets/timer.wav",
+    "volume": 60
   }
 }

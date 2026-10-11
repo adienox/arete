@@ -31,7 +31,7 @@ in
 {
   imports = [
     inputs.dms.homeModules.dank-material-shell
-    inputs.dms-plugin-registry.nixosModules.default
+    inputs.dms-plugin.nixosModules.default
   ];
 
   home.packages = with pkgs; [
@@ -57,6 +57,7 @@ in
       systemMonitorPlus.enable = true;
       wallpaperCarousel.enable = true;
       fullscreenPowerMenu.enable = true;
+      smartTimer.enable = true;
     };
   };
 

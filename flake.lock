@@ -106,18 +106,18 @@
         "type": "github"
       }
     },
-    "dms-plugin-registry": {
+    "dms-plugin": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1791284535,
-        "narHash": "sha256-UN5/lm4c4i7hqbRjstRAXWIsECNwE+VvLUue+QwqeMs=",
+        "lastModified": 1791533887,
+        "narHash": "sha256-fGWNJj6ZSzGyTK4wmbCbBYGSkb3AakxJa0QHk8rYGS0=",
         "owner": "AvengeMedia",
         "repo": "dms-plugin-registry",
-        "rev": "388faa6f21ff09d41da815e3114b444c84d4e734",
+        "rev": "14d2b6d998b4289f2f769b076746565c939b8280",
         "type": "github"
       },
       "original": {
@@ -513,7 +513,7 @@
         "dcal": "dcal",
         "disko": "disko",
         "dms": "dms",
-        "dms-plugin-registry": "dms-plugin-registry",
+        "dms-plugin": "dms-plugin",
         "home-manager": "home-manager",
         "niri": "niri",
         "nix-firefox-addons": "nix-firefox-addons",
@@ -657,11 +657,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1791201103,
-        "narHash": "sha256-IKLp7HJdxngMT1DkF9YMh73xfg2rGqfdoYsw0shsXpM=",
+        "lastModified": 1791566048,
+        "narHash": "sha256-vVJkjPueXgA1kAsgJgkfgQ87qmMxWjhtkzNmV6olBAg=",
         "owner": "vicinaehq",
         "repo": "vicinae",
-        "rev": "d53a08eb9d83782d14c6800677e05e99cf3ae804",
+        "rev": "28ac1efa8865b080bf223b337e1e99df63c2d4b2",
         "type": "github"
       },
       "original": {
