@@ -242,8 +242,8 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1792159196,
-        "narHash": "sha256-Gunwrx1Npiv19TRb52HiREGKrWhiHcrLy0IEFkAW0vs=",
+        "lastModified": 1792160085,
+        "narHash": "sha256-T25uxFUa3YsxCRUgCioM773y+csEpdhvhK+pTondZ3w=",
         "path": "/home/nox/Documents/projects/niri-snap",
         "type": "path"
       },
