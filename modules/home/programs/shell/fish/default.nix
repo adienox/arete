@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  config,
+  helpers,
+  ...
+}:
 {
   programs.fish = {
     enable = true;
@@ -17,6 +22,15 @@
           repo = "autopair.fish";
           rev = "4d1752ff5b39819ab58d7337c69220342e9de0e2";
           hash = "sha256-qt3t1iKRRNuiLWiVoiAYOu+9E7jsyECyIqZJ/oRIT1A=";
+        };
+      }
+      {
+        name = "bang-bang";
+        src = pkgs.fetchFromGitHub {
+          owner = "oh-my-fish";
+          repo = "plugin-bang-bang";
+          rev = "ec991b80ba7d4dda7a962167b036efc5c2d79419";
+          hash = "";
         };
       }
       # {
@@ -70,6 +84,48 @@
           ${pkgs.exiftool}/bin/exiftool -s3 -Comment $argv
         '';
       };
+    }
+    // (
+      let
+        dir = "${config.xdg.stateHome}/dtach";
+        dtach = "${pkgs.dtach}/bin/dtach";
+      in
+      {
+        ds = {
+          description = "Attach to or create a named dtach session";
+          body = ''
+            mkdir -p -m 700 ${dir}
+            set -l sock ${dir}/$argv[1]
+            if test (count $argv) -ge 2
+              ${dtach} -A $sock -r winch $argv[2..-1]
+            else if test -S $sock
+              ${dtach} -a $sock -r winch
+            else
+              echo "no session '$argv[1]' (usage: ds NAME COMMAND...)" >&2
+              return 1
+            end
+          '';
+        };
+        dsl = {
+          description = "List dtach sessions";
+          body = "ls ${dir}";
+        };
+      }
+    );
+
+    completions = {
+      ds = "complete -c ds -n '__fish_is_first_arg' -a '(ls ${config.xdg.stateHome}/dtach 2>/dev/null)'";
     };
   };
+
+  home.file = helpers.mkConfigFiles [
+    {
+      source = ./compress.fish;
+      target = ".config/fish/functions/compress.fish";
+    }
+    {
+      source = ./decompress.fish;
+      target = ".config/fish/functions/decompress.fish";
+    }
+  ];
 }
