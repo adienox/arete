@@ -64,18 +64,6 @@
       }
     },
     {
-      "id": "lock_power",
-      "widgetType": "lockPower",
-      "enabled": false,
-      "config": {
-        "displayPreferences": [
-          "all"
-        ],
-        "syncPositionAcrossScreens": true,
-        "shape": "round"
-      }
-    },
-    {
       "id": "lw_1791473553263_3r23gepce",
       "widgetType": "lockPower",
       "name": "Power",
@@ -142,18 +130,6 @@
       }
     },
     {
-      "id": "lock_power",
-      "widgetType": "lockPower",
-      "enabled": false,
-      "config": {
-        "displayPreferences": [
-          "all"
-        ],
-        "syncPositionAcrossScreens": true,
-        "shape": "round"
-      }
-    },
-    {
       "id": "lw_1791473553263_3r23gepce",
       "widgetType": "lockPower",
       "name": "Power",
@@ -186,6 +162,7 @@
   "monoFontFamily": "Maple Mono NF",
   "displayFontFamily": "Readex Pro SemiBold",
   "textRenderType": 1,
+  "lockScreenShowPowerActions": true,
   "dockConfigs": [
     {
       "id": "dock",
@@ -385,31 +362,39 @@
       "row": 4
     },
     {
-      "id": "runningApps",
-      "enabled": true,
-      "w": 4,
-      "h": 1,
-      "footer": true,
-      "footerW": 6,
-      "footerFill": true
-    },
-    {
       "id": "idleInhibitor",
       "enabled": true,
       "w": 4,
       "h": 1,
       "col": 4,
-      "row": 4,
-      "footerW": 1
+      "row": 4
+    },
+    {
+      "id": "runningApps",
+      "enabled": true,
+      "w": 3.5,
+      "h": 1,
+      "small": true,
+      "col": 3,
+      "row": 5
     },
     {
       "id": "edit",
       "enabled": true,
-      "w": 1,
+      "w": 1.5,
       "h": 1,
       "small": true,
-      "footer": true,
-      "footerW": 1
+      "col": 6.5,
+      "row": 5
+    },
+    {
+      "id": "plugin_aiUsage",
+      "enabled": true,
+      "w": 3,
+      "h": 1,
+      "col": 0,
+      "row": 5,
+      "small": true
     }
   ],
   "scrollTitleEnabled": false,
@@ -438,7 +423,7 @@
     {
       "id": "notifications",
       "w": 3,
-      "h": 4,
+      "h": 3,
       "col": 3,
       "row": 1
     },
@@ -447,14 +432,14 @@
       "w": 3,
       "h": 3,
       "col": 0,
-      "row": 1
+      "row": 2
     },
     {
       "id": "media",
       "w": 3,
       "h": 1,
       "col": 0,
-      "row": 4
+      "row": 1
     },
     {
       "id": "user",
@@ -462,6 +447,27 @@
       "h": 1,
       "col": 0,
       "row": 0
+    },
+    {
+      "id": "plugin_aiUsage",
+      "w": 3,
+      "h": 2,
+      "col": 3,
+      "row": 4
+    },
+    {
+      "id": "wellbeing",
+      "w": 2,
+      "h": 1,
+      "col": 0,
+      "row": 5
+    },
+    {
+      "id": "battery",
+      "w": 1,
+      "h": 1,
+      "col": 2,
+      "row": 5
     }
   ],
   "dashOptions": {
@@ -503,14 +509,6 @@
           "row": 2
         },
         {
-          "id": "moon",
-          "w": 1,
-          "h": 2,
-          "tone": "",
-          "col": 1,
-          "row": 2
-        },
-        {
           "id": "wind",
           "w": 1,
           "h": 2,
@@ -527,6 +525,15 @@
           "tone": "",
           "col": 2,
           "row": 0
+        },
+        {
+          "id": "uv",
+          "w": 1,
+          "h": 2,
+          "graphics": true,
+          "tone": "",
+          "col": 1,
+          "row": 2
         }
       ]
     },
@@ -600,6 +607,13 @@
       "attachToScreenEdge": false,
       "gothCornersEnabled": true,
       "borderEnabled": false
+    },
+    "dot1791773482727": {
+      "shadowIntensity": 0,
+      "squareCorners": false,
+      "attachToScreenEdge": false,
+      "gothCornersEnabled": false,
+      "borderEnabled": false
     }
   },
   "barConfigs": [
@@ -607,6 +621,133 @@
       "id": "default",
       "name": "Main Bar",
       "enabled": true,
+      "position": 3,
+      "screenPreferences": [
+        "all"
+      ],
+      "showOnLastDisplay": true,
+      "leftWidgets": [
+        {
+          "id": "workspaceSwitcher",
+          "enabled": true,
+          "showWorkspacePadding": true,
+          "showOccupiedWorkspacesOnly": true
+        },
+        {
+          "id": "systemMonitorPlus",
+          "enabled": true
+        },
+        {
+          "id": "focusedWindow",
+          "enabled": true,
+          "focusedWindowSize": 0,
+          "focusedWindowCompactMode": true
+        }
+      ],
+      "centerWidgets": [
+        {
+          "id": "clock",
+          "enabled": true,
+          "clockCompactMode": false
+        },
+        {
+          "id": "music",
+          "enabled": true
+        },
+        {
+          "id": "smartTimer",
+          "enabled": true
+        }
+      ],
+      "rightWidgets": [
+        {
+          "id": "systemTray",
+          "enabled": true,
+          "trayUseInlineExpansion": false
+        },
+        {
+          "id": "privacyIndicator",
+          "enabled": true
+        },
+        {
+          "id": "controlCenterButton",
+          "enabled": true,
+          "showNetworkIcon": true,
+          "showBluetoothIcon": true,
+          "showAudioIcon": false,
+          "showAudioPercent": false,
+          "showBrightnessIcon": false,
+          "showBrightnessPercent": false,
+          "showBatteryIcon": true,
+          "showPrinterIcon": false,
+          "controlCenterGroupOrder": [
+            "network",
+            "vpn",
+            "bluetooth",
+            "screenSharing",
+            "audio",
+            "microphone",
+            "brightness",
+            "battery",
+            "printer"
+          ],
+          "showIdleInhibitorIcon": true,
+          "showVpnIcon": true,
+          "showMicIcon": false,
+          "showMicPercent": false,
+          "showDoNotDisturbIcon": true
+        }
+      ],
+      "spacing": 0,
+      "innerPadding": 4,
+      "bottomGap": 0,
+      "transparency": 0.5,
+      "widgetTransparency": 0.5,
+      "squareCorners": false,
+      "noBackground": false,
+      "maximizeWidgetIcons": false,
+      "maximizeWidgetText": false,
+      "widgetPadding": 8,
+      "gothCornersEnabled": false,
+      "gothCornerRadiusOverride": true,
+      "gothCornerRadiusValue": 12,
+      "borderEnabled": false,
+      "borderColor": "surfaceText",
+      "borderOpacity": 1,
+      "borderThickness": 1,
+      "widgetOutlineEnabled": false,
+      "widgetOutlineColor": "primary",
+      "widgetOutlineOpacity": 1,
+      "widgetOutlineThickness": 1,
+      "fontScale": 1,
+      "iconScale": 1,
+      "autoHide": false,
+      "autoHideStrict": false,
+      "autoHideDelay": 250,
+      "showOnWindowsOpen": false,
+      "openOnOverview": true,
+      "visible": true,
+      "popupGapsAuto": true,
+      "popupGapsManual": 4,
+      "maximizeDetection": true,
+      "scrollEnabled": true,
+      "scrollXBehavior": "focusWindow",
+      "scrollYBehavior": "workspace",
+      "shadowIntensity": 0,
+      "shadowOpacity": 60,
+      "shadowColorMode": "default",
+      "shadowCustomColor": "#000000",
+      "clickThrough": false,
+      "useOverlayLayer": false,
+      "hoverPopouts": false,
+      "followInterfaceStyle": false,
+      "widgetStyle": "pills",
+      "widgetFollowInterfaceStyle": false
+    },
+    {
+      "id": "dot1791773482727",
+      "name": "Dot",
+      "enabled": false,
       "position": 3,
       "screenPreferences": [
         "all"
@@ -727,7 +868,7 @@
       "popupGapsManual": 4,
       "maximizeDetection": true,
       "scrollEnabled": true,
-      "scrollXBehavior": "column",
+      "scrollXBehavior": "focusWindow",
       "scrollYBehavior": "workspace",
       "shadowIntensity": 0,
       "shadowOpacity": 60,
@@ -738,7 +879,9 @@
       "hoverPopouts": false,
       "followInterfaceStyle": false,
       "widgetStyle": "pills",
-      "widgetFollowInterfaceStyle": false
+      "widgetFollowInterfaceStyle": false,
+      "island": false,
+      "dot": true
     }
   ],
   "builtInPluginSettings": {
@@ -760,5 +903,6 @@
   "frameRounding": 12,
   "frameShowOnOverview": true,
   "frameBarInsetPadding": 8,
-  "configVersion": 38
+  "configVersion": 42,
+  "bluetoothMprisEnabled": false
 }

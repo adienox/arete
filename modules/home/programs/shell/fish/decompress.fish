@@ -9,6 +9,7 @@ function decompress --description 'Extract archives of (almost) any format'
         echo
         echo 'Handles tar(.gz/.bz2/.xz/.zst/.lz4/.lz), zip, 7z, rar, gz, bz2, xz, zst,'
         echo 'lz4, Z, deb, rpm, and falls back to bsdtar / 7-Zip for the rest (iso, cab, ...).'
+        echo 'Missing tools are run through comma (`, cmd`) when available.'
         return 0
     end
 
@@ -18,10 +19,10 @@ function decompress --description 'Extract archives of (almost) any format'
         set dest $_flag_dir
     end
 
-    # Locate a 7-Zip binary (name varies by distro)
-    set -l sz
+    # Prefer an installed 7-Zip binary; otherwise ask comma for 7zz
+    set -l sz 7zz
     for c in 7zz 7z 7za
-        if type -q $c
+        if command -q $c
             set sz $c
             break
         end
@@ -38,71 +39,53 @@ function decompress --description 'Extract archives of (almost) any format'
         # Name for single-file formats: strip the last extension
         set -l base (string replace -r '\.[^.]+$' '' -- (path basename $f))
 
+        # Decompressor for tar.* and single-file formats. It runs as a separate
+        # pipeline stage (not via tar's auto-detect) so comma can supply it.
+        set -l dc
         switch (string lower -- $f)
-            case '*.tar' '*.tar.gz' '*.tgz' '*.tar.bz2' '*.tbz2' '*.tar.xz' '*.txz' \
-                 '*.tar.zst' '*.tzst' '*.tar.lz4' '*.tar.lz' '*.tar.z'
-                tar -xf $f -C $dest
+            case '*.tar.gz' '*.tgz' '*.tar.z' '*.gz' '*.z'
+                set dc gzip -dc
+            case '*.tar.bz2' '*.tbz2' '*.bz2'
+                set dc bzip2 -dc
+            case '*.tar.xz' '*.txz' '*.xz'
+                set dc xz -dc
+            case '*.tar.zst' '*.tzst' '*.zst'
+                set dc zstd -dcq
+            case '*.tar.lz4' '*.lz4'
+                set dc lz4 -dcq
+            case '*.tar.lz' '*.lz'
+                set dc lzip -dc
+        end
+
+        switch (string lower -- $f)
+            case '*.tar'
+                __archive_run tar -xf $f -C $dest
+            case '*.tar.gz' '*.tgz' '*.tar.z' '*.tar.bz2' '*.tbz2' '*.tar.xz' '*.txz' \
+                 '*.tar.zst' '*.tzst' '*.tar.lz4' '*.tar.lz'
+                __archive_run $dc $f | __archive_run tar -xf - -C $dest
+                set -l ps $pipestatus
+                test $ps[1] -eq 0; and test $ps[2] -eq 0
             case '*.zip' '*.jar' '*.apk' '*.whl' '*.epub'
-                if type -q unzip
-                    unzip -q -o $f -d $dest
-                else if test -n "$sz"
-                    $sz x -o$dest -y $f >/dev/null
-                else
-                    echo "decompress: need 'unzip' or 7-Zip" >&2
-                    false
-                end
+                __archive_run unzip -q -o $f -d $dest
             case '*.7z'
-                if test -n "$sz"
-                    $sz x -o$dest -y $f >/dev/null
-                else
-                    echo "decompress: need 7-Zip" >&2
-                    false
-                end
+                __archive_run $sz x -o$dest -y $f >/dev/null
             case '*.rar'
-                if type -q unrar
+                # unrar is unfree, so comma can't fetch it; libarchive reads rar too
+                if command -q unrar
                     unrar x -o+ -idq $f $dest/
-                else if test -n "$sz"
-                    $sz x -o$dest -y $f >/dev/null
-                else if type -q bsdtar
-                    bsdtar -xf $f -C $dest
                 else
-                    echo "decompress: need 'unrar', 7-Zip or bsdtar" >&2
-                    false
+                    __archive_run bsdtar -xf $f -C $dest
                 end
-            case '*.gz'
-                gzip -dc $f >$dest/$base
-            case '*.bz2'
-                bzip2 -dc $f >$dest/$base
-            case '*.xz'
-                xz -dc $f >$dest/$base
-            case '*.zst'
-                zstd -dcq $f >$dest/$base
-            case '*.lz4'
-                lz4 -dcq $f >$dest/$base
-            case '*.z'
-                gzip -dc $f >$dest/$base
-            case '*.lz'
-                lzip -dc $f >$dest/$base
+            case '*.gz' '*.bz2' '*.xz' '*.zst' '*.lz4' '*.z' '*.lz'
+                __archive_run $dc $f >$dest/$base
             case '*.deb'
-                dpkg-deb -x $f $dest
+                __archive_run dpkg-deb -x $f $dest
             case '*.rpm'
-                if type -q bsdtar
-                    bsdtar -xf $f -C $dest
-                else
-                    rpm2cpio $f | begin
-                        cd $dest; and cpio -idm --quiet
-                    end
-                end
+                __archive_run bsdtar -xf $f -C $dest
             case '*'
                 # iso, cab, dmg, cpio, xar, ... let libarchive / 7-Zip sniff it
-                if type -q bsdtar
-                    bsdtar -xf $f -C $dest
-                else if test -n "$sz"
-                    $sz x -o$dest -y $f >/dev/null
-                else
-                    echo "decompress: unsupported format: $f" >&2
-                    false
-                end
+                __archive_run bsdtar -xf $f -C $dest
+                or __archive_run $sz x -o$dest -y $f >/dev/null
         end
         or begin
             echo "decompress: failed: $f" >&2

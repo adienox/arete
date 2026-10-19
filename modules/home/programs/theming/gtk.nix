@@ -25,15 +25,21 @@
       package = lib.mkForce pkgs.adw-gtk3;
     };
 
-    gtk3.bookmarks = [
-      "file://${config.home.homeDirectory}/Documents"
-      "file://${config.home.homeDirectory}/Documents/projects Projects"
-      "file://${config.home.homeDirectory}/Pictures/Screenshots Screenshots"
-      "file://${config.home.homeDirectory}/Videos/Recordings Recordings"
-      "sftp://impel/home/nox Impel"
-      "sftp://hawk/data/data/com.termux/files/home/storage/shared Hawk"
-      "sftp://kindle/mnt/us/koreader Kindle"
-    ];
+    gtk3.bookmarks =
+      let
+        userDirs = config.xdg.userDirs;
+      in
+      [
+        "file://${userDirs.documents}"
+        "file://${userDirs.projects}"
+        "file://${userDirs.extraConfig.TAILDROP}"
+        "file://${userDirs.download}"
+        "file://${userDirs.extraConfig.SCREENSHOTS}"
+        "file://${userDirs.videos}/Recordings"
+        "sftp://impel/home/nox Impel"
+        "sftp://hawk/data/data/com.termux/files/home/storage/shared Hawk"
+        "sftp://kindle/mnt/us/koreader Kindle"
+      ];
 
     gtk3.theme = {
       name = lib.mkForce "adw-gtk3";

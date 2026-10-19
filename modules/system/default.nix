@@ -16,7 +16,6 @@
     ./tailscale.nix
     ./environment.nix
     ./hardware-tuning.nix
-    ./services.nix
     ./users.nix
     ./wireshark.nix
     ./boot.nix

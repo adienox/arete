@@ -4,6 +4,7 @@
     ./emacs.nix
     ./git.nix
     ./devenv.nix
+    ./pi.nix
   ];
 
   home.packages = with pkgs; [
@@ -16,12 +17,7 @@
       ]
     ))
     uv
-    flutter
     nixd
     platformio-core
-    fritzing
-    kotlin
-    gradle
-    jdk21
   ];
 }

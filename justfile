@@ -24,7 +24,6 @@ update-at-boot:
 
 # diff and commit flake.lock
 _git-flake:
-    @just _diff flake.lock
     @git add flake.lock
     @just _commit "chore: update flake.lock"
 

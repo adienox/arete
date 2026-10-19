@@ -30,7 +30,7 @@
           owner = "oh-my-fish";
           repo = "plugin-bang-bang";
           rev = "ec991b80ba7d4dda7a962167b036efc5c2d79419";
-          hash = "";
+          hash = "sha256-oPPCtFN2DPuM//c48SXb4TrFRjJtccg0YPXcAo0Lxq0=";
         };
       }
       # {
@@ -126,6 +126,10 @@
     {
       source = ./decompress.fish;
       target = ".config/fish/functions/decompress.fish";
+    }
+    {
+      source = ./__archive_run.fish;
+      target = ".config/fish/functions/__archive_run.fish";
     }
   ];
 }

@@ -76,6 +76,8 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri-snap.url = "path:/home/nox/Documents/projects/niri-snap";
   };
 
   outputs =

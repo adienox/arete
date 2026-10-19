@@ -7,6 +7,8 @@ in
     # Reducing direnv logs
     DIRENV_LOG_FORMAT = "";
 
+    NPM_CONFIG_PREFIX = "${xdg.dataHome}/npm-global";
+
     # ~/ Clean-up:
     XAUTHORITY = "$XDG_RUNTIME_DIR/Xauthority";
 
@@ -30,4 +32,5 @@ in
     NIXPKGS_ALLOW_UNFREE = 1;
     _ZO_EXCLUDE_DIRS = "/nix/*:/sys/*:/run/*";
   };
+  home.sessionPath = [ "${xdg.dataHome}/npm-global/bin" ];
 }

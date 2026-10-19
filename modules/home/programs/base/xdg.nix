@@ -22,7 +22,9 @@
       projects = "${config.xdg.userDirs.documents}/projects";
       extraConfig = {
         SCREENSHOTS = "${config.xdg.userDirs.pictures}/Screenshots";
+        RECORDINGS = "${config.xdg.userDirs.videos}/Recordings";
         MAIL = "${config.xdg.dataHome}/Mail";
+        TAILDROP = "${config.xdg.userDirs.documents}/Taildrop";
       };
       setSessionVariables = true;
     };

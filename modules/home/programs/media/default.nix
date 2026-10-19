@@ -9,7 +9,6 @@
   ];
 
   home.packages = with pkgs; [
-    gimp
     helvum
     yt-dlp
   ];

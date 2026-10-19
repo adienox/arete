@@ -7,10 +7,11 @@
     ./atuin.nix
     ./bat.nix
     ./lsd.nix
-    ./fish.nix
+    ./fish
     ./btop.nix
     ./ssh.nix
     ./tealdeer.nix
+    ./ntfy.nix
   ];
 
   home.shell.enableFishIntegration = true;

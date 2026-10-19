@@ -9,6 +9,8 @@
       "syncthing/password" = { };
       "services/homeassistant" = { };
       "services/freshrss" = { };
+      "services/pi" = { };
+      "services/dmsOpenRouter" = { };
     };
   };
 }

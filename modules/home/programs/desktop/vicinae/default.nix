@@ -2,6 +2,7 @@
   pkgs,
   vars,
   config,
+  helpers,
   ...
 }:
 {
@@ -17,6 +18,7 @@
 
   programs.vicinae = {
     enable = true;
+    package = pkgs.vicinae; # FIXME: remove after vicinae is fixed upstream
 
     systemd = {
       enable = true;
@@ -70,7 +72,7 @@
       ];
 
       fallbacks = [
-        "@adienox/org-todos:list-tasks"
+        "@adienox/org-todos:quick-add"
         "files:search"
         "@mattisssa/spotify-player:search"
         "@knoopx/home-assistant:home-assistant"
@@ -80,5 +82,10 @@
         "@knoopx/vicinae-extension-niri-0:keybinds"
       ];
     };
+  };
+
+  home.file = helpers.mkSymlinkedFile {
+    target = ".local/share/vicinae/scripts";
+    source = "${vars.paths.homeFiles}/vicinae-scripts";
   };
 }

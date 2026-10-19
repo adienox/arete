@@ -18,23 +18,19 @@ in
 
   home.packages = with pkgs; [
     gnome-calculator
-    fuzzel
     libtool
     ispell
-    xclip
     ffmpegthumbnailer
     mediainfo
     imagemagick
     ntfy
+
     #freecad-wayland
     trash-cli
     gojq
     libnotify
-    imv
     yad
-    hyprlock
     just
-    tesseract
     qbittorrent
     sony-device-center
   ];
@@ -50,6 +46,10 @@ in
         source = "${homeFiles}/fastfetch";
       }
       {
+        target = ".local/share/assets";
+        source = "${homeFiles}/assets";
+      }
+      {
         target = ".config/matugen";
         source = "${homeFiles}/matugen";
       }
@@ -60,10 +60,6 @@ in
       {
         target = ".local/share/nautilus/scripts";
         source = "${homeFiles}/nautilus-scripts";
-      }
-      {
-        target = ".config/hypr/hyprlock.conf";
-        source = "${homeFiles}/hyprlock.conf";
       }
       {
         target = ".config/codebook/codebook.toml";

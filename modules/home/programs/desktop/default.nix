@@ -15,6 +15,7 @@ in
     ./dms.nix
     ./dcal.nix
     ./xremap.nix
+    ./niri-snap.nix
   ];
 
   services.kdeconnect.enable = true;

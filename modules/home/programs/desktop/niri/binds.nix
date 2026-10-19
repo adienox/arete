@@ -2,12 +2,14 @@
   pkgs,
   lib,
   vars,
+  config,
   osConfig ? null,
   ...
 }:
 let
   scripts = vars.paths.scripts;
   uwsm = osConfig != null && (osConfig.programs.uwsm.enable or false);
+  emacs = "${scripts}/emacs-frame";
 
   # ── applications (long-running / GUI: get their own scope under uwsm) ──
   appBinds = lib.mapAttrs (_: wrap) {
@@ -15,7 +17,7 @@ let
       spawn-sh = [ "${pkgs.ghostty}/bin/ghostty +new-window" ];
     };
     "Mod+E" = titled "Open Emacs: New Frame" {
-      spawn-sh = [ "${scripts}/emacs.sh" ];
+      spawn-sh = [ emacs ];
     };
     "Mod+W" = titled "Open Browser: Zen" {
       spawn = [ "zen-twilight" ];
@@ -41,7 +43,12 @@ let
     };
     "Mod+Backslash" = titled "Open Emacs: Journal" {
       spawn-sh = [
-        "emacsclient -c -F '((name . \"emacs-float\"))' -e '(denote-journal-new-or-existing-entry)'"
+        "${emacs} emacs-float denote-journal-new-or-existing-entry"
+      ];
+    };
+    "Mod+A" = titled "Open Emacs: Journal" {
+      spawn-sh = [
+        "${emacs} emacs-float '(org-agenda nil \"a\")'"
       ];
     };
     "Mod+P" = titled "Open Launcher: Bitwarden" {
@@ -58,7 +65,7 @@ let
     "Ctrl+Alt+Delete" = titled "Open Launcher: Session Menu" {
       spawn-sh = [ "dms ipc call fullscreenPowerMenu toggle" ];
     };
-    "Ctrl+Return" = titled "Cursor movement" {
+    "Ctrl+Apostrophe" = titled "Cursor movement" {
       spawn-sh = [
         "${pkgs.wl-kbptr}/bin/wl-kbptr"
       ];
@@ -80,97 +87,111 @@ let
   };
 
   # ── screenshots ────────────────────────────────────────────────────────
-  screenshotBinds = {
-    "Print" = titled "Screenshot: region" {
-      spawn = [
-        "niri-snap"
-        "freeze"
-      ];
-    };
-    "Ctrl+Print" = titled "Screenshot: window" {
-      spawn = [
-        "niri-snap"
-        "window"
-      ];
-    };
-    "Alt+Print" = titled "Screenshot: screen" {
-      spawn = [
-        "niri-snap"
-        "screen"
-      ];
-    };
-    "Mod+Print" = titled "Screenshot: focused" {
-      spawn = [
-        "niri-snap"
-        "focused"
-        "save"
-      ];
-    };
-    "Mod+Shift+T" = titled "Screenshot: text" {
-      spawn = [
-        "niri-snap"
-        "text"
-      ];
-    };
-    "Mod+Shift+R" = titled "Screenshot: record region" {
-      spawn = [
-        "niri-snap"
-        "record"
-        "region"
-      ];
-    };
-    "XF86SelectiveScreenshot" = titled "Screenshot: Select Area" {
-      spawn = [
-        "niri-snap"
-        "freeze"
-      ];
-    };
-    "Ctrl+Alt+Comma" = titled "Screenshot: Annotate last" {
-      spawn-sh = [ "${scripts}/screenshot-annotate.sh" ];
-    };
-  };
+  screenshotBinds =
+    if config.programs.niri-snap.enable then
+      {
+        "Print" = titled "Screenshot: region" {
+          spawn = [
+            "niri-snap"
+            "freeze"
+          ];
+        };
+        "Ctrl+Print" = titled "Screenshot: window" {
+          spawn = [
+            "niri-snap"
+            "window"
+          ];
+        };
+        "Alt+Print" = titled "Screenshot: screen" {
+          spawn = [
+            "niri-snap"
+            "screen"
+          ];
+        };
+        "Mod+Print" = titled "Screenshot: repeat" {
+          spawn = [
+            "niri-snap"
+            "repeat"
+          ];
+        };
+        "XF86SelectiveScreenshot" = titled "Screenshot: region" {
+          spawn = [
+            "niri-snap"
+            "freeze"
+          ];
+        };
+        "Ctrl+XF86SelectiveScreenshot" = titled "Screenshot: window" {
+          spawn = [
+            "niri-snap"
+            "window"
+          ];
+        };
+      }
+    else
+      {
+        "Print" = titled "Screenshot: Screen" { screenshot-screen = { }; };
+        "Shift+Print" = titled "Screenshot: Region" { screenshot = { }; };
+        "Ctrl+Print" = titled "Screenshot: Window" { screenshot-window = { }; };
+        "XF86SelectiveScreenshot" = titled "Screenshot: Region" { screenshot = { }; };
+      }
+      // {
+        "Ctrl+Alt+Comma" = titled "Annotate Last Screenshot" {
+          spawn-sh = [ "${scripts}/screenshot-annotate.sh" ];
+        };
+      };
 
   # ── media, volume, brightness ──────────────────────────────────────────
-  mediaBinds = {
-    "XF86AudioRaiseVolume" = titledWith "Volume Up" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+" ];
-    };
-    "XF86AudioLowerVolume" = titledWith "Volume Down" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-" ];
-    };
-    "XF86AudioMute" = titledWith "Mute Audio" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" ];
-    };
-    "XF86AudioMicMute" = titledWith "Mute Microphone" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle" ];
-    };
+  mediaBinds =
+    let
+      wpctl = "${pkgs.wireplumber}/bin/wpctl";
+      playerctl = "${pkgs.playerctl}/bin/playerctl -i kdeconnect";
+    in
+    {
+      "XF86AudioRaiseVolume" = titledWith "Volume Up" { allow-when-locked = true; } {
+        spawn-sh = [ "${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 5%+" ];
+      };
+      "XF86AudioLowerVolume" = titledWith "Volume Down" { allow-when-locked = true; } {
+        spawn-sh = [ "${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 5%-" ];
+      };
+      "XF86AudioMute" = titledWith "Mute Audio" { allow-when-locked = true; } {
+        spawn-sh = [ "${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle" ];
+      };
+      "XF86AudioMicMute" = titledWith "Mute Microphone" { allow-when-locked = true; } {
+        spawn-sh = [ "${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle" ];
+      };
 
-    "XF86AudioPlay" = titledWith "Media: Play/Pause" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.playerctl}/bin/playerctl -i kdeconnect play-pause" ];
-    };
-    "XF86AudioNext" = titledWith "Media: Next" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.playerctl}/bin/playerctl -i kdeconnect next" ];
-    };
-    "XF86AudioPrev" = titledWith "Media: Previous" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.playerctl}/bin/playerctl -i kdeconnect previous" ];
-    };
-    "XF86AudioStop" = titledWith "Media: Stop" { allow-when-locked = true; } {
-      spawn-sh = [ "${pkgs.playerctl}/bin/playerctl -i kdeconnect stop" ];
-    };
+      "XF86AudioPlay" = titledWith "Media: Play/Pause" { allow-when-locked = true; } {
+        spawn-sh = [ "${playerctl} play-pause" ];
+      };
+      "XF86AudioNext" = titledWith "Media: Next" { allow-when-locked = true; } {
+        spawn-sh = [ "${playerctl} next" ];
+      };
+      "Ctrl+XF86AudioPlay" = titledWith "Media: Next" { allow-when-locked = true; } {
+        spawn-sh = [ "${playerctl} next" ];
+      };
+      "XF86AudioPrev" = titledWith "Media: Previous" { allow-when-locked = true; } {
+        spawn-sh = [ "${playerctl} previous" ];
+      };
+      "Shift+XF86AudioPlay" = titledWith "Media: Previous" { allow-when-locked = true; } {
+        spawn-sh = [ "${playerctl} previous" ];
+      };
+      "XF86AudioStop" = titledWith "Media: Stop" { allow-when-locked = true; } {
+        spawn-sh = [ "${playerctl} stop" ];
+      };
 
-    "XF86MonBrightnessUp" = titledWith "Brightness Up" { allow-when-locked = true; } {
-      spawn-sh = [ "${scripts}/brightness.sh increment" ];
+      "XF86MonBrightnessUp" = titledWith "Brightness Up" { allow-when-locked = true; } {
+        spawn-sh = [ "${scripts}/brightness.sh increment" ];
+      };
+      "XF86MonBrightnessDown" = titledWith "Brightness Down" { allow-when-locked = true; } {
+        spawn-sh = [ "${scripts}/brightness.sh decrement" ];
+      };
+      "Shift+XF86AudioRaiseVolume" = titledWith "Brightness Up" { allow-when-locked = true; } {
+        spawn-sh = [ "${scripts}/brightness.sh increment" ];
+      };
+      "Shift+XF86AudioLowerVolume" = titledWith "Brightness Down" { allow-when-locked = true; } {
+        spawn-sh = [ "${scripts}/brightness.sh decrement" ];
+      };
     };
-    "XF86MonBrightnessDown" = titledWith "Brightness Down" { allow-when-locked = true; } {
-      spawn-sh = [ "${scripts}/brightness.sh decrement" ];
-    };
-    "Shift+XF86AudioRaiseVolume" = titledWith "Brightness Up" { allow-when-locked = true; } {
-      spawn-sh = [ "${scripts}/brightness.sh increment" ];
-    };
-    "Shift+XF86AudioLowerVolume" = titledWith "Brightness Down" { allow-when-locked = true; } {
-      spawn-sh = [ "${scripts}/brightness.sh decrement" ];
-    };
-  };
 
   # ── focus ──────────────────────────────────────────────────────────────
   focusBinds = {
@@ -219,7 +240,6 @@ let
     "Mod+Minus" = titled "Column Width -10%" { set-column-width = [ "-10%" ]; };
     "Mod+Shift+Equal" = titled "Window Height +10%" { set-window-height = [ "+10%" ]; };
     "Mod+Shift+Minus" = titled "Window Height -10%" { set-window-height = [ "-10%" ]; };
-    "Mod+Shift+R" = titled "Cycle Window Height Presets" { switch-preset-window-height = { }; };
     "Mod+Ctrl+R" = titled "Reset Window Height" { reset-window-height = { }; };
 
     "Mod+T" = titled "Toggle Tabbed Column" { toggle-column-tabbed-display = { }; };

@@ -9,6 +9,7 @@ inotifywait -m -e create --format "%f" "$WATCH_DIR" | while read -r FILE; do
         ACTION=$(notify-send --wait \
             --action=open="Open file" \
             --action=copy="Copy file" \
+            --icon="folder-download" \
             -a "Taildrop" \
             "Received: $FILE")
         case "$ACTION" in

@@ -5,7 +5,11 @@
     "deviceImageMap": "{\"f2742624e1dd45fc990f89026937b3f8\":\"file:///home/nox/Documents/projects/arete/modules/home/files/dms/op-11.jpg\"}"
   },
   "hiddenBar": {
-    "enabled": true
+    "enabled": false,
+    "collapseDelay": 1,
+    "hideIconPillWhenCollapsed": true,
+    "hideIconPillWhenExpanded": true,
+    "showRegionPreview": false
   },
   "systemMonitorPlus": {
     "enabled": true,
@@ -47,5 +51,10 @@
     "sound": "custom",
     "customSound": "/home/nox/.local/share/assets/timer.wav",
     "volume": 60
+  },
+  "aiUsage": {
+    "enabled": true,
+    "piSessionsDir": "~/.pi/agent/sessions",
+    "openRouterApiKeyFile": "~/.config/sops-nix/secrets/services/dmsOpenRouter"
   }
 }

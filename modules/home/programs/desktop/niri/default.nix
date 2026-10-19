@@ -12,9 +12,6 @@
 
   home.packages = with pkgs; [
     wl-clipboard
-    xwayland-satellite
-    playerctl
-    bibata-cursors
     satty
   ];
 

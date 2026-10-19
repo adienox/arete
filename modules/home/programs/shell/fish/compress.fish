@@ -9,6 +9,7 @@ function compress --description 'Create an archive; the format is chosen from th
         echo
         echo 'Formats: tar tar.gz tgz tar.bz2 tbz2 tar.xz txz tar.zst tar.lz4'
         echo '         zip 7z rar gz bz2 xz zst lz4'
+        echo 'Missing tools are run through comma (`, cmd`) when available.'
         return 0
     end
 
@@ -42,67 +43,51 @@ function compress --description 'Create an archive; the format is chosen from th
         return 1
     end
 
-    # Locate a 7-Zip binary (name varies by distro)
-    set -l sz
+    # Prefer an installed 7-Zip binary; otherwise ask comma for 7zz
+    set -l sz 7zz
     for c in 7zz 7z 7za
-        if type -q $c
+        if command -q $c
             set sz $c
             break
         end
     end
 
+    # Compressor for tar.* and single-file formats. It runs as a separate
+    # pipeline stage (not via tar -I) so comma can supply it if missing.
+    set -l cc
+    switch (string lower -- $out)
+        case '*.tar.gz' '*.tgz' '*.gz'
+            set cc gzip -c
+        case '*.tar.bz2' '*.tbz2' '*.bz2'
+            set cc bzip2 -c
+        case '*.tar.xz' '*.txz' '*.xz'
+            set cc xz -T0 -c
+        case '*.tar.zst' '*.zst'
+            set cc zstd -T0 -q -c
+        case '*.tar.lz4' '*.lz4'
+            set cc lz4 -q -c
+    end
+
     set -l rc 0
     switch (string lower -- $out)
         case '*.tar'
-            tar -cf $out $inputs
-        case '*.tar.gz' '*.tgz'
-            tar -czf $out $inputs
-        case '*.tar.bz2' '*.tbz2'
-            tar -cjf $out $inputs
-        case '*.tar.xz' '*.txz'
-            tar -I 'xz -T0' -cf $out $inputs
-        case '*.tar.zst'
-            tar -I 'zstd -T0' -cf $out $inputs
-        case '*.tar.lz4'
-            tar -I lz4 -cf $out $inputs
+            __archive_run tar -cf $out $inputs
+        case '*.tar.gz' '*.tgz' '*.tar.bz2' '*.tbz2' '*.tar.xz' '*.txz' '*.tar.zst' '*.tar.lz4'
+            __archive_run tar -cf - $inputs | __archive_run $cc >$out
+            set -l ps $pipestatus
+            test $ps[1] -eq 0; and test $ps[2] -eq 0
         case '*.zip'
-            if type -q zip
-                zip -qr $out $inputs
-            else if test -n "$sz"
-                $sz a -tzip $out $inputs >/dev/null
-            else
-                echo "compress: need 'zip' or 7-Zip installed" >&2
-                return 1
-            end
+            __archive_run zip -qr $out $inputs
         case '*.7z'
-            if test -z "$sz"
-                echo "compress: need 7-Zip installed" >&2
-                return 1
-            end
-            $sz a $out $inputs >/dev/null
+            __archive_run $sz a $out $inputs >/dev/null
         case '*.rar'
-            if not type -q rar
-                echo "compress: need 'rar' installed" >&2
-                return 1
-            end
-            rar a -idq $out $inputs
+            __archive_run rar a -idq $out $inputs
         case '*.gz' '*.bz2' '*.xz' '*.zst' '*.lz4'
             if test (count $inputs) -ne 1; or not test -f $inputs[1]
                 echo "compress: this format takes exactly one regular file (use .tar.* for directories)" >&2
                 return 1
             end
-            switch (string lower -- $out)
-                case '*.gz'
-                    gzip -c $inputs[1] >$out
-                case '*.bz2'
-                    bzip2 -c $inputs[1] >$out
-                case '*.xz'
-                    xz -T0 -c $inputs[1] >$out
-                case '*.zst'
-                    zstd -T0 -q -c $inputs[1] >$out
-                case '*.lz4'
-                    lz4 -q -c $inputs[1] >$out
-            end
+            __archive_run $cc $inputs[1] >$out
         case '*'
             echo "compress: unsupported format: $out" >&2
             return 1

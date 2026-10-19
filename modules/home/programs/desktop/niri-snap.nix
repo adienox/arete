@@ -3,12 +3,13 @@
   programs.niri-snap = {
     enable = true;
     settings = {
-      SCREENSHOT_DIR = config.xdg.userDirs.extraConfig.SCREENSHOTS;
-      RECORDING_DIR = config.xdg.userDirs.extraConfig.RECORDINGS;
-      NIRI_SNAP_DELAY = 3;
-      NIRI_SNAP_POINTER = true;
-      NIRI_SNAP_RECORD_FORMAT = "webm";
-      NIRI_SNAP_RATIOS = [
+      screenshot_path = "${config.xdg.userDirs.extraConfig.SCREENSHOTS}/%Y-%m-%d %H-%M-%S.png";
+      recording_path = "${config.xdg.userDirs.extraConfig.RECORDINGS}/%Y-%m-%d %H-%M-%S";
+      controls = false;
+      delay = 3;
+      pointer = true;
+      record_format = "webm";
+      ratios = [
         "16:9"
         "4:3"
         "1:1"

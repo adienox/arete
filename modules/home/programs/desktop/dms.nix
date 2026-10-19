@@ -39,6 +39,7 @@ in
     dms-wallpaper-selector
     dms-toggle-theme
     dms-toggle-inhibit
+    jq
   ];
 
   programs.dank-material-shell = {
@@ -60,6 +61,18 @@ in
       smartTimer.enable = true;
     };
   };
+
+  # DMS sets Freedesktop/GTK `color-scheme` immediately on a theme toggle, but
+  # matugen only rewrites ~/.config/gtk-4.0/dank-colors.css ~1-2s later. Running
+  # GTK4 apps (Nautilus, ...) reload their CSS on the color-scheme change, so
+  # they pick up the *old* colors and never reload when the file is rewritten,
+  # making the theme lag one toggle behind (light in dark mode and vice versa).
+  #
+  # DMS_ENABLE_GTK_REFRESH makes the matugen worker do a color-scheme round-trip
+  # *after* the CSS has been generated, forcing running GTK4 apps to reload with
+  # the new colors. Chromium/Electron can latch the wrong mode with this, so drop
+  # the env var if a browser misbehaves.
+  systemd.user.services.dms.Service.Environment = [ "DMS_ENABLE_GTK_REFRESH=1" ];
 
   home.file = helpers.mkSymlinkedFiles [
     {

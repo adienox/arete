@@ -45,7 +45,6 @@ post_hook = 'bat cache --build'
 [templates.niri-snap]
 input_path = '~/.config/matugen/templates/niri-snap-colors.json'
 output_path = '~/.config/niri-snap/colors.json'
-post_hook = 'qs kill -c niri-snap && qs -c niri-snap -d'
 
 [templates.wl-kbptr]
 input_path = '~/.config/matugen/templates/wl-kbptr'

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  taildropDir = "${config.xdg.userDirs.documents}/Taildrop";
+  taildropDir = config.xdg.userDirs.extraConfig.TAILDROP;
 in
 {
   home.packages = with pkgs; [ inotify-tools ];

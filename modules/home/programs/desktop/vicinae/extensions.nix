@@ -20,7 +20,7 @@ in
     ++ (
       let
         raycastRev = "3c654737b0d566d3103fcdf72221a9f34664bdf2";
-        adienoxRev = "856bd8bcacf0c980feb18f9dd5d74901ffc30a88";
+        adienoxRev = "cbe94d171becd386945c84034caa604451669c06";
 
         mkRayCastExt =
           { name, hash }:
@@ -40,7 +40,7 @@ in
                 owner = "adienox";
                 repo = "vicinae-extensions";
                 rev = adienoxRev;
-                sha256 = "sha256-7Mn+nH5S2WasoYlxSiWkMn/sWcb/KlXKbLjvZnxdRR0=";
+                sha256 = "sha256-hKsAhHQU6e1GdHFwxMzWGSG4GHRQz+A4J/iISImgHL0=";
               }
               + "/${name}";
           };

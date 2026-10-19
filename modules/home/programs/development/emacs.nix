@@ -56,8 +56,6 @@ in
     zip
     poppler-utils
 
-    # LATEX
-    texliveMedium
     vips
 
     nixfmt

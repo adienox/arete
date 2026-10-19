@@ -1,14 +1,38 @@
 #!/usr/bin/env sh
-FRAME_PARAMS='((title . "emacs-main"))'
+# Usage: emacs-frame [TITLE [COMMAND]]
+#   no args        -> frame titled "emacs-main"
+#   TITLE          -> frame with that title
+#   TITLE COMMAND  -> frame with that title, then run COMMAND in it
+#                     (COMMAND is an Emacs command name, or a full
+#                      elisp form if it starts with "(")
 
-if systemctl --user is-active --quiet emacs.service; then
-    emacsclient -c -n -F "$FRAME_PARAMS"
-else
+TITLE="${1:-emacs-main}"
+CMD="$2"
+
+FRAME_PARAMS="((title . \"$TITLE\"))"
+
+# Make sure the daemon is up
+if ! systemctl --user is-active --quiet emacs.service; then
     systemctl --user start emacs.service
-    if emacsclient -c -n -F "$FRAME_PARAMS" --retry 10 --quiet 2>/dev/null; then
-        :
-    else
+fi
+
+# Wait for the server to accept connections (up to ~10s)
+i=0
+until emacsclient -e t >/dev/null 2>&1; do
+    i=$((i + 1))
+    if [ "$i" -ge 50 ]; then
         echo "emacs daemon did not start in time" >&2
         exit 1
     fi
+    sleep 0.2
+done
+
+if [ -n "$CMD" ]; then
+    case "$CMD" in
+        "("*) EXPR="$CMD" ;;
+        *)    EXPR="(call-interactively #'$CMD)" ;;
+    esac
+    emacsclient -c -n -F "$FRAME_PARAMS" -e "$EXPR"
+else
+    emacsclient -c -n -F "$FRAME_PARAMS"
 fi
