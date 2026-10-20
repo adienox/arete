@@ -40,9 +40,9 @@ else
 fi
 
 ACTION="$(notify-send --wait -a Wallpapers -i preferences-desktop-wallpaper \
-  --action=commit="Commit & push" \
-  --action=rename="Rename & push" \
-  --action=task="Add to tasks" \
+  --action=commit="Push" \
+  --action=rename="Rename" \
+  --action=task="Later" \
   "New wallpaper: ${LABEL}" \
   "$(printf '%s\n' "${NEW[@]:0:10}")" 2>/dev/null || true)"
 
