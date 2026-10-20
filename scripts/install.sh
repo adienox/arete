@@ -10,26 +10,10 @@ USER_NAME="${USER_NAME:-nox}"
 FLAKE_REF="${FLAKE_REF:-github:adienox/arete}"
 REPO_URL="https://github.com/adienox/arete"
 
-# disko evaluates the flake before /mnt exists, so a hardware.nix must be
-# present. Fetch a local working copy and stub it if the repo has none; the
-# real one is generated from /mnt below.
-WORK="$(mktemp -d)"
-trap 'rm -rf "$WORK"' EXIT
-echo "==> fetching arete into ${WORK}"
-git clone --depth 1 "${REPO_URL}" "${WORK}"
-
-HW_WORK="${WORK}/hosts/${HOST}/hardware.nix"
-if [ ! -f "${HW_WORK}" ]; then
-  echo "==> no committed hardware.nix for ${HOST}; using a stub for the disko step"
-  mkdir -p "$(dirname "${HW_WORK}")"
-  printf '{ }\n' > "${HW_WORK}"
-  git -C "${WORK}" add "hosts/${HOST}/hardware.nix"
-fi
-
 echo "==> partitioning ${HOST} (destroy,format,mount)"
 sudo nix run github:nix-community/disko/latest -- \
   --mode destroy,format,mount --yes-wipe-all-disks \
-  --flake "${WORK}#${HOST}"
+  --flake "${FLAKE_REF}#${HOST}"
 
 TARGET_ARETE="/mnt/home/${USER_NAME}/Documents/projects/arete"
 echo "==> cloning arete into target (used for install + kept post-boot)"
@@ -39,9 +23,10 @@ sudo git clone --depth 1 "${REPO_URL}" "${TARGET_ARETE}"
 echo "==> checking hardware-configuration.nix for ${HOST}"
 HW_REPO="${TARGET_ARETE}/hosts/${HOST}/hardware.nix"
 if [ ! -f "${HW_REPO}" ]; then
-  echo "    not present, generating"
+  echo "    not present, generating (no fileSystems; disko owns those)"
   sudo mkdir -p "$(dirname "${HW_REPO}")"
-  sudo nixos-generate-config --root /mnt --show-hardware-config | sudo tee "${HW_REPO}" > /dev/null
+  sudo nixos-generate-config --root /mnt --no-filesystems --show-hardware-config \
+    | sudo tee "${HW_REPO}" > /dev/null
   echo "    staging with git so the flake can see it"
   sudo git -C "${TARGET_ARETE}" add "hosts/${HOST}/hardware.nix"
 else
