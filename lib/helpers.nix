@@ -81,11 +81,14 @@ rec {
   # all of the given submodules whenever the group is enabled.
   # Group defaults to true enabling all its modules.
   #
+  # NOTE: kept intentionally but not yet used. Adopting it means giving the
+  # group's submodules a `modules.<name>.enable` option and gating their
+  # config with mkIf. See modules/profiles/ for the current model.
+  #
   # Usage:
   # imports = [
-  #   (mkModuleGroup "shell"   [ "zsh" "starship" "git" ])
-  #   (mkModuleGroup "desktop" [ "hyprland" "waybar" "rofi" ])
-  #   (mkModuleGroup "dev"     [ "emacs" "python-dev" "direnv" ])
+  #   (mkModuleGroup "desktop" [ "niri" "audio" "bluetooth" "fonts" ])
+  #   (mkModuleGroup "dev"     [ "emacs" "direnv" ])
   # ];
   mkModuleGroup = name: modules: {
     options.modules.${name}.enable = lib.mkEnableOption name // {

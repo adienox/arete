@@ -36,7 +36,7 @@
         "file://${userDirs.download}"
         "file://${userDirs.extraConfig.SCREENSHOTS}"
         "file://${userDirs.videos}/Recordings"
-        "sftp://impel/home/nox Impel"
+        "sftp://impel${vars.home} Impel"
         "sftp://hawk/data/data/com.termux/files/home/storage/shared Hawk"
         "sftp://kindle/mnt/us/koreader Kindle"
       ];

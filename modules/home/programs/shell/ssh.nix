@@ -1,4 +1,8 @@
 {
+  vars,
+  ...
+}:
+{
   services.ssh-agent.enable = true;
   programs.ssh = {
     enable = true;
@@ -31,8 +35,8 @@
 
       "services" = {
         HostName = "impel";
-        User = "nox";
-        RemoteCommand = "cd /home/nox/services && fish -l";
+        User = vars.user;
+        RemoteCommand = "cd ${vars.home}/services && fish -l";
         RequestTTY = "yes";
       };
 

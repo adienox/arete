@@ -1,3 +1,6 @@
+# ntfy topic used by _notify. Override with the NTFY_TOPIC env var.
+ntfy_topic := env_var_or_default("NTFY_TOPIC", "anomaly-alerts")
+
 # list all recipes
 _default:
     @just --list
@@ -65,11 +68,11 @@ _notify msg:
     #!/usr/bin/env bash
     notify-send -a "system" -i "system-software-update" "Update complete" "{{ msg }}"
     if tailscale status >/dev/null 2>&1; then
-        curl -s -o /dev/null \
-          -H "Title: Update complete" \
-          -H "Priority: low" \
-          -d "{{ msg }}" \
-          https://ntfy.chipmunk-teeth.ts.net/anomaly-alerts
+        ntfy publish \
+            --title="Update complete" \
+            --priority=low \
+            {{ ntfy_topic }} \
+            "{{ msg }}"
     fi
 
 # nh clean

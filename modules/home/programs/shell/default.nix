@@ -8,6 +8,7 @@
     ./bat.nix
     ./lsd.nix
     ./fish
+    ./nushell
     ./btop.nix
     ./ssh.nix
     ./tealdeer.nix
@@ -43,5 +44,6 @@
     jq = "${pkgs.gojq}/bin/gojq";
 
     man = "${pkgs.bat-extras.batman}/bin/batman";
+    speedtest = "${pkgs.speedtest-cli}/bin/speedtest-cli";
   };
 }

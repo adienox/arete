@@ -1,6 +1,6 @@
-{ hostname, ... }: {
+{ hostname, vars, ... }: {
   sops = {
-    age.sshKeyPaths = [ "/home/nox/.ssh/id_ed25519" ];
+    age.sshKeyPaths = [ "${vars.home}/.ssh/id_ed25519" ];
     defaultSopsFile = ../secrets/secrets.sops.yaml;
     secrets = {
       "ids/email" = { };

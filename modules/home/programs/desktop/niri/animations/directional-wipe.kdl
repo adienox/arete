@@ -45,4 +45,9 @@ animations {
             }
         "
     }
+
+    // Snappier programmatic window moves (e.g. the PiP snap).
+    window-movement {
+        spring damping-ratio=1.0 stiffness=2000 epsilon=0.0001
+    }
 }

@@ -1,0 +1,9 @@
+{
+  "defaultModel": "deepseek/deepseek-v4.1-flash",
+  "defaultProvider": "openrouter",
+  "lastChangelogVersion": "1.1.0",
+  "packages": [
+    "npm:pi-ask-user",
+    "npm:pi-notify"
+  ]
+}

@@ -1,15 +1,23 @@
 [
   {
     window-rule._children = [
-      { match._props.title = "^Picture-in-Picture$"; }
+      {
+        match._props = {
+          app-id = "^(firefox|librewolf|zen|chromium|google-chrome)";
+          title = "^Picture[- ]in[- ][Pp]icture$";
+        };
+      }
 
       {
         default-column-width.fixed = 650;
         default-window-height.fixed = 365;
         open-floating = true;
         open-focused = false;
+        # Browsers also send an XDG activation request when popping the PiP
+        # out, which focuses it regardless of open-focused. Ignore that too.
+        on-xdg-activate = "ignore";
         default-floating-position._props = {
-          relative-to = "bottom-right";
+          relative-to = "top-right";
           x = 5;
           y = 5;
         };

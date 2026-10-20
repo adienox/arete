@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# @vicinae.schemaVersion 1
+# @vicinae.title Headphones Ambient
+# @vicinae.mode compact
+# @vicinae.icon 🎧
+# @vicinae.argument1 {"type": "text", "placeholder": "level (1-20) or off"}
+
+set -euo pipefail
+
+level="$1"
+
+
+if [[ "$level" == "off" ]]; then
+    exec sonyctl anc on
+else
+    exec sonyctl ambient "$level"
+fi

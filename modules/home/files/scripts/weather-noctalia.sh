@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WEATHER_JSON="/home/nox/.local/cache/noctalia/location.json"
+WEATHER_JSON="$HOME/.local/cache/noctalia/location.json"
 
 read TEMP WINDSPEED CODE < <(gojq -r '[
   .weather.current_weather.temperature,

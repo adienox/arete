@@ -1,8 +1,16 @@
+# Desktop/GUI cluster. Imported by modules/profiles/desktop.nix.
 {
   imports = [
     ./niri.nix
     ./polkit.nix
     ./dms-greeter.nix
+    ./fonts.nix
+    ./audio.nix
+    ./audio-devices.nix
+    ./bluetooth.nix
+    ./monitor.nix
+    ./xremap.nix
+    ./power.nix
   ];
 
   programs.dconf.enable = true;

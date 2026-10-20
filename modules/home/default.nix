@@ -23,7 +23,6 @@ in
     ffmpegthumbnailer
     mediainfo
     imagemagick
-    ntfy
 
     #freecad-wayland
     trash-cli
@@ -80,6 +79,8 @@ in
 
   home = {
     enableNixpkgsReleaseCheck = false;
-    stateVersion = "26.11";
+    stateVersion = vars.stateVersion;
   };
+
+  programs.man.generateCaches = false;
 }

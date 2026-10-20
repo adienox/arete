@@ -1,6 +1,5 @@
 {
   nixpkgs,
-  home-manager,
   inputs,
   pkgs,
 }:
@@ -8,7 +7,6 @@
   mkHost = import ./mk-host.nix {
     inherit
       nixpkgs
-      home-manager
       inputs
       ;
   };

@@ -1,7 +1,71 @@
 {
   config,
+  lib,
+  hostname,
   ...
 }:
+let
+  mkDhi = extra: {
+    output = {
+      _args = [ "PNP(DHI) DHI-LM27-E331 0x00000001" ];
+      scale = 1;
+      transform = "normal";
+      mode = "2560x1440@144.002000";
+      variable-refresh-rate._props = {
+        on-demand = false;
+      };
+    }
+    // extra;
+  };
+
+  outputsByHost = {
+    axiom = [
+      {
+        output = {
+          _args = [ "eDP-1" ];
+          scale = 1;
+          transform = "normal";
+          focus-at-startup = { };
+        };
+      }
+      (mkDhi { })
+    ];
+
+    anomaly = [
+      (mkDhi {
+        focus-at-startup = { };
+        position._props = {
+          x = 1920;
+          y = 0;
+        };
+      })
+      {
+        output = {
+          _args = [ "eDP-1" ];
+          scale = 1;
+          transform = "normal";
+          position._props = {
+            x = 0;
+            y = 0;
+          };
+          mode = "1920x1080@120.030000";
+        };
+      }
+      {
+        output = {
+          _args = [ "eDP-2" ];
+          scale = 1;
+          transform = "normal";
+          position._props = {
+            x = 0;
+            y = 0;
+          };
+          mode = "1920x1080@120.030000";
+        };
+      }
+    ];
+  };
+in
 {
   wayland.windowManager.niri.settings = {
     screenshot-path = "${config.xdg.userDirs.pictures}/Screenshots/%Y-%m-%d %H-%M-%S.png";
@@ -15,8 +79,10 @@
     debug = {
       emulate-zero-presentation-time = { };
       honor-xdg-activation-with-invalid-serial = { };
-      render-drm-device = "/dev/dri/nvidia-dgpu";
       wait-for-frame-completion-before-queueing = { };
+    }
+    // lib.optionalAttrs (hostname == "anomaly") {
+      render-drm-device = "/dev/dri/nvidia-dgpu";
     };
 
     blur = {
@@ -95,82 +161,34 @@
 
     hotkey-overlay.skip-at-startup = { };
 
-    _children = [
-      {
-        output = {
-          _args = [ "PNP(DHI) DHI-LM27-E331 0x00000001" ];
-          scale = 1;
-          focus-at-startup = { };
-          transform = "normal";
-
-          position._props = {
-            x = 1920;
-            y = 0;
+    _children =
+      (outputsByHost.${hostname} or [ ])
+      ++ [
+        {
+          workspace = {
+            _args = [ "web" ];
+            open-on-output = "HDMI-A-1";
           };
+        }
 
-          mode = "2560x1440@144.002000";
-
-          variable-refresh-rate._props = {
-            on-demand = false;
+        {
+          workspace = {
+            _args = [ "editor" ];
+            open-on-output = "HDMI-A-1";
           };
-        };
-      }
+        }
 
-      {
-        output = {
-          _args = [ "eDP-1" ];
-          scale = 1;
-          transform = "normal";
-
-          position._props = {
-            x = 0;
-            y = 0;
+        {
+          workspace = {
+            _args = [ "media" ];
+            _children = [
+              { open-on-output = "eDP-1"; }
+              { open-on-output = "eDP-2"; }
+            ];
           };
-
-          mode = "1920x1080@120.030000";
-        };
-      }
-
-      {
-        output = {
-          _args = [ "eDP-2" ];
-          scale = 1;
-          transform = "normal";
-
-          position._props = {
-            x = 0;
-            y = 0;
-          };
-
-          mode = "1920x1080@120.030000";
-        };
-      }
-
-      {
-        workspace = {
-          _args = [ "web" ];
-          open-on-output = "HDMI-A-1";
-        };
-      }
-
-      {
-        workspace = {
-          _args = [ "editor" ];
-          open-on-output = "HDMI-A-1";
-        };
-      }
-
-      {
-        workspace = {
-          _args = [ "media" ];
-          _children = [
-            { open-on-output = "eDP-1"; }
-            { open-on-output = "eDP-2"; }
-          ];
-        };
-      }
-    ]
-    ++ (import ./rules.nix)
-    ++ (import ./includes.nix { inherit config; });
+        }
+      ]
+      ++ (import ./rules.nix)
+      ++ (import ./includes.nix { inherit config; });
   };
 }

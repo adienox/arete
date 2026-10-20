@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# @vicinae.schemaVersion 1
+# @vicinae.title Start Timer
+# @vicinae.mode silent
+# @vicinae.icon ⏳
+# @vicinae.argument1 {"type": "text", "placeholder": "name with Duration (e.g. 5m, 30s, 1h)"}
+
+set -euo pipefail
+
+duration="$1"
+
+exec dms ipc call smartTimer start "$duration"

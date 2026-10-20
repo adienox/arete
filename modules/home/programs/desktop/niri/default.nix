@@ -8,6 +8,7 @@
     ./screenshot-url-tag.nix
     ./binds.nix
     ./settings.nix
+    ./pip-stack.nix
   ];
 
   home.packages = with pkgs; [

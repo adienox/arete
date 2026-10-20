@@ -81,18 +81,13 @@
   };
 
   outputs =
-    {
-      nixpkgs,
-      home-manager,
-      ...
-    }@inputs:
+    { nixpkgs, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       lib = import ./lib {
         inherit
           nixpkgs
-          home-manager
           inputs
           pkgs
           ;
@@ -122,13 +117,19 @@
           ];
         };
       };
-      nixosConfigurations = {
-        anomaly = lib.mkHost {
-          hostname = "anomaly";
-        };
-        axiom = lib.mkHost {
-          hostname = "axiom";
-        };
-      };
+      # Hosts are auto-discovered from hosts/<name>/. Role and opt-in
+      # profiles come from hosts/<name>/meta.nix.
+      nixosConfigurations = nixpkgs.lib.mapAttrs (
+        hostname: _:
+        let
+          metaPath = ./hosts/${hostname}/meta.nix;
+          meta = if builtins.pathExists metaPath then import metaPath else { };
+        in
+        lib.mkHost {
+          inherit hostname;
+          role = meta.role or "workstation";
+          profiles = meta.profiles or [ ];
+        }
+      ) (nixpkgs.lib.filterAttrs (_: type: type == "directory") (builtins.readDir ./hosts));
     };
 }

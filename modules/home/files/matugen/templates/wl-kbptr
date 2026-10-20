@@ -1,0 +1,76 @@
+## General configuration ##
+[general]
+home_row_keys=
+modes=floating,click
+cancellation_status_code=0
+
+
+## Configuration for tile mode ##
+[mode_tile]
+label_color={{colors.on_surface.default.hex}}ff
+label_select_color={{colors.on_primary.default.hex}}ff
+
+unselectable_bg_color={{colors.surface_container_low.default.hex}}99
+selectable_bg_color={{colors.primary.default.hex}}22
+selectable_border_color={{colors.primary.default.hex}}66
+
+label_font_family=sans-serif
+label_font_size=8 50% 100
+label_symbols=abcdefghijklmnopqrstuvwxyz
+
+
+## Configuration for floating mode ##
+[mode_floating]
+source=detect
+
+label_color={{colors.on_surface.default.hex}}ff
+label_select_color={{colors.on_primary.default.hex}}ff
+
+unselectable_bg_color={{colors.surface_container_low.default.hex}}99
+selectable_bg_color={{colors.surface_container.default.hex}}
+selectable_border_color={{colors.primary.default.hex}}66
+
+label_font_family=sans-serif
+label_font_size=16 50% 100
+label_symbols=asdfghjkl;ty
+
+
+## Configuration for bisect mode ##
+[mode_bisect]
+label_color={{colors.on_surface.default.hex}}ff
+
+label_font_size=20
+label_font_family=sans-serif
+label_padding=12
+
+pointer_size=20
+pointer_color={{colors.primary.default.hex}}ff
+
+unselectable_bg_color={{colors.surface_container_low.default.hex}}99
+
+even_area_bg_color={{colors.primary.default.hex}}22
+even_area_border_color={{colors.primary.default.hex}}66
+
+odd_area_bg_color={{colors.secondary.default.hex}}22
+odd_area_border_color={{colors.secondary.default.hex}}66
+
+history_border_color={{colors.outline.default.hex}}99
+
+
+## Configuration for split mode ##
+[mode_split]
+pointer_size=20
+pointer_color={{colors.primary.default.hex}}ff
+
+bg_color={{colors.surface_container_low.default.hex}}99
+area_bg_color={{colors.surface_container.default.hex}}88
+
+vertical_color={{colors.primary.default.hex}}cc
+horizontal_color={{colors.secondary.default.hex}}cc
+
+history_border_color={{colors.outline.default.hex}}99
+
+
+## Configuration for click mode ##
+[mode_click]
+button=left

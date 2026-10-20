@@ -3,7 +3,7 @@
     disk = {
       main = {
         type = "disk";
-        device = "/dev/vdb";
+        device = "/dev/nvme0n1";
         content = {
           type = "gpt";
           partitions = {
@@ -22,13 +22,13 @@
               content = {
                 type = "luks";
                 name = "crypted";
-                # disable settings.keyFile if you want to use interactive password entry
-                #passwordFile = "/tmp/secret.key"; # Interactive
+                # Interactive LUKS password by default. To use key files instead,
+                # create them before running the installer and set:
+                #   settings.keyFile = "/tmp/secret.key";
+                #   additionalKeyFiles = [ "/tmp/additionalSecret.key" ];
                 settings = {
                   allowDiscards = true;
-                  keyFile = "/tmp/secret.key";
                 };
-                additionalKeyFiles = [ "/tmp/additionalSecret.key" ];
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
