@@ -12,6 +12,7 @@ rec {
     homeFiles = "${paths.dotFiles}/modules/home/files";
     scripts = "${paths.homeFiles}/scripts";
     notes = "${home}/Documents/notes";
+    wallpapers = "${home}/Pictures/wallpapers";
   };
 
   fonts = {

@@ -7,6 +7,7 @@
     ./nh.nix
     ./commands-api.nix
     ./syncthing.nix
+    ./wallpaper-git.nix
   ];
 
   home.packages = with pkgs; [
