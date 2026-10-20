@@ -10,27 +10,42 @@ USER_NAME="${USER_NAME:-nox}"
 FLAKE_REF="${FLAKE_REF:-github:adienox/arete}"
 REPO_URL="https://github.com/adienox/arete"
 
+# disko evaluates the flake, which requires a hardware.nix. If the repo has
+# none yet, generate one here from the live machine (we are running on the
+# target), omitting fileSystems/swap because disko owns those.
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
+echo "==> fetching arete into ${WORK}"
+git clone --depth 1 "${REPO_URL}" "${WORK}"
+
+HW_WORK="${WORK}/hosts/${HOST}/hardware.nix"
+if [ ! -f "${HW_WORK}" ]; then
+  echo "==> no hardware.nix for ${HOST}; generating from this machine"
+  mkdir -p "$(dirname "${HW_WORK}")"
+  nixos-generate-config --no-filesystems --show-hardware-config > "${HW_WORK}"
+  git -C "${WORK}" add "hosts/${HOST}/hardware.nix"
+else
+  echo "==> using committed hardware.nix for ${HOST}"
+fi
+
 echo "==> partitioning ${HOST} (destroy,format,mount)"
 sudo nix run github:nix-community/disko/latest -- \
   --mode destroy,format,mount --yes-wipe-all-disks \
-  --flake "${FLAKE_REF}#${HOST}"
+  --flake "${WORK}#${HOST}"
 
 TARGET_ARETE="/mnt/home/${USER_NAME}/Documents/projects/arete"
 echo "==> cloning arete into target (used for install + kept post-boot)"
 sudo mkdir -p "/mnt/home/${USER_NAME}/Documents/projects"
 sudo git clone --depth 1 "${REPO_URL}" "${TARGET_ARETE}"
 
-echo "==> checking hardware-configuration.nix for ${HOST}"
 HW_REPO="${TARGET_ARETE}/hosts/${HOST}/hardware.nix"
 if [ ! -f "${HW_REPO}" ]; then
-  echo "    not present, generating (no fileSystems; disko owns those)"
+  echo "==> copying generated hardware.nix into the target repo"
   sudo mkdir -p "$(dirname "${HW_REPO}")"
-  sudo nixos-generate-config --root /mnt --no-filesystems --show-hardware-config \
-    | sudo tee "${HW_REPO}" > /dev/null
-  echo "    staging with git so the flake can see it"
+  sudo cp "${HW_WORK}" "${HW_REPO}"
   sudo git -C "${TARGET_ARETE}" add "hosts/${HOST}/hardware.nix"
 else
-  echo "    already present in repo, skipping generation"
+  echo "==> target repo already has hardware.nix"
 fi
 
 echo "==> detecting role for ${HOST}"
@@ -73,5 +88,7 @@ TARGET_GID="$(sudo grep "^${USER_NAME}:" /mnt/etc/passwd | cut -d: -f4)"
 sudo chown -R "${TARGET_UID}:${TARGET_GID}" "/mnt/home/${USER_NAME}"
 
 echo "✓ done — reboot into ${HOST}"
-echo "  (hardware-configuration.nix for ${HOST} is staged but not committed —"
-echo "   run 'git commit' in ~/Documents/projects/arete after first boot)"
+echo
+echo "  NOTE: hosts/${HOST}/hardware.nix is staged in the target repo but not"
+echo "  committed. After first boot, commit it:"
+echo "      cd ~/Documents/projects/arete && git add hosts/${HOST}/hardware.nix && git commit"
