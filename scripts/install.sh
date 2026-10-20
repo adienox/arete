@@ -22,7 +22,7 @@ HW_WORK="${WORK}/hosts/${HOST}/hardware.nix"
 if [ ! -f "${HW_WORK}" ]; then
   echo "==> no hardware.nix for ${HOST}; generating from this machine"
   mkdir -p "$(dirname "${HW_WORK}")"
-  nixos-generate-config --no-filesystems --show-hardware-config > "${HW_WORK}"
+  sudo nixos-generate-config --no-filesystems --show-hardware-config | tee "${HW_WORK}" > /dev/null
   git -C "${WORK}" add "hosts/${HOST}/hardware.nix"
 else
   echo "==> using committed hardware.nix for ${HOST}"
