@@ -10,10 +10,6 @@ USER_NAME="${USER_NAME:-nox}"
 FLAKE_REF="${FLAKE_REF:-github:adienox/arete}"
 REPO_URL="https://github.com/adienox/arete"
 
-# One clone, used for both disko and the installed system. disko evaluates the
-# flake, which requires a hardware.nix; if the repo has none yet, generate one
-# here from the live machine (we are running on the target) with
-# --no-filesystems, because disko owns fileSystems/swapDevices.
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 echo "==> fetching arete into ${WORK}"
@@ -86,5 +82,4 @@ if [ "${GENERATED_HW}" = "1" ]; then
   echo
   echo "  NOTE: hosts/${HOST}/hardware.nix was generated and is staged but not"
   echo "  committed. After first boot, commit it:"
-  echo "      cd ~/Documents/projects/arete && git add hosts/${HOST}/hardware.nix && git commit"
 fi
