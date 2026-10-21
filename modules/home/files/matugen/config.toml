@@ -53,3 +53,8 @@ output_path = '~/.config/wl-kbptr/config'
 [templates.pinax]
 input_path  = '~/.config/matugen/templates/pinax-colors.json'
 output_path = '~/.local/state/pinax/colors.json'
+
+[templates.fish]
+input_path = "~/.config/matugen/templates/fish.theme"
+output_path = "~/.config/fish/themes/matugen.theme"
+post_hook = "fish -c 'fish_config theme choose matugen'"

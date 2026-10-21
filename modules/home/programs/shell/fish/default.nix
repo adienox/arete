@@ -2,6 +2,7 @@
   pkgs,
   config,
   helpers,
+  lib,
   ...
 }:
 {
@@ -9,6 +10,7 @@
     enable = true;
     interactiveShellInit = ''
       not set -q INSIDE_EMACS; and ${pkgs.fastfetch}/bin/fastfetch
+      set -gx LS_COLORS (${lib.getExe pkgs.vivid} generate ansi)
     '';
     shellInit = ''
       set -g fish_greeting
