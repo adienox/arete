@@ -49,3 +49,7 @@ output_path = '~/.config/niri-snap/colors.json'
 [templates.wl-kbptr]
 input_path = '~/.config/matugen/templates/wl-kbptr'
 output_path = '~/.config/wl-kbptr/config'
+
+[templates.pinax]
+input_path  = '~/.config/matugen/templates/pinax-colors.json'
+output_path = '~/.local/state/pinax/colors.json'
