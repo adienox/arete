@@ -88,7 +88,7 @@ let
 
   # ── screenshots ────────────────────────────────────────────────────────
   screenshotBinds =
-    if config.programs.niri-snap.enable then
+    if true then
       {
         "Print" = titled "Screenshot: region" {
           spawn = [
