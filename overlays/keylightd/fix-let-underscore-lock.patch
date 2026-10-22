@@ -1,0 +1,22 @@
+From b7b17e3ac9402cbaac9ca9192c33755f6e8394a6 Mon Sep 17 00:00:00 2001
+From: piotr-yuxuan <piotr-yuxuan@users.noreply.github.com>
+Date: Tue, 6 Aug 2024 23:06:00 +0200
+Subject: [PATCH] Fix non-binding let breaking build
+
+---
+ src/main.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main.rs b/src/main.rs
+index 77e5813..3a558ec 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -131,7 +131,7 @@ fn main() -> anyhow::Result<()> {
+     loop {
+         let guard = act.last_activity.lock().unwrap();
+         let last = *guard;
+-        let (_, result) = act
++        let (_unused, result) = act
+             .condvar
+             .wait_timeout_while(guard, Duration::from_secs(args.timeout.into()), |instant| {
+                 *instant == last
