@@ -28,7 +28,7 @@ else
 fi
 
 echo "==> partitioning ${HOST} (destroy,format,mount)"
-sudo nix run --experimental-features "nix-command flakes" github:nix-community/disko/latest -- \
+sudo nix run --extra-experimental-features "nix-command flakes" github:nix-community/disko/latest -- \
   --mode destroy,format,mount --yes-wipe-all-disks \
   --flake "${WORK}#${HOST}"
 
