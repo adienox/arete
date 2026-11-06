@@ -1,0 +1,1118 @@
+#!/usr/bin/env python3
+"""Control a Sony headset's ambient sound / noise cancelling and
+Speak-to-Chat (conversation awareness) over Bluetooth RFCOMM. One file, Python
+standard library only, Linux + BlueZ.
+
+Condensed from lung595/orbitBluetooth (MIT, (c) 2026 lung595), whose protocol
+code was itself written from the public notes of Gadgetbridge and
+mos9527/SonyHeadphonesClient. The headset must already be paired and
+connected. Tested upstream on a WH-1000XM6; the ambient/NC path is the part the
+upstream author verified on hardware, chat-ends is unconfirmed there.
+
+Examples
+@EXAMPLES@
+
+Session mode (for Emacs/QML/etc.): stdin lines "get", "set mode nc",
+"set ambient 12", "set voice on", "set chat off", "set chatEnds 1",
+"set listening cinema", "set room cafe", "set eq heavy", "set eqBands
+-2,0,1,1,0,0,0,1,2,2", "set pauseWhenTakenOff on", "set autoPowerOff never",
+"set chatSensitivity high", "set source here", "quit"; stdout gets one JSON
+object per change.
+
+Notes
+  * The headset accepts ONE control connection at a time: close the Sony phone
+    app's connection first or this fails with "connection refused/busy".
+  * XM6 quirk: a query cannot tell "noise cancelling" from "off", so `mode`
+    may read as unknown until the headset sends a change notification.
+  * Listening mode (standard / background / cinema, plus the background-music
+    room: my-room / living-room / cafe) is WH-1000XM6 only. "--listening cafe"
+    is shorthand for background music in the cafe room. "--room X" switches to
+    background music, like "--ambient" switches to ambient mode.
+  * Also WH-1000XM6 (protocol as verified by yelloduxx/xm6-control): equalizer
+    presets and a 10-band custom curve (-6..+6 per band, lowest frequency
+    first; write it as --eq-bands=-2,0,... with the "="), pause when taken
+    off, automatic power off, Speak-to-Chat sensitivity, and the multipoint
+    device list with playback switching (--source here / MAC / name).
+"""
+
+import argparse
+import json
+import os
+import re
+import selectors
+import socket
+import struct
+import subprocess
+import sys
+import time
+import uuid as uuidlib
+
+# The tool works under any filename: use whatever it was invoked as for help,
+# examples and diagnostics instead of a hard-coded name.
+PROG = os.path.basename(sys.argv[0]) or "sony_anc.py"
+
+
+def _examples(prog):
+    """Usage examples with the program's own name, comments aligned."""
+    rows = [(prog, "# show help (no arguments)"),
+            (prog + " --status", "# auto-find a connected Sony, show full status"),
+            (prog + " AA:BB:CC:DD:EE:FF --mode ambient --ambient 15 --voice on", ""),
+            (prog + " --mode nc", ""),
+            (prog + " --chat off --chat-ends standard", ""),
+            (prog + " --listening cinema", "# XM6: standard / background / cinema / cafe"),
+            (prog + " --listening background --room living-room", ""),
+            (prog + " --eq clear", "# off / heavy / clear / hard / soft / custom"),
+            (prog + " --eq-bands=-2,0,1,1,0,0,0,1,2,2", "# custom 10-band curve"),
+            (prog + " --pause-when-taken-off on --auto-power-off never", ""),
+            (prog + " --source here", "# multipoint: play from this computer"),
+            (prog + " --status --json", ""),
+            (prog + " --session", "# JSON lines in/out, stays connected")]
+    def fmt(cmd, note):
+        line = "  " + cmd
+        if note:
+            line = line.ljust(48) + note
+        return line.rstrip()
+
+    return "\n".join(fmt(cmd, note) for cmd, note in rows)
+
+
+DOC = __doc__.replace("@EXAMPLES@", _examples(PROG))
+
+# --------------------------------------------------------------------------
+# Framing:  3E | escaped(type, seq, len u32 BE, payload, checksum) | 3C
+# checksum = sum of unescaped bytes (type..payload) mod 256
+# 3C/3D/3E inside a frame are sent as 3D followed by (byte & EF)
+# --------------------------------------------------------------------------
+
+START, END, ESCAPE = 0x3E, 0x3C, 0x3D
+T_ACK, T_DATA, T_DATA2 = 0x01, 0x0C, 0x0E
+
+
+def encode(dtype, seq, payload):
+    body = bytes([dtype, seq]) + len(payload).to_bytes(4, "big") + bytes(payload)
+    raw = body + bytes([sum(body) & 0xFF])
+    out = bytearray([START])
+    for b in raw:
+        out += bytes([ESCAPE, b & 0xEF]) if b in (START, END, ESCAPE) else bytes([b])
+    out.append(END)
+    return bytes(out)
+
+
+def decode(escaped):
+    """(type, seq, payload) from the bytes between 3E and 3C, or None."""
+    raw, i = bytearray(), 0
+    while i < len(escaped):
+        if escaped[i] == ESCAPE and i + 1 < len(escaped):
+            raw.append(escaped[i + 1] | 0x10)
+            i += 2
+        else:
+            raw.append(escaped[i])
+            i += 1
+    if len(raw) < 7:
+        return None
+    length = int.from_bytes(raw[2:6], "big")
+    if len(raw) != 7 + length or sum(raw[:-1]) & 0xFF != raw[-1]:
+        return None
+    return raw[0], raw[1], bytes(raw[6:6 + length])
+
+
+# --------------------------------------------------------------------------
+# Minimal SDP client: which RFCOMM channel serves a vendor service UUID?
+# (one ServiceSearchAttributeRequest over L2CAP PSM 1; Core spec Vol 3 Part B)
+# --------------------------------------------------------------------------
+
+SDP_PSM = 1
+ATTR_PROTOCOL_DESCRIPTOR_LIST = 0x0004
+UUID_RFCOMM = 0x0003
+T_NIL, T_UINT, T_INT, T_UUID, T_TEXT, T_BOOL, T_SEQ, T_ALT, T_URL = range(9)
+
+
+def _element(buf, pos=0):
+    head = buf[pos]
+    kind, size_index = head >> 3, head & 7
+    pos += 1
+    if kind == T_NIL:
+        return None, pos
+    if size_index < 5:
+        size = (1, 2, 4, 8, 16)[size_index]
+    else:
+        width = (1, 2, 4)[size_index - 5]
+        size = int.from_bytes(buf[pos:pos + width], "big")
+        pos += width
+    data = buf[pos:pos + size]
+    end = pos + size
+    if kind in (T_SEQ, T_ALT):
+        items, inner = [], 0
+        while inner < len(data):
+            value, inner = _element(data, inner)
+            items.append(value)
+        return items, end
+    if kind == T_UUID:
+        return (uuidlib.UUID(bytes=bytes(data)) if size == 16 else int.from_bytes(data, "big")), end
+    if kind == T_UINT:
+        return int.from_bytes(data, "big"), end
+    if kind == T_INT:
+        return int.from_bytes(data, "big", signed=True), end
+    if kind == T_BOOL:
+        return bool(data[0]), end
+    return bytes(data), end
+
+
+def _sdp_request(service_uuid, transaction, continuation):
+    pattern = b"\x35\x11\x1c" + uuidlib.UUID(service_uuid).bytes
+    attrs = b"\x35\x03\x09" + struct.pack(">H", ATTR_PROTOCOL_DESCRIPTOR_LIST)
+    params = pattern + struct.pack(">H", 0xFFFF) + attrs + bytes([len(continuation)]) + continuation
+    return struct.pack(">BHH", 0x06, transaction, len(params)) + params
+
+
+def find_rfcomm_channel(address, service_uuid, timeout=5.0):
+    sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_SEQPACKET, socket.BTPROTO_L2CAP)
+    sock.settimeout(timeout)
+    try:
+        sock.connect((address, SDP_PSM))
+        collected, continuation, transaction = b"", b"", 1
+        while True:
+            sock.send(_sdp_request(service_uuid, transaction, continuation))
+            pdu = sock.recv(4096)
+            pdu_id, _t, _l = struct.unpack(">BHH", pdu[:5])
+            if pdu_id != 0x07:
+                raise OSError("SDP error response")
+            count = struct.unpack(">H", pdu[5:7])[0]
+            collected += pdu[7:7 + count]
+            cont_len = pdu[7 + count]
+            continuation = pdu[8 + count:8 + count + cont_len]
+            if not continuation:
+                break
+            transaction += 1
+        if not collected:
+            return None
+        records, _ = _element(collected)
+        for record in records or []:
+            for i in range(0, len(record) - 1, 2):
+                if record[i] != ATTR_PROTOCOL_DESCRIPTOR_LIST:
+                    continue
+                for layer in record[i + 1]:
+                    if isinstance(layer, list) and len(layer) >= 2 and layer[0] == UUID_RFCOMM:
+                        return layer[1]
+        return None
+    finally:
+        sock.close()
+
+
+# --------------------------------------------------------------------------
+# Sony "MDR" protocol, v1 (WH-1000XM3/XM4, WF-1000XM3...) and
+# v2 (WH-1000XM5/XM6, WF-1000XM4/XM5, LinkBuds, ULT...)
+# --------------------------------------------------------------------------
+
+UUID_V2 = "956c7b26-d49a-4ba8-b03f-b17d393cb6e2"
+UUID_V1 = "96cc203e-5068-46ad-b32d-e316f5e069ba"
+
+RETRY_SECONDS = 1.25
+MAX_TRIES = 3
+AMBIENT_MAX = 20
+
+# v2 support-function codes -> noise-control layout byte / battery kind
+FN_NC_TYPE = {0x6D: 0x19, 0x6B: 0x17, 0x68: 0x15, 0x67: 0x22}
+FN_BATTERY = {0x20: 0x00, 0x28: 0x08}
+FN_BATTERY_DUAL = {0x21: 0x01, 0x29: 0x09}
+FN_BATTERY_CASE = {0x22: 0x02, 0x2A: 0x0A}
+FN_SPEAK_TO_CHAT = 0xFC
+
+CHAT_SENSITIVITY_MAX = 0x02
+CHAT_ENDS_NAMES = {"short": 0, "standard": 1, "long": 2, "never": 3}
+LATE_FEATURES = ("chat", "chatEnds", "chatSensitivity", "listening", "room", "eq", "eqBands",
+                 "pauseWhenTakenOff", "autoPowerOff", "source")  # announced after "ready"
+
+# What `probe` groups exist and which setting needs which. Probing a group
+# sends its queries; models that do not have the feature just do not answer.
+ALL_PROBES = ("listening", "eq", "wear", "power", "devices")
+ACTION_PROBES = {"listening": "listening", "room": "listening", "eq": "eq", "eqBands": "eq",
+                 "pauseWhenTakenOff": "wear", "autoPowerOff": "power", "source": "devices"}
+
+CHAT_SENSITIVITY = {"auto": 0, "high": 1, "low": 2}
+CHAT_SENSITIVITY_NAMES = {v: k for k, v in CHAT_SENSITIVITY.items()}
+
+# Equalizer (EQEBB family 56/57/58/59). The XM6 dropped the classic preset
+# table: only these codes are accepted. Layout [op, type, preset, bands, ...];
+# type 04 on the XM6 (00 on older models), echoed back on writes.
+EQ_PRESETS = {"off": 0x00, "heavy": 0x30, "clear": 0x31, "hard": 0x32, "soft": 0x33, "custom": 0xA0}
+EQ_NAMES = {v: k for k, v in EQ_PRESETS.items()}
+EQ_BANDS = 10
+EQ_GAIN = (-6, 6)       # the byte stores gain + 6 (10-band layout)
+
+# Automatic power off (POWER family 26/27/28/29, type 05): two values on the XM6
+POWER_MODES = {"when-taken-off": 0x10, "never": 0x11}
+POWER_NAMES = {v: k for k, v in POWER_MODES.items()}
+
+# Listening mode (WH-1000XM6): two independent AUDIO-family on/off parameters,
+# opcodes E6 get / E7 reply / E8 set / E9 notify. On the wire 00 = enabled and
+# 01 = disabled. "standard" = both off. Protocol as verified on a live XM6 by
+# yelloduxx/xm6-control.
+AUDIO_BGM, AUDIO_CINEMA = 0x09, 0x04
+BGM_ROOMS = {"my-room": 0, "living-room": 1, "cafe": 2}
+ROOM_NAMES = {v: k for k, v in BGM_ROOMS.items()}
+LISTEN_MODES = ["standard", "background", "cinema"]
+
+
+class Sony:
+    def __init__(self, send):
+        self._send = send
+        self.buffer = bytearray()
+        self.ready = False
+        self.pending = []        # (key, value) asked before the handshake ended
+        self.deferred = {}       # late features asked before they were announced
+        self.awaiting = 0        # our writes not acknowledged yet
+        self.version = 0         # 1 or 2 once the headset answered
+        self.seq = 0
+        self.queue = []
+        self.inflight = None     # (payload, sent_at, tries)
+        self.nc_type = None      # v2 layout byte; 0x02 on v1
+        self.nc_candidates = []
+        self.wind = False
+        self.auto = 0            # XM6 automatic (adaptive) ambient
+        self.sensitivity = 0
+        self.level = 10
+        self.voice = False
+        self.chat_sensitivity = 0
+        self.bgm = self.cinema = False
+        self.room = None         # BGM room size byte as last reported
+        self.probe = set()       # feature groups to ask about (see ALL_PROBES)
+        self.chat_duration = 1   # as last read: a chat-config write sends both bytes
+        self.eq_subtype = 0x04
+        self.local_address = None
+        self.features = {"modes": [], "ambientMax": 0, "voice": False,
+                         "chat": False, "chatEnds": False,
+                         "listening": False, "room": False, "chatSensitivity": False,
+                         "eq": False, "eqBands": 0, "pauseWhenTakenOff": False,
+                         "autoPowerOff": False, "source": False}
+        self.state = {"mode": None, "ambient": None, "voice": None,
+                      "chat": None, "chatEnds": None, "battery": {},
+                      "listening": None, "room": None, "chatSensitivity": None,
+                      "eq": None, "eqBands": [], "pauseWhenTakenOff": None,
+                      "autoPowerOff": None, "devices": []}
+
+    # --- transport ---------------------------------------------------------
+
+    def start(self):
+        self._queue(b"\x00\x00")  # protocol info: tells v1 from v2
+
+    def _queue(self, payload, dtype=T_DATA):
+        self.queue.append((dtype, bytes(payload)))
+        self._pump()
+
+    def _pump(self, now=None):
+        if self.inflight is None and self.queue:
+            dtype, payload = self.queue.pop(0)
+            self._send(encode(dtype, self.seq, payload))
+            self.inflight = (dtype, payload, now, 1)
+        self.awaiting = len(self.queue) + (1 if self.inflight else 0)
+
+    def wants_tick(self):
+        return self.inflight is not None
+
+    def tick(self, now):
+        if self.inflight:
+            dtype, payload, sent, tries = self.inflight
+            if sent is None:
+                self.inflight = (dtype, payload, now, tries)
+            elif now - sent > RETRY_SECONDS:
+                if tries >= MAX_TRIES:
+                    self.inflight = None  # unanswered: unknown command on this model
+                    self._on_silence(payload)
+                else:
+                    self._send(encode(dtype, self.seq, payload))
+                    self.inflight = (dtype, payload, now, tries + 1)
+        self._pump(now)
+
+    def receive(self, data):
+        self.buffer += data
+        while True:
+            start = self.buffer.find(bytes([START]))
+            if start < 0:
+                self.buffer.clear()
+                break
+            end = self.buffer.find(bytes([END]), start)
+            if end < 0:
+                del self.buffer[:start]
+                break
+            chunk = bytes(self.buffer[start + 1:end])
+            del self.buffer[:end + 1]
+            frame = decode(chunk)
+            if frame:
+                self._handle(frame)
+        if len(self.buffer) > 64 * 1024:
+            del self.buffer[:-64 * 1024]
+
+    def _handle(self, frame):
+        dtype, seq, payload = frame
+        if dtype == T_ACK:
+            if self.inflight and seq != self.seq:
+                self.seq = seq
+                self.inflight = None
+                self._pump()
+            return
+        # Every data frame from the headset must be acknowledged
+        self._send(encode(T_ACK, 1 - seq, b""))
+        if dtype == T_DATA and payload:
+            self._data(payload)
+        elif dtype == T_DATA2 and payload:
+            self._data2(payload)
+        self._pump()
+
+    # --- replies and notifications -----------------------------------------
+
+    def _data(self, p):
+        op = p[0]
+        if op == 0x01:
+            self._on_protocol_info(p)
+        elif op == 0x07 and self.version == 2:
+            self._on_functions(p)
+        elif op in (0x67, 0x69):
+            self._on_noise(p, reply=op == 0x67)
+        elif (op in (0x23, 0x25) and self.version == 2) or (op in (0x11, 0x13) and self.version == 1):
+            self._on_battery(p)
+        elif op in (0xF7, 0xF9):
+            self._on_speak_to_chat(p)
+        elif op in (0xFB, 0xFD):
+            self._on_chat_ends(p)
+        elif op in (0xE7, 0xE9) and self.version == 2:
+            self._on_audio(p)
+        elif op in (0x57, 0x59) and self.version == 2:
+            self._on_eq(p)
+        elif op in (0x27, 0x29) and self.version == 2:
+            self._on_power(p)
+
+    def _data2(self, p):
+        # Second message table (frame type 0E): the peripheral family
+        if p[0] in (0x37, 0x39):
+            self._on_devices(p)
+
+    def _on_protocol_info(self, p):
+        if self.version:
+            return
+        self.version = 2 if len(p) >= 8 else 1
+        if self.version == 2:
+            self._queue(b"\x06\x00")  # which functions this model supports
+        else:
+            self.nc_type = 0x02
+            self.features["chat"] = True
+            for payload in (b"\x66\x02", b"\x10\x00", b"\xf6\x05"):
+                self._queue(payload)
+
+    def _on_functions(self, p):
+        codes = set(p[3:3 + 2 * p[2]:2]) if len(p) > 2 else set()
+        types = [FN_NC_TYPE[c] for c in FN_NC_TYPE if c in codes]
+        # Unknown list: probe the layouts from newest to oldest
+        self.nc_candidates = types[:1] or [0x19, 0x17, 0x15]
+        self._probe_noise()
+        batteries = [FN_BATTERY[c] for c in FN_BATTERY if c in codes] or [0x00]
+        batteries += [FN_BATTERY_DUAL[c] for c in FN_BATTERY_DUAL if c in codes][:1]
+        batteries += [FN_BATTERY_CASE[c] for c in FN_BATTERY_CASE if c in codes][:1]
+        if 0x21 in codes or 0x29 in codes:
+            del batteries[0]  # earbuds report left/right, not a single level
+        for kind in batteries:
+            self._queue(bytes([0x22, kind]))
+        if FN_SPEAK_TO_CHAT in codes:
+            self.features["chat"] = True
+            self._queue(b"\xf6\x0c")  # Speak-to-Chat on/off
+            self._queue(b"\xfa\x0c")  # how long a conversation lasts
+        self._query_groups()
+
+    def _query_groups(self):
+        if self.version != 2:
+            return
+        # A model without a feature ignores its query (usually still ACKing it)
+        if "listening" in self.probe:
+            self._queue(bytes([0xE6, AUDIO_BGM]))     # background music + room
+            self._queue(bytes([0xE6, AUDIO_CINEMA]))  # cinema (upmix)
+        if "eq" in self.probe:
+            self._queue(bytes([0x56, 0x04]))          # the XM6 answers type 04 only,
+            self._queue(bytes([0x56, 0x00]))          # older models type 00
+        if "wear" in self.probe:
+            self._queue(bytes([0xF6, 0x01]))          # pause when taken off
+        if "power" in self.probe:
+            self._queue(bytes([0x26, 0x05]))          # automatic power off
+        if "devices" in self.probe:
+            self._queue(bytes([0x36, 0x02]), T_DATA2)  # multipoint device list
+
+    def _probe_noise(self):
+        if self.nc_candidates:
+            self._queue(bytes([0x66, self.nc_candidates.pop(0)]))
+
+    def _on_silence(self, payload):
+        # A noise-control query the model ignored: try the next layout
+        if payload[0] == 0x66 and self.version == 2 and not self.nc_type:
+            if self.nc_candidates:
+                self._probe_noise()
+            else:
+                self._mark_ready()  # no noise control at all
+
+    def _on_noise(self, p, reply=False):
+        kind, v = p[1], p[2:]
+        if self.version == 1 and kind == 0x02 and len(v) >= 6:
+            effect, nc_setting, nc_value, _asm, voice, level = v[:6]
+            self.wind = nc_setting == 0x02
+            if effect == 0x00:
+                mode = "off"
+            elif (nc_setting == 0x02 and nc_value >= 1) or (nc_setting == 0x00 and nc_value == 1):
+                mode = "nc"
+            else:
+                mode = "ambient"
+            self._apply(["nc", "ambient", "off"], mode, voice, level)
+        elif kind in (0x19, 0x17, 0x15) and len(v) >= 5:
+            _chg, on, nc_or_amb, voice, level = v[:5]
+            modes = ["nc", "ambient", "off"]
+            if kind == 0x19 and len(v) >= 7:
+                self.auto, self.sensitivity = v[5], v[6]
+                modes.append("adaptive")
+            mode = ("off" if not on else "nc" if nc_or_amb == 0
+                    else "adaptive" if kind == 0x19 and self.auto else "ambient")
+            if kind == 0x19 and reply:
+                # WH-1000XM6: a query reply always carries on/off = 0, so "nc"
+                # and "off" read the same. Only notifications are exact.
+                mode = ("adaptive" if self.auto else "ambient") if nc_or_amb else None
+            self.nc_type = kind
+            self._apply(modes, mode, voice, level)
+        elif kind == 0x22 and len(v) >= 4:
+            _chg, on, voice, level = v[:4]
+            self.nc_type = kind
+            self._apply(["ambient", "off"], "ambient" if on else "off", voice, level)
+
+    def _apply(self, modes, mode, voice, level):
+        self.features.update({"modes": modes, "ambientMax": AMBIENT_MAX, "voice": True})
+        self.voice = bool(voice)
+        if level <= AMBIENT_MAX:
+            self.level = level
+        # A reply that cannot tell nc from off must not erase what we know
+        self.state.update({"mode": mode if mode is not None else self.state["mode"],
+                           "voice": self.voice, "ambient": self.level})
+        self._mark_ready()
+
+    def _on_battery(self, p):
+        # status byte is a bit field: bit 0 = charging (XM6 sends 03 while charging)
+        kind, v = p[1], p[2:]
+        if kind in (0x00, 0x08) and len(v) >= 2:
+            self._battery("single", v[0], v[1] & 1)
+        elif kind in (0x01, 0x09) and len(v) >= 4:
+            if v[0]:  # level 0 = that earbud is not connected
+                self._battery("left", v[0], v[1] & 1)
+            if v[2]:
+                self._battery("right", v[2], v[3] & 1)
+        elif kind in (0x02, 0x0A) and len(v) >= 2:
+            self._battery("case", v[0], v[1] & 1)
+
+    def _battery(self, part, level, charging):
+        if 0 <= level <= 100:
+            self.state["battery"][part] = {"level": level, "charging": bool(charging)}
+
+    def _on_speak_to_chat(self, p):
+        if self.version == 2 and p[1] == 0x01 and len(p) >= 3:
+            self._set_wear_pause(p[2] == 0x00)  # pause when taken off; 00 = on
+        elif self.version == 2 and p[1] == 0x0C and len(p) >= 3:
+            self.state["chat"] = p[2] == 0x00  # v2 inverts it: 00 means on
+        elif self.version == 1 and p[1] == 0x05 and len(p) >= 4 and p[2] == 0x01:
+            self.state["chat"] = bool(p[3])
+
+    def _on_chat_ends(self, p):
+        # <FB|FD> 0C <sensitivity> <duration>
+        if len(p) >= 4 and p[1] == 0x0C and p[2] <= CHAT_SENSITIVITY_MAX and p[3] <= 3:
+            self.chat_sensitivity = p[2]
+            self.chat_duration = p[3]
+            self.state["chatEnds"] = p[3]
+            self.state["chatSensitivity"] = CHAT_SENSITIVITY_NAMES.get(p[2])
+            self.features["chatEnds"] = self.features["chatSensitivity"] = True
+
+    # --- commands ----------------------------------------------------------
+
+    def _noise_payload(self, mode):
+        on = 0 if mode == "off" else 1
+        ambient = 0 if mode == "nc" else 1
+        voice, level = int(self.voice), self.level
+        if self.version == 1:
+            nc_setting = 0x02 if self.wind else 0x00
+            nc_value = (0x02 if self.wind else 0x01) if mode == "nc" else 0x00
+            return bytes([0x68, 0x02, 0x11 if on else 0x00, nc_setting, nc_value, 0x01, voice, level])
+        if self.nc_type == 0x22:
+            return bytes([0x68, 0x22, 0x01, on, voice, level])
+        if self.nc_type == 0x19:
+            auto = 1 if mode == "adaptive" else 0 if mode == "ambient" else self.auto
+            return bytes([0x68, 0x19, 0x01, on, ambient, voice, level, auto, self.sensitivity])
+        return bytes([0x68, self.nc_type, 0x01, on, ambient, voice, level])
+
+    def _send_noise(self, mode):
+        if self.nc_type is None:
+            return
+        if mode == "adaptive":
+            self.auto = 1
+        elif mode == "ambient":
+            self.auto = 0
+        self._queue(self._noise_payload(mode))
+        self.state["mode"] = mode
+
+    def _ambient_mode(self):
+        # The level and voice flag live inside the ambient command
+        return self.state["mode"] if self.state["mode"] in ("ambient", "adaptive") else "ambient"
+
+    def _on_audio(self, p):
+        # E7/E9 09 <00 on | 01 off> <room>   (03 instead of 09 on some firmware)
+        # E7/E9 04 <00 on | 01 off>
+        if len(p) >= 4 and p[1] in (AUDIO_BGM, 0x03) and p[3] in ROOM_NAMES:
+            self.bgm, self.room = p[2] == 0x00, p[3]
+            self.features.update({"listening": True, "room": True})
+        elif len(p) >= 3 and p[1] == AUDIO_CINEMA:
+            self.cinema = p[2] == 0x00
+            self.features["listening"] = True
+        else:
+            return
+        self.state["listening"] = "background" if self.bgm else "cinema" if self.cinema else "standard"
+        self.state["room"] = ROOM_NAMES.get(self.room)
+
+    def _set_wear_pause(self, on):
+        self.state["pauseWhenTakenOff"] = on
+        self.features["pauseWhenTakenOff"] = True
+
+    def _on_power(self, p):
+        # 27/29 05 <mode> <last selected>   (04 reply on 01 = wear pause, defensively)
+        if p[1] == 0x05 and len(p) == 4 and p[2] in POWER_NAMES:
+            self.state["autoPowerOff"] = POWER_NAMES[p[2]]
+            self.features["autoPowerOff"] = True
+        elif p[1] == 0x01 and len(p) == 3:
+            self._set_wear_pause(p[2] == 0x00)
+
+    def _on_eq(self, p):
+        # 57/59 <type 00|02|04> <preset> <band count> <bands...>
+        if len(p) < 4 or p[1] not in (0x00, 0x02, 0x04):
+            return
+        self.eq_subtype = p[1]
+        count = p[3]
+        bands = []
+        if count > 0 and len(p) >= 4 + count:
+            offset = 10 if count == 6 else 6      # 6-band replies use the classic offset
+            bands = [b - offset for b in p[4:4 + count]]
+        self.state["eq"] = EQ_NAMES.get(p[2], "preset-0x%02x" % p[2])
+        self.state["eqBands"] = bands
+        self.features["eq"] = True
+        self.features["eqBands"] = EQ_BANDS if count == EQ_BANDS else 0
+
+    def _on_devices(self, p):
+        # 37/39 <02 with class-of-device | 00> <count> entries... <playback status>
+        # entry: MAC (17 ASCII), status (non-zero = connected), [3-byte CoD], name len, name
+        if len(p) < 4 or p[1] not in (0x02, 0x00):
+            return
+        devices, i = [], 3
+        if 0 < p[2] < 16:
+            for _ in range(p[2]):
+                if i + 18 > len(p):
+                    return
+                mac = bytes(p[i:i + 17]).decode("ascii", "replace")
+                status = p[i + 17]
+                i += 18 + (3 if p[1] == 0x02 else 0)
+                if i >= len(p) or i + 1 + p[i] > len(p):
+                    return
+                name = bytes(p[i + 1:i + 1 + p[i]]).decode("utf-8", "replace")
+                i += 1 + p[i]
+                devices.append({"mac": mac, "name": name, "connected": status != 0,
+                                "playing": status != 0 and status == p[-1]})
+        self.state["devices"] = devices
+        self.features["source"] = True
+
+    def _find_device(self, wanted):
+        wanted = wanted.strip().lower()
+        if wanted == "here" and self.local_address:
+            wanted = self.local_address.lower()
+        devices = self.state["devices"]
+        exact = [d for d in devices if d["mac"].lower() == wanted]
+        named = [d for d in devices if wanted and wanted in d["name"].lower()]
+        found = exact or named
+        return found[0] if len(found) == 1 else (None, found)
+
+    def _send_chat_config(self):
+        self._queue(bytes([0xFC, 0x0C, self.chat_sensitivity, self.chat_duration]))
+
+    def _send_listening(self, mode):
+        # The headset allows one at a time, and the app sets both every time
+        room = 1 if self.room is None else self.room
+        self.room = room
+        self.bgm, self.cinema = mode == "background", mode == "cinema"
+        self._queue(bytes([0xE8, AUDIO_BGM, 0x00 if self.bgm else 0x01, room]))
+        self._queue(bytes([0xE8, AUDIO_CINEMA, 0x00 if self.cinema else 0x01]))
+        self.state["listening"] = mode
+        self.state["room"] = ROOM_NAMES[room]
+
+    def set(self, key, value):
+        """Apply "set <key> <value>". Returns None, or a reason it was refused."""
+        if key in LATE_FEATURES:
+            if not self.features[key]:
+                self.deferred[key] = value  # applied once the headset announces it
+                return None
+            self.deferred.pop(key, None)
+        value = str(value).lower()
+        truthy = value in ("1", "true", "on", "yes")
+        if key == "mode":
+            if value not in self.features["modes"]:
+                return "mode %r not supported (this headset: %s)" % (value, ", ".join(self.features["modes"]) or "none")
+            self._send_noise(value)
+        elif key == "ambient":
+            if not self.features["ambientMax"]:
+                return "no ambient level on this headset"
+            self.level = max(0, min(AMBIENT_MAX, int(value)))
+            self.state["ambient"] = self.level
+            self._send_noise(self._ambient_mode())
+        elif key == "voice":
+            if not self.features["voice"]:
+                return "no voice passthrough on this headset"
+            self.voice = truthy
+            self.state["voice"] = truthy
+            self._send_noise(self._ambient_mode())
+        elif key == "chat":
+            if self.version == 2:
+                self._queue(bytes([0xF8, 0x0C, 0x00 if truthy else 0x01, 0x01]))
+            else:
+                self._queue(bytes([0xF8, 0x05, 0x01, 0x01 if truthy else 0x00]))
+            self.state["chat"] = truthy
+        elif key == "chatEnds":
+            duration = CHAT_ENDS_NAMES.get(value, int(value) if value in ("0", "1", "2", "3") else None)
+            if duration is None:
+                return "chatEnds must be short, standard, long, never (or 0-3)"
+            # The write replaces both bytes: send the other one back as read
+            self.chat_duration = duration
+            self._send_chat_config()
+            self.state["chatEnds"] = duration
+        elif key == "chatSensitivity":
+            if value not in CHAT_SENSITIVITY:
+                return "chatSensitivity must be %s" % ", ".join(CHAT_SENSITIVITY)
+            self.chat_sensitivity = CHAT_SENSITIVITY[value]
+            self._send_chat_config()
+            self.state["chatSensitivity"] = value
+        elif key == "eq":
+            if value not in EQ_PRESETS:
+                return "eq must be %s" % ", ".join(EQ_PRESETS)
+            self._queue(bytes([0x58, self.eq_subtype, EQ_PRESETS[value], 0x00]))
+            self.state["eq"] = value
+        elif key == "eqBands":
+            try:
+                gains = [int(g) for g in value.split(",")]
+            except ValueError:
+                gains = []
+            if len(gains) != EQ_BANDS:
+                return "eqBands needs %d comma-separated gains (%d..%d), e.g. -2,0,1,1,0,0,0,1,2,2" % (
+                    EQ_BANDS, EQ_GAIN[0], EQ_GAIN[1])
+            if not self.features["eqBands"]:
+                return "this headset does not report the 10-band equalizer layout"
+            gains = [max(EQ_GAIN[0], min(EQ_GAIN[1], g)) for g in gains]
+            # Selecting the custom preset is implicit in a band write
+            self._queue(bytes([0x58, self.eq_subtype, EQ_PRESETS["custom"], EQ_BANDS] + [g + 6 for g in gains]))
+            self.state["eq"], self.state["eqBands"] = "custom", gains
+        elif key == "pauseWhenTakenOff":
+            self._queue(bytes([0xF8, 0x01, 0x00 if truthy else 0x01]))
+            self._set_wear_pause(truthy)
+        elif key == "autoPowerOff":
+            if value not in POWER_MODES:
+                return "autoPowerOff must be %s" % ", ".join(POWER_MODES)
+            self._queue(bytes([0x28, 0x05, POWER_MODES[value], 0x00]))
+            self.state["autoPowerOff"] = value
+        elif key == "source":
+            device = self._find_device(value)
+            if isinstance(device, tuple):
+                return ("no device matches %r" % value if not device[1] else
+                        "%r is ambiguous: %s" % (value, ", ".join(d["name"] for d in device[1])))
+            if not device["connected"]:
+                return "%s is not connected to the headset" % device["name"]
+            self._queue(b"\x3c\x01" + device["mac"].encode("ascii"), T_DATA2)
+            self._queue(bytes([0x36, 0x02]), T_DATA2)  # the headset also pushes the new list
+            for d in self.state["devices"]:
+                d["playing"] = d is device
+        elif key == "listening":
+            if value not in LISTEN_MODES:
+                return "listening must be %s" % ", ".join(LISTEN_MODES)
+            self._send_listening(value)
+        elif key == "room":
+            if value not in BGM_ROOMS:
+                return "room must be %s" % ", ".join(BGM_ROOMS)
+            self.room = BGM_ROOMS[value]
+            self._send_listening("background")  # the room only matters in that mode
+        else:
+            return "unknown setting %r" % key
+        return None
+
+    def refresh(self):
+        if self.version == 2 and self.nc_type:
+            self._queue(bytes([0x66, self.nc_type]))
+        elif self.version == 1:
+            self._queue(b"\x66\x02")
+        self._query_groups()
+
+    def flush_deferred(self):
+        if not self.ready:
+            return []
+        problems = []
+        for key in [k for k in self.deferred if self.features[k]]:
+            problem = self.set(key, self.deferred.pop(key))
+            if problem:
+                problems.append(problem)
+        return problems
+
+    def _mark_ready(self):
+        if self.ready:
+            return
+        self.ready = True
+        waiting, self.pending = self.pending, []
+        self.problems = []
+        for key, value in waiting:
+            problem = self.set(key, value)
+            if problem:
+                self.problems.append(problem)
+
+    problems = ()
+
+    def snapshot(self):
+        if not self.ready:
+            return {"status": "connecting"}
+        return json.loads(json.dumps({"status": "ready", "features": self.features, "state": self.state}))
+
+
+# --------------------------------------------------------------------------
+# Connection and runner
+# --------------------------------------------------------------------------
+
+CONNECT_TIMEOUT = 8.0
+HANDSHAKE_TIMEOUT = 10.0
+SETTLE_SECONDS = 0.5      # let battery/chat answers arrive before reporting
+QUIET_SECONDS = 0.5       # one-shot: exit after this long without traffic
+DEFERRED_GIVE_UP = 5.0    # a late feature the headset never announces
+LINGER_SECONDS = 1.5      # session: after stdin closes, let the headset answer
+
+SONY_NAME = re.compile(r"\b(WH|WF)-[\w-]+|LinkBuds|\bULT\b|\bSony\b", re.I)
+
+
+def connect(address):
+    """Opens the RFCOMM socket of Sony's control service."""
+    channels = []
+    for service in (UUID_V2, UUID_V1):
+        try:
+            channel = find_rfcomm_channel(address, service)
+        except OSError:
+            channel = None
+        if channel:
+            channels.append(channel)
+            break
+    if not channels:
+        raise OSError("Sony control service not found (is it paired and connected?)")
+    error = None
+    for channel in channels:
+        sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        sock.settimeout(CONNECT_TIMEOUT)
+        try:
+            sock.connect((address, channel))
+        except OSError as err:
+            sock.close()
+            error = err
+            continue
+        sock.setblocking(False)
+        return sock
+    raise error
+
+
+def autodetect():
+    """Address of a connected device whose name looks like a Sony headset."""
+    out = subprocess.run(["bluetoothctl", "devices", "Connected"], capture_output=True, text=True, timeout=5).stdout
+    found = []
+    for line in out.splitlines():
+        m = re.match(r"Device\s+([0-9A-F:]{17})\s+(.*)", line, re.I)
+        if m and SONY_NAME.search(m.group(2)):
+            found.append((m.group(1), m.group(2)))
+    if len(found) == 1:
+        return found[0][0]
+    if not found:
+        raise SystemExit("No connected Sony headset found; pass the MAC address.")
+    raise SystemExit("Several Sony devices connected, pass one MAC address:\n" +
+                     "\n".join("  %s  %s" % d for d in found))
+
+
+def run(sock, actions, session=False, debug=False, out=None, probe=()):
+    """Drives one headset. Returns the final snapshot (one-shot) or None."""
+    out = out or sys.stdout
+
+    def send(data):
+        if debug:
+            sys.stderr.write(">> %s\n" % data.hex(" "))
+        sock.sendall(data)
+
+    proto = Sony(send)
+    proto.probe = set(probe)
+    try:
+        proto.local_address = sock.getsockname()[0]   # this computer's adapter ("here")
+    except (OSError, IndexError, TypeError):
+        pass
+    proto.pending = list(actions)
+    sel = selectors.DefaultSelector()
+    sel.register(sock, selectors.EVENT_READ, "socket")
+    stdin_open = session
+    if session:
+        sel.register(sys.stdin, selectors.EVENT_READ, "stdin")
+    deadline = None
+    pending_in = b""
+    started = last_rx = time.monotonic()
+    ready_at = None
+    last = None
+    warned = set()
+
+    def warn(text):
+        if text not in warned:
+            warned.add(text)
+            sys.stderr.write("%s: %s\n" % (PROG, text))
+
+    proto.start()
+    while True:
+        now = time.monotonic()
+        if deadline is not None and now >= deadline:
+            break
+        if not proto.ready and now - started > HANDSHAKE_TIMEOUT:
+            raise TimeoutError("headset did not complete the handshake")
+        for key, _ in sel.select(0.25):
+            if key.data == "socket":
+                data = sock.recv(4096)
+                if not data:
+                    raise ConnectionError("headset closed the connection")
+                if debug:
+                    sys.stderr.write("<< %s\n" % data.hex(" "))
+                last_rx = time.monotonic()
+                proto.receive(data)
+            else:
+                chunk = os.read(sys.stdin.fileno(), 4096)
+                if not chunk:
+                    sel.unregister(sys.stdin)
+                    stdin_open = False
+                    deadline = time.monotonic() + (LINGER_SECONDS if proto.ready else HANDSHAKE_TIMEOUT)
+                    continue
+                pending_in += chunk
+                while b"\n" in pending_in:
+                    line, pending_in = pending_in.split(b"\n", 1)
+                    parts = line.decode("utf-8", "ignore").split()
+                    if parts[:1] == ["quit"]:
+                        deadline = time.monotonic() + LINGER_SECONDS
+                    elif parts[:1] == ["get"]:
+                        proto.refresh()
+                    elif len(parts) == 3 and parts[0] == "set":
+                        if proto.ready:
+                            problem = proto.set(parts[1], parts[2])
+                            if problem:
+                                warn(problem)
+                        else:
+                            proto.pending.append((parts[1], parts[2]))
+        proto.tick(time.monotonic())
+        for problem in list(proto.flush_deferred()) + list(proto.problems):
+            warn(problem)
+        proto.problems = ()
+        now = time.monotonic()
+        if proto.ready and ready_at is None:
+            ready_at = now
+        settling = ready_at is not None and now - ready_at < SETTLE_SECONDS
+
+        if session:
+            snap = proto.snapshot()
+            if snap != last and not (settling and snap["status"] == "ready"):
+                last = snap
+                out.write(json.dumps(snap, separators=(",", ":")) + "\n")
+                out.flush()
+            if not stdin_open and proto.ready and not proto.pending and not proto.awaiting:
+                deadline = min(deadline or now + 0.2, now + 0.2)
+        else:
+            if ready_at is None:
+                continue
+            gave_up = proto.deferred and now - ready_at > DEFERRED_GIVE_UP
+            if gave_up:
+                for key in proto.deferred:
+                    warn("headset never reported support for %r; not applied" % key)
+                proto.deferred.clear()
+            if (not settling and not proto.pending and not proto.deferred and not proto.awaiting
+                    and now - last_rx >= QUIET_SECONDS):
+                break
+    return proto.snapshot()
+
+
+# --------------------------------------------------------------------------
+# CLI
+# --------------------------------------------------------------------------
+
+DURATIONS = ["short", "standard", "long", "never"]
+CHANGE_LABELS = {"mode": "mode", "ambient": "ambient level", "voice": "voice passthrough",
+                 "chat": "Speak-to-Chat", "chatEnds": "chat ends after",
+                 "listening": "listening mode", "room": "background room",
+                 "chatSensitivity": "Speak-to-Chat sensitivity", "eq": "equalizer",
+                 "eqBands": "equalizer bands", "pauseWhenTakenOff": "pause when taken off",
+                 "autoPowerOff": "automatic power off", "source": "playback source"}
+
+
+def describe(snap):
+    f, s = snap["features"], snap["state"]
+    lines = []
+    if f["modes"]:
+        mode = s["mode"] or "unknown (this model can't tell NC from off on a query)"
+        lines.append("Mode:           %s   [%s]" % (mode, "/".join(f["modes"])))
+        extra = "ambient level %s/%d" % (s["ambient"], f["ambientMax"])
+        extra += ", voice passthrough %s" % ("on" if s["voice"] else "off")
+        lines.append("                %s" % extra)
+    else:
+        lines.append("Mode:           no noise control reported")
+    if f["chat"]:
+        chat = {True: "on", False: "off", None: "unknown"}[s["chat"]]
+        ends = s["chatEnds"]
+        extra = "" if ends is None else ", ends after: " + DURATIONS[ends]
+        if s["chatSensitivity"]:
+            extra += ", sensitivity: " + s["chatSensitivity"]
+        lines.append("Speak-to-Chat:  %s%s" % (chat, extra))
+    if f["listening"]:
+        listen = s["listening"] or "unknown"
+        lines.append("Listening mode: %s%s" % (listen, ", room: %s" % s["room"] if listen == "background" and s["room"] else ""))
+    if f["eq"]:
+        eq = s["eq"] or "unknown"
+        bands = " ".join("%+d" % b for b in s["eqBands"]) if eq == "custom" and s["eqBands"] else ""
+        lines.append("Equalizer:      %s%s" % (eq, "  [%s]" % bands if bands else ""))
+    if f["pauseWhenTakenOff"]:
+        lines.append("Wear pause:     %s" % {True: "on", False: "off", None: "unknown"}[s["pauseWhenTakenOff"]])
+    if f["autoPowerOff"]:
+        lines.append("Auto power off: %s" % (s["autoPowerOff"] or "unknown"))
+    for part, b in s["battery"].items():
+        lines.append("Battery %-7s %d%%%s" % (part + ":", b["level"], " (charging)" if b["charging"] else ""))
+    if f["source"]:
+        lines.append("Devices:")
+        for d in s["devices"]:
+            lines.append("  %s %-24s %s%s" % ("*" if d["playing"] else " ", d["name"] or "?", d["mac"],
+                                              "" if d["connected"] else "  (not connected)"))
+        if not s["devices"]:
+            lines.append("  (none reported)")
+    return "\n".join(lines)
+
+
+def describe_changes(actions, snap):
+    """One line per requested change, using the confirmed value when known."""
+    state = snap.get("state") or {}
+    lines = []
+    for key, value in actions:
+        if key == "mode":
+            shown = state.get("mode") or value
+        elif key == "ambient":
+            shown = value if state.get("ambient") is None else state["ambient"]
+        elif key in ("voice", "chat"):
+            flag = state.get(key)
+            if flag is None:
+                flag = str(value).lower() in ("1", "true", "on", "yes")
+            shown = "on" if flag else "off"
+        elif key == "chatEnds":
+            ends = state.get("chatEnds")
+            shown = DURATIONS[ends] if ends is not None else value
+        elif key in ("listening", "room", "eq", "chatSensitivity", "autoPowerOff"):
+            shown = state.get(key) or value
+        elif key == "eqBands":
+            shown = " ".join("%+d" % b for b in state.get("eqBands") or []) or value
+        elif key == "pauseWhenTakenOff":
+            flag = state.get(key)
+            shown = "on" if (flag if flag is not None else str(value).lower() == "on") else "off"
+        elif key == "source":
+            playing = [d["name"] for d in state.get("devices") or [] if d.get("playing")]
+            shown = playing[0] if playing else value
+        else:
+            shown = value
+        lines.append("%s: %s" % (CHANGE_LABELS.get(key, key), shown))
+    return "\n".join(lines)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="Control a Sony headset's ambient sound / NC / Speak-to-Chat.",
+                                 formatter_class=argparse.RawDescriptionHelpFormatter,
+                                 epilog="Examples" + DOC.split("Examples", 1)[1])
+    ap.add_argument("address", nargs="?", help="Bluetooth MAC (default: auto-detect a connected Sony)")
+    ap.add_argument("--mode", choices=["nc", "ambient", "adaptive", "off"])
+    ap.add_argument("--ambient", type=int, metavar="0-20", help="ambient level (switches to ambient if not already)")
+    ap.add_argument("--voice", choices=["on", "off"], help="voice passthrough (ambient modes)")
+    ap.add_argument("--chat", choices=["on", "off"], help="Speak-to-Chat / conversation awareness")
+    ap.add_argument("--chat-ends", choices=DURATIONS, help="how long silence ends a conversation")
+    ap.add_argument("--listening", choices=LISTEN_MODES + ["cafe"],
+                    help="XM6 listening mode; 'cafe' = background music in the cafe room")
+    ap.add_argument("--room", choices=list(BGM_ROOMS),
+                    help="XM6 background music room (switches to background music)")
+    ap.add_argument("--chat-sensitivity", choices=list(CHAT_SENSITIVITY), help="Speak-to-Chat sensitivity")
+    ap.add_argument("--eq", choices=list(EQ_PRESETS), help="XM6 equalizer preset")
+    ap.add_argument("--eq-bands", metavar="G1,..,G10",
+                    help="XM6 custom equalizer, 10 gains -6..6, lowest frequency first (use --eq-bands=-2,0,...)")
+    ap.add_argument("--pause-when-taken-off", choices=["on", "off"], help="pause playback when the headset comes off")
+    ap.add_argument("--auto-power-off", choices=list(POWER_MODES), help="XM6 automatic power off")
+    ap.add_argument("--source", metavar="HERE|MAC|NAME",
+                    help="multipoint: play from this device ('here' = this computer, a MAC, or part of its name)")
+    ap.add_argument("--status", action="store_true", help="print the full state instead of just the changes")
+    ap.add_argument("--json", action="store_true", help="print the final state as JSON")
+    ap.add_argument("--session", action="store_true", help="stay connected: JSON lines out, 'set k v' / 'get' / 'quit' lines in")
+    ap.add_argument("--debug", action="store_true", help="raw packets to stderr")
+    raw_args = sys.argv[1:] if argv is None else argv
+    if not raw_args:
+        ap.print_help()
+        return 0
+    args = ap.parse_args(raw_args)
+
+    if args.ambient is not None and not 0 <= args.ambient <= AMBIENT_MAX:
+        ap.error("--ambient must be 0-%d" % AMBIENT_MAX)
+
+    # Order matters: level/voice first (they imply ambient mode), mode last so
+    # the final mode is the one asked for, with the level kept for later.
+    actions = []
+    if args.chat_ends:
+        actions.append(("chatEnds", args.chat_ends))
+    if args.chat:
+        actions.append(("chat", args.chat))
+    if args.room:
+        actions.append(("room", args.room))
+    if args.listening == "cafe":
+        actions += [("room", "cafe"), ("listening", "background")]
+    elif args.listening:
+        actions.append(("listening", args.listening))
+    if args.chat_sensitivity:
+        actions.append(("chatSensitivity", args.chat_sensitivity))
+    if args.eq_bands:
+        actions.append(("eqBands", args.eq_bands))
+    if args.eq:
+        actions.append(("eq", args.eq))
+    if args.pause_when_taken_off:
+        actions.append(("pauseWhenTakenOff", args.pause_when_taken_off))
+    if args.auto_power_off:
+        actions.append(("autoPowerOff", args.auto_power_off))
+    if args.source:
+        actions.append(("source", args.source))
+    if args.ambient is not None:
+        actions.append(("ambient", str(args.ambient)))
+    if args.voice:
+        actions.append(("voice", args.voice))
+    if args.mode:
+        actions.append(("mode", args.mode))
+
+    address = args.address or autodetect()
+    try:
+        sock = connect(address)
+    except OSError as err:
+        sys.exit("%s: %s: %s\n(one control connection at a time: close the Sony phone app)" % (PROG, address, err))
+    try:
+        # XM6-only features are queried only when they matter, so other models
+        # are not asked about things they do not have
+        if args.status or args.json or args.session or not actions:
+            probe = ALL_PROBES
+        else:
+            probe = {ACTION_PROBES[key] for key, _ in actions if key in ACTION_PROBES}
+        snap = run(sock, actions, session=args.session, debug=args.debug, probe=probe)
+    except (OSError, TimeoutError) as err:
+        sys.exit("%s: %s" % (PROG, err))
+    except KeyboardInterrupt:
+        return 130
+    finally:
+        sock.close()
+    if not args.session:
+        if args.json:
+            print(json.dumps(snap, indent=2))
+        elif args.status or not actions:
+            print(describe(snap))
+        else:
+            print(describe_changes(actions, snap))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

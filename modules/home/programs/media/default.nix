@@ -4,8 +4,7 @@
     ./spicetify.nix
     ./imv.nix
     ./mpv.nix
-    ./easyeffects.nix
-    ./spotifyd.nix
+    ./easyeffects
   ];
 
   home.packages = with pkgs; [

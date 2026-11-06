@@ -11,7 +11,7 @@ level="$1"
 
 
 if [[ "$level" == "off" ]]; then
-    exec sonyctl anc on
+    exec sonyctl --mode nc
 else
-    exec sonyctl ambient "$level"
+    exec sonyctl --ambient "$level"
 fi

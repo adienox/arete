@@ -8,6 +8,10 @@ let
     url = "https://brave.com/static-assets/images/brave-logo-sans-text.svg";
     hash = "sha256-JTD4D98hRLYvlpU6gcaYjJwxpsx8necuBpB5SFgXy+c=";
   };
+  redlib-icon = pkgs.fetchurl {
+    url = "https://redlib.catsarch.com/favicon.ico";
+    hash = "sha256-eWK5e8eqm0Rph3wgcA5Kt5Xr0aWNHgjiK3tofjsXQwY=";
+  };
 in
 {
   programs.zen-browser.profiles.default.search = {
@@ -101,6 +105,32 @@ in
 
         icon = brave-icon;
         definedAliases = [ "bb" ];
+      };
+
+      subreddit = {
+        urls = [
+          {
+            template = "https://redlib.catsarch.com/r/{searchTerms}";
+          }
+        ];
+        icon = redlib-icon;
+        definedAliases = [ "rr" ];
+      };
+
+      reddit = {
+        urls = [
+          {
+            template = "https://redlib.catsarch.com/search";
+            params = [
+              {
+                name = "q";
+                value = "{searchTerms}";
+              }
+            ];
+          }
+        ];
+        icon = redlib-icon;
+        definedAliases = [ "rs" ];
       };
       google.metaData.alias = "gg";
     };

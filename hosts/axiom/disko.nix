@@ -22,12 +22,9 @@
               content = {
                 type = "luks";
                 name = "crypted";
-                # Interactive LUKS password by default. To use key files instead,
-                # create them before running the installer and set:
-                #   settings.keyFile = "/tmp/secret.key";
-                #   additionalKeyFiles = [ "/tmp/additionalSecret.key" ];
                 settings = {
                   allowDiscards = true;
+                  crypttabExtraOpts = [ "tpm2-device=auto" ];
                 };
                 content = {
                   type = "btrfs";
@@ -47,6 +44,13 @@
                         "noatime"
                       ];
                     };
+                    "/home/.snapshots" = {
+                      mountpoint = "/home/.snapshots";
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
+                    };
                     "/nix" = {
                       mountpoint = "/nix";
                       mountOptions = [
@@ -56,7 +60,7 @@
                     };
                     "/swap" = {
                       mountpoint = "/.swapvol";
-                      swap.swapfile.size = "20M";
+                      swap.swapfile.size = "32G";
                     };
                   };
                 };

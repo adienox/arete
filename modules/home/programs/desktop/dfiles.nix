@@ -1,9 +1,10 @@
 { inputs, ... }:
 {
   imports = [
-    inputs.dfiles.homeModules.dank-files
+    inputs.dfiles.homeModules.dux-files
   ];
-  programs.dank-files = {
+
+  programs.dux-files = {
     enable = true;
 
     systemd = {

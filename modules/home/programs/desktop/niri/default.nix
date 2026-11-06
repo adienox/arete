@@ -19,7 +19,6 @@
   wayland.windowManager.niri = {
     enable = true;
     enableDefaultConfig = true;
-    package = pkgs.niri-unstable;
   };
 
   home.file = helpers.mkConfigFile {

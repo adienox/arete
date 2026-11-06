@@ -48,6 +48,8 @@
     extension:
       nix: 
       gpg: 󰦝
+      age: 󰦝
       md : 󰍔
+      el : 
   '';
 }

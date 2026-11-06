@@ -5,6 +5,11 @@
   ...
 }:
 {
+  sops.secrets = {
+    "syncthing/${hostname}/cert" = { };
+    "syncthing/${hostname}/key" = { };
+    "syncthing/password" = { };
+  };
   services.syncthing = {
     enable = true;
 

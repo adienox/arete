@@ -12,7 +12,7 @@
   config = lib.mkIf osConfig.modules.xremap.enable {
     services.xremap = {
       enable = true;
-      withNiri = true;
+      package = pkgs.xremap;
       watch = true;
       config.modmap = [
         {

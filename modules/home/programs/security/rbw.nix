@@ -6,9 +6,10 @@
 }:
 {
   programs.rbw.enable = true;
+  sops.secrets."ids/bitwarden" = { };
 
   sops.templates."rbw-config.json".content = builtins.toJSON {
-    email = config.sops.placeholder."ids/email";
+    email = config.sops.placeholder."ids/bitwarden";
     pinentry = "${pkgs.pinentry-gnome3}/bin/pinentry";
     lock_timeout = 3600;
   };

@@ -1,14 +1,21 @@
 { vars, ... }:
 {
-  services.displayManager.dms-greeter = {
-    enable = true;
-    compositor.name = "niri";
+  services.displayManager = {
+    dux-greeter = {
+      enable = true;
+      compositor.name = "niri";
 
-    configHome = vars.home;
+      configHome = vars.home;
 
-    logs = {
-      save = true;
-      path = "/tmp/dms-greeter.log";
+      logs = {
+        save = true;
+        path = "/tmp/dms-greeter.log";
+      };
     };
+  };
+
+  security.pam.services.greetd = {
+    fprintAuth = true;
+    enableGnomeKeyring = true;
   };
 }

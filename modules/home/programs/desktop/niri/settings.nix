@@ -11,9 +11,7 @@ let
       scale = 1;
       transform = "normal";
       mode = "2560x1440@144.002000";
-      variable-refresh-rate._props = {
-        on-demand = false;
-      };
+      variable-refresh-rate = { };
     }
     // extra;
   };
@@ -23,12 +21,24 @@ let
       {
         output = {
           _args = [ "eDP-1" ];
-          scale = 1;
+          scale = 1.5;
           transform = "normal";
+          mode = "2880x1920@120.000";
+          position._props = {
+            x = 0;
+            y = 0;
+          };
+          variable-refresh-rate = { };
           focus-at-startup = { };
         };
       }
-      (mkDhi { })
+      (mkDhi {
+        focus-at-startup = { };
+        position._props = {
+          x = 2880;
+          y = 0;
+        };
+      })
     ];
 
     anomaly = [
@@ -77,16 +87,14 @@ in
     };
 
     debug = {
-      emulate-zero-presentation-time = { };
       honor-xdg-activation-with-invalid-serial = { };
-      wait-for-frame-completion-before-queueing = { };
     }
     // lib.optionalAttrs (hostname == "anomaly") {
       render-drm-device = "/dev/dri/nvidia-dgpu";
     };
 
     blur = {
-      passes = 4;
+      passes = 3;
       offset = 5.000000;
       noise = 0.020000;
       saturation = 2.000000;
@@ -117,6 +125,7 @@ in
       mouse.natural-scroll = { };
 
       focus-follows-mouse._props.max-scroll-amount = "95%";
+      disable-power-key-handling = { };
     };
 
     layout = {
@@ -183,7 +192,6 @@ in
             _args = [ "media" ];
             _children = [
               { open-on-output = "eDP-1"; }
-              { open-on-output = "eDP-2"; }
             ];
           };
         }

@@ -39,16 +39,25 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dms.url = "github:AvengeMedia/DankMaterialShell";
+    dms = {
+      url = "github:duxlabs-dev/dux-shell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    dcal.url = "github:AvengeMedia/dankcalendar";
+    dcal = {
+      url = "github:duxlabs-dev/dux-calendar";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    dfiles = {
+      url = "github:duxlabs-dev/dux-files";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     dms-plugin = {
       url = "github:AvengeMedia/dms-plugin-registry";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    niri.url = "github:epireyn/niri-flake";
 
     xremap = {
       url = "github:xremap/nix-flake";
@@ -76,6 +85,8 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri-snap.url = "github:adienox/niri-snap";
   };
 
   outputs =
@@ -105,6 +116,10 @@
           name = "update";
           script = ./scripts/update.sh;
           runtimeInputs = [ pkgs.nix ];
+        };
+        enroll-tpm = lib.mkApp {
+          name = "enroll-tpm";
+          script = ./scripts/tpm.sh;
         };
         secrets = lib.mkApp {
           name = "secrets";

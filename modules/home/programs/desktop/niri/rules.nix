@@ -15,7 +15,7 @@
         open-focused = false;
         # Browsers also send an XDG activation request when popping the PiP
         # out, which focuses it regardless of open-focused. Ignore that too.
-        on-xdg-activate = "ignore";
+        # on-xdg-activate = "ignore"; # Only works after next release from 26.04
         default-floating-position._props = {
           relative-to = "top-right";
           x = 5;
@@ -72,6 +72,12 @@
       { match._props.app-id = "org.gnome.NautilusPreviewer"; }
       { match._props.app-id = "com.gabm.satty"; }
       { match._props.app-id = "imv"; }
+      {
+        match._props = {
+          app-id = "dev.duxlabs.files";
+          title = "^(Open|Save|Select|Upload|Export|Import)";
+        };
+      }
 
       {
         default-column-width.fixed = 1150;
@@ -129,7 +135,9 @@
       { match._props.app-id = "zen-twilight"; }
       { match._props.app-id = "org.pipewire.Helvum"; }
       { match._props.app-id = "btop.desktop"; }
-      { match._props.app-id = "com.danklinux.dankcalendar"; }
+      { match._props.app-id = "dev.duxlabs.calendar"; }
+      { match._props.app-id = "dev.duxlabs.files"; }
+      { match._props.app-id = "org.qutebrowser.qutebrowser"; }
 
       { open-maximized = true; }
     ];
@@ -173,8 +181,19 @@
 
   {
     window-rule._children = [
+      { match._props.title = "^emacs-journal$"; }
+
+      {
+        open-fullscreen = true;
+        open-floating = true;
+      }
+    ];
+  }
+
+  {
+    window-rule._children = [
       { match._props.app-id = "spotify"; }
-      { match._props.app-id = "com.danklinux.dankcalendar"; }
+      { match._props.app-id = "dev.duxlabs.calendar"; }
 
       { open-on-workspace = "media"; }
     ];
@@ -223,7 +242,6 @@
       clip-to-geometry = true;
       background-effect = {
         blur = true;
-        xray = true;
       };
     };
   }

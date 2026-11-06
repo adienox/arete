@@ -8,7 +8,7 @@
       controls = false;
       delay = 3;
       pointer = true;
-      record_format = "webm";
+      record_format = "mp4";
       ratios = [
         "16:9"
         "4:3"

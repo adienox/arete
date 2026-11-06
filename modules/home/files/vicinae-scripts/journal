@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# @vicinae.schemaVersion 1
+# @vicinae.title Journal
+# @vicinae.mode silent
+# @vicinae.icon 🖋️
+# @vicinae.argument1 {"type": "text", "placeholder": "Write your thoughts"}
+
+set -euo pipefail
+
+log="$1"
+journal_dir="$HOME/Documents/notes/journal"
+
+mkdir -p "$journal_dir"
+
+# Capture a single timestamp for consistent metadata.
+timestamp=$(date '+%Y%m%dT%H%M%S')
+date_slug=$(date -d "${timestamp:0:8} ${timestamp:9:2}:${timestamp:11:2}:${timestamp:13:2}" \
+    '+%A-%-d-%B-%Y' | tr '[:upper:]' '[:lower:]')
+
+# Find today's journal file.
+shopt -s nullglob
+files=( "$journal_dir/"*"--${date_slug}__journal.org" )
+shopt -u nullglob
+
+if (( ${#files[@]} > 0 )); then
+    file="${files[0]}"
+else
+    file="$journal_dir/${timestamp}--${date_slug}__journal.org"
+
+    {
+        printf '#+title:      %s\n' "$(date -d "${timestamp:0:8} ${timestamp:9:2}:${timestamp:11:2}:${timestamp:13:2}" '+%A %-d %B %Y')"
+        printf '#+date:       [%s]\n' "$(date -d "${timestamp:0:8} ${timestamp:9:2}:${timestamp:11:2}:${timestamp:13:2}" '+%Y-%m-%d %a %H:%M')"
+        printf '#+filetags:   :journal:\n'
+        printf '#+identifier: %s\n\n' "$timestamp"
+    } > "$file"
+fi
+
+# Append the captured thoughts.
+if [[ -n "$log" ]]; then
+    printf -- '- %s: %s\n\n' "$(date '+%H:%M')" "$log" >> "$file"
+fi
+
+echo "Log entered!"

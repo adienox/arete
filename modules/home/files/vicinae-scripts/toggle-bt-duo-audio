@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# @vicinae.schemaVersion 1
+# @vicinae.title Toggle Bluetooth Duo Audio
+# @vicinae.mode silent
+# @vicinae.icon 🎧
+
+set -euo pipefail
+
+# Resolve the mirroring helper even if ~/.local/bin is not on Vicinae's PATH.
+bt_duo="$(command -v bt-duo-audio || true)"
+[ -n "$bt_duo" ] || bt_duo="$HOME/.local/bin/bt-duo-audio"
+
+notify() {
+    command -v notify-send >/dev/null || return 0
+    notify-send -a "Bluetooth Duo" -i audio-headphones "$1" "$2" || true
+}
+
+if [ ! -x "$bt_duo" ]; then
+    notify "Bluetooth Duo: unavailable" "bt-duo-audio not found in PATH or ~/.local/bin"
+    exit 1
+fi
+
+if "$bt_duo" --is-active; then
+    "$bt_duo" --stop
+    notify "Bluetooth Duo: OFF" "Audio restored to the normal default output."
+else
+    count="$("$bt_duo" --list 2>/dev/null | grep -c 'bluez_output' || true)"
+    if [ "$count" -lt 2 ]; then
+        notify "Bluetooth Duo: needs two headsets" \
+               "Only $count connected Bluetooth audio device(s). Connect two and retry."
+        exit 1
+    fi
+    "$bt_duo"
+    notify "Bluetooth Duo: ON" "Mirroring audio to all connected Bluetooth headsets."
+fi

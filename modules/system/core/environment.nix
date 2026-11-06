@@ -37,6 +37,7 @@
       gcc
       ripgrep
       fd
+      socat
     ];
     pathsToLink = [ "/share/applications" ];
     localBinInPath = true;

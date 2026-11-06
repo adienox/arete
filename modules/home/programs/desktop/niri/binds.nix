@@ -19,11 +19,14 @@ let
     "Mod+E" = titled "Open Emacs: New Frame" {
       spawn-sh = [ emacs ];
     };
-    "Mod+W" = titled "Open Browser: Zen" {
-      spawn = [ "zen-twilight" ];
+    "Mod+W" = titled "Open Browser" {
+      spawn = [ "qutebrowser" ];
     };
     "Mod+D" = titled "Open Dired" {
       spawn-sh = [ "dired" ];
+    };
+    "XF86AudioMedia" = titled "Open Dired" {
+      spawn-sh = [ "spotify" ];
     };
     "XF86Calculator" = titled "Open Calculator" {
       spawn-sh = [ "${pkgs.gnome-calculator}/bin/gnome-calculator" ];
@@ -46,6 +49,11 @@ let
         "${emacs} emacs-float denote-journal-new-or-existing-entry"
       ];
     };
+    "Mod+Ctrl+Backslash" = titled "Open Emacs: Journal Focused" {
+      spawn-sh = [
+        "${emacs} emacs-journal +config/denote-journal-focused"
+      ];
+    };
     "Mod+A" = titled "Open Emacs: Journal" {
       spawn-sh = [
         "${emacs} emacs-float '(org-agenda nil \"a\")'"
@@ -56,11 +64,19 @@ let
         "vicinae vicinae://launch/@bl4zee1g/vicinae-extension-bitwarden-0/browse-vault"
       ];
     };
+    "Mod+Semicolon" = titled "Open Launcher: Tasks" {
+      spawn-sh = [
+        "vicinae vicinae://launch/@adienox/org-todos/list-tasks"
+      ];
+    };
     "Mod+Shift+W" = titled "Open Launcher: Wallpaper" {
       spawn-sh = [ "dms ipc call dash toggle wallpaper" ];
     };
-    "Mod+Shift+O" = titled "Open Launcher: Overview" {
+    "Mod+O" = titled "Open Launcher: Overview" {
       spawn-sh = [ "dms ipc call dash toggle overview" ];
+    };
+    "Mod+Y" = titled "Open Launcher: Org Clock" {
+      spawn-sh = [ "dms ipc call orgClock panel" ];
     };
     "Ctrl+Alt+Delete" = titled "Open Launcher: Session Menu" {
       spawn-sh = [ "dms ipc call fullscreenPowerMenu toggle" ];
@@ -75,7 +91,7 @@ let
   # ── session / compositor ───────────────────────────────────────────────
   sessionBinds = {
     "Mod+Shift+Slash" = titled "Show Hotkey Overlay" { show-hotkey-overlay = { }; };
-    "Mod+O" = titledWith "Toggle Overview" { repeat = false; } {
+    "Mod+Shift+O" = titledWith "Toggle Overview" { repeat = false; } {
       toggle-overview = { };
     };
     "Mod+X" = titled "Lock Screen" {
@@ -88,7 +104,7 @@ let
 
   # ── screenshots ────────────────────────────────────────────────────────
   screenshotBinds =
-    if true then
+    if config.programs.niri-snap.enable then
       {
         "Print" = titled "Screenshot: region" {
           spawn = [

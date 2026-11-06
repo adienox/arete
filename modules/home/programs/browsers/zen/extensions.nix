@@ -21,7 +21,6 @@
         darkreader
         enhancer-for-youtube
         facebook-container
-        multi-account-containers
         imagus
         karakeep
         redirector
@@ -35,9 +34,7 @@
         github-file-icons
         watchmarker-for-youtube
         tab-reloader
-        youtube-unhook
         vicinae
-        floccus
         pkgs.tab-handoff.xpi
       ];
 

@@ -19,6 +19,6 @@ in
       copyLyrics
     ];
 
-    theme = spicePkgs.themes.defaultDynamic;
+    theme = spicePkgs.themes.hazy;
   };
 }

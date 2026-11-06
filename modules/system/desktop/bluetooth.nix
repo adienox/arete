@@ -4,7 +4,7 @@
   ...
 }:
 let
-  timeoutMinutes = 5;
+  timeoutMinutes = 3;
 
   script = pkgs.writeShellApplication {
     name = "bluetooth-autooff";

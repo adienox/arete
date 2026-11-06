@@ -5,12 +5,12 @@
   services.avahi = {
     enable = true;
     nssmdns4 = true; # Enables .local name resolution for IPv4
-    publish = {
-      enable = true;
-      addresses = true; # Broadcast IP addresses
-      workstation = true; # Register as a workstation
-      domain = true; # Announce local domain
-      userServices = true; # Allow user-defined services
+    settings.publish = {
+      disable-publishing = false;
+      publish-addresses = true; # Broadcast IP addresses
+      publish-workstation = true; # Register as a workstation
+      publish-domain = true; # Announce local domain
+      disable-user-service-publishing = false; # Allow user-defined services
     };
   };
 

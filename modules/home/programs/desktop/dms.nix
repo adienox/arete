@@ -13,6 +13,13 @@ let
     desktopName = "Select Wallpaper";
     terminal = false;
   };
+  dms-settings = pkgs.makeDesktopItem {
+    icon = "settings";
+    name = "dms-settings";
+    exec = "dms ipc call settings open";
+    desktopName = "DMS Settings";
+    terminal = false;
+  };
   dms-toggle-theme = pkgs.makeDesktopItem {
     icon = "applications-interfacedesign";
     name = "theme-toggle";
@@ -27,6 +34,13 @@ let
     desktopName = "Toggle Keep Awake";
     terminal = false;
   };
+  dms-toggle-dnd = pkgs.makeDesktopItem {
+    icon = "caffeine-cup-full";
+    name = "dnd-toggle";
+    exec = "dms ipc notifications toggleDoNotDisturb";
+    desktopName = "Toggle DND";
+    terminal = false;
+  };
 in
 {
   imports = [
@@ -39,8 +53,16 @@ in
     dms-wallpaper-selector
     dms-toggle-theme
     dms-toggle-inhibit
+    dms-settings
+    dms-toggle-dnd
     jq
   ];
+
+  sops.secrets = {
+    "services/dmsOpenRouter" = { };
+    "services/homeassistant" = { };
+    "services/freshrss" = { };
+  };
 
   programs.dank-material-shell = {
     enable = true;
@@ -54,9 +76,7 @@ in
 
     plugins = {
       dankKDEConnect.enable = true;
-      hiddenBar.enable = true;
       systemMonitorPlus.enable = true;
-      wallpaperCarousel.enable = true;
       fullscreenPowerMenu.enable = true;
       smartTimer.enable = true;
     };

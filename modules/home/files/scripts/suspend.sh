@@ -48,4 +48,4 @@ check_ssh
 check_cpu
 check_nix
 loginctl lock-session
-systemctl suspend
+systemctl suspend-then-hibernate

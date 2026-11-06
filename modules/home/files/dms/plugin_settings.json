@@ -50,11 +50,52 @@
     "tick": true,
     "sound": "custom",
     "customSound": "/home/nox/.local/share/assets/timer.wav",
-    "volume": 60
+    "volume": 60,
+    "hourglassStyle": "classic",
+    "alertKind": "halo",
+    "alertScreen": "focused"
   },
   "aiUsage": {
     "enabled": true,
     "piSessionsDir": "~/.pi/agent/sessions",
     "openRouterApiKeyFile": "~/.config/sops-nix/secrets/services/dmsOpenRouter"
+  },
+  "dankClight": {
+    "enabled": false
+  },
+  "orgClock": {
+    "enabled": true,
+    "saveAfterEdit": true,
+    "alwaysShow": true,
+    "pollSeconds": 60,
+    "calendarCommand": "! dms ipc call dash open plugin_dashWeek",
+    "editorCommand": "! emacsclient -c -F '((name . \"emacs-float\"))' --eval '(+config/open-org-subtree {line} \"{file}\")'",
+    "showKeyHints": false,
+    "clockInCommand": "~/.config/scripts/clockin.sh",
+    "clockOutCommand": "~/.config/scripts/clockout.sh",
+    "newTaskFile": "~/Documents/notes/inbox/quickadd.org"
+  },
+  "ccTestTab": {
+    "enabled": true,
+    "clicks": 14
+  },
+  "dashTestTab": {
+    "enabled": true
+  },
+  "dashWeek": {
+    "enabled": true,
+    "orgDir": "~/Documents/notes/inbox",
+    "todoKeywords": "TODO NEXT WAIT PROG | DONE NOPE",
+    "orgOpenCommand": "emacsclient -c -F '((name . \"emacs-float\"))' --eval '(+config/open-org-subtree {line} \"{file}\")'",
+    "jumpToDate": ""
+  },
+  "orbitBluetooth": {
+    "enabled": true,
+    "pcLevels": {
+      "80:99:E7:FF:4A:2B": 1
+    },
+    "glyphOverrides": {
+      "80:99:E7:FF:4A:2B": "headphonesPremium"
+    }
   }
 }

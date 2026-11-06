@@ -14,6 +14,7 @@
   ];
 
   programs.dconf.enable = true;
+  modules.xremap.enable = true;
 
   services = {
     logind.settings.Login = {

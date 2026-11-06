@@ -35,7 +35,8 @@
         "style": "expressive",
         "profileVisibility": "always",
         "passwordVisibility": "always"
-      }
+      },
+      "name": "Password"
     },
     {
       "id": "lock_notifications",
@@ -113,7 +114,8 @@
         "style": "expressive",
         "profileVisibility": "always",
         "passwordVisibility": "always"
-      }
+      },
+      "name": "Password"
     },
     {
       "id": "lock_status",
@@ -428,13 +430,6 @@
       "row": 1
     },
     {
-      "id": "calendar",
-      "w": 3,
-      "h": 3,
-      "col": 0,
-      "row": 2
-    },
-    {
       "id": "media",
       "w": 3,
       "h": 1,
@@ -468,14 +463,19 @@
       "h": 1,
       "col": 2,
       "row": 5
+    },
+    {
+      "id": "plugin_dashWeek",
+      "w": 3,
+      "h": 3
     }
   ],
   "dashOptions": {
     "media": {
       "animatedArt": true,
-      "deviceName": false,
-      "artStyle": "square",
-      "titleFont": "display"
+      "titleFont": "display",
+      "albumArtBackdrop": false,
+      "albumArtAccent": false
     },
     "calendar": {
       "weekends": true
@@ -540,6 +540,19 @@
     "wallpaper": {
       "layout": "carousel",
       "filename": false
+    },
+    "battery": {
+      "style": "outline",
+      "color": "theme"
+    },
+    "clock": {
+      "tone": ""
+    },
+    "plugin_dashWeek": {
+      "days": 3,
+      "startHour": 5,
+      "hourHeight": 40,
+      "stripRows": 2
     }
   },
   "networkPreference": "wifi",
@@ -565,10 +578,10 @@
   "acSuspendBehavior": 2,
   "acProfileName": "1",
   "acPostLockMonitorTimeout": 30,
-  "batteryProfileName": "0",
+  "batteryProfileName": "1",
   "batteryCriticalNotificationType": 0,
-  "batteryAutoPowerSaver": true,
-  "lowerDisplayRefreshRateOnBattery": true,
+  "batteryAutoPowerSaver": false,
+  "lowerDisplayRefreshRateOnBattery": false,
   "lockBeforeSuspend": true,
   "matugenTemplateEmacs": false,
   "notificationOverlayEnabled": true,
@@ -651,19 +664,21 @@
           "clockCompactMode": false
         },
         {
-          "id": "music",
-          "enabled": true
-        },
-        {
           "id": "smartTimer",
           "enabled": true
         }
       ],
       "rightWidgets": [
         {
+          "id": "orgClock",
+          "enabled": true
+        },
+        {
           "id": "systemTray",
           "enabled": true,
-          "trayUseInlineExpansion": false
+          "trayUseInlineExpansion": false,
+          "trayPopupSingleLine": true,
+          "trayAutoOverflow": true
         },
         {
           "id": "privacyIndicator",
@@ -678,7 +693,7 @@
           "showAudioPercent": false,
           "showBrightnessIcon": false,
           "showBrightnessPercent": false,
-          "showBatteryIcon": true,
+          "showBatteryIcon": false,
           "showPrinterIcon": false,
           "controlCenterGroupOrder": [
             "network",
@@ -801,9 +816,9 @@
         },
         {
           "id": "battery",
-          "enabled": true,
+          "enabled": false,
           "showBatteryPercentOnlyOnBattery": true,
-          "showBatteryTime": false,
+          "showBatteryTime": true,
           "batteryStyle": "icon"
         },
         {
@@ -904,5 +919,29 @@
   "frameShowOnOverview": true,
   "frameBarInsetPadding": 8,
   "configVersion": 42,
-  "bluetoothMprisEnabled": false
+  "bluetoothMprisEnabled": false,
+  "displayPreviousRefreshModes": {},
+  "lockPamExternallyManaged": false,
+  "enableFprint": true,
+  "blurWallpaperOnOverview": false,
+  "avatarRing": "none",
+  "iconThemePerMode": false,
+  "batteryCriticalThreshold": 15,
+  "acMonitorTimeout": 0,
+  "fadeToLockGracePeriod": 10,
+  "fadeToDpmsGracePeriod": 10,
+  "desktopWidgetInstances": [],
+  "touchpadAccelSpeed": 0,
+  "touchpadMiddleEmulation": false,
+  "touchpadDisableWhileTyping": true,
+  "touchpadTapToClick": true,
+  "mouseMiddleEmulation": false,
+  "niriOverviewLauncherStyle": "spotlight",
+  "systemTrayIconTintMode": "none",
+  "lockScreenShowWeather": true,
+  "osdVolumeEnabled": true,
+  "osdWorkspaceEnabled": false,
+  "greeterPamExternallyManaged": false,
+  "greeterEnableFprint": true,
+  "batteryChargeLimit": 90
 }

@@ -58,3 +58,8 @@ output_path = '~/.local/state/pinax/colors.json'
 input_path = "~/.config/matugen/templates/fish.theme"
 output_path = "~/.config/fish/themes/matugen.theme"
 post_hook = "fish -c 'fish_config theme choose matugen'"
+
+[templates.qutebrowser]
+input_path = '~/.config/matugen/templates/qutebrowser.py'
+output_path = '~/.config/qutebrowser/matugen_palette.py'
+post_hook = "~/.config/matugen/hooks/reload-qb.sh"

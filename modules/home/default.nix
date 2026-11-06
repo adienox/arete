@@ -23,6 +23,8 @@ in
     ffmpegthumbnailer
     mediainfo
     imagemagick
+    keylightd
+    qutebrowser
 
     #freecad-wayland
     trash-cli
@@ -31,7 +33,6 @@ in
     yad
     just
     qbittorrent
-    sony-device-center
   ];
 
   home.file = helpers.mkFiles {

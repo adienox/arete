@@ -13,6 +13,7 @@
       bun
     ];
   };
+  sops.secrets."services/pi" = { };
 
   sops.templates."pi-auth.json".content = builtins.toJSON {
     openrouter = {

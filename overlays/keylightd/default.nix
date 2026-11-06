@@ -4,7 +4,7 @@
   fetchFromGitHub,
 }:
 
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "keylightd";
   version = "1.1.0";
 
@@ -12,10 +12,14 @@ rustPlatform.buildRustPackage rec {
     owner = "jonas-schievink";
     repo = "keylightd";
     rev = "933a4cf851009d4a8c1b4ce7725556d69d4b82db";
-    hash = lib.fakeHash;
+    hash = "sha256-lU5ddVRjiGts7IzkoL3CWJVtjoiBMIHRBxb/C0n+oqQ=";
   };
 
-  cargoHash = lib.fakeHash;
+  patches = [
+    ./fix-let-underscore-lock.patch
+  ];
+
+  cargoHash = "sha256-P3kJM4TI33ug5hmTLer91Wy1eVJGgtPRbvftqI3tbvY=";
 
   meta = {
     description = "Keyboard backlight daemon for Framework laptops";

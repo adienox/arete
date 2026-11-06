@@ -61,8 +61,8 @@ in
         startRadio.enable = true;
       };
       "@adienox/org-todos".preferences = {
-        editorCommand = "emacsclient -c -F '((name . \"emacs-float\"))' +{line} {file}";
-        todoKeywords = "TODO NEXT WAIT | DONE NOPE";
+        editorCommand = "emacsclient -c -F '((name . \"emacs-float\"))' --eval '(+config/open-org-subtree {line} \"{file}\")'";
+        todoKeywords = "TODO NEXT PROG WAIT | DONE NOPE";
         todosFile = "${notes}/inbox/tasks.org";
         extraFiles = "${notes}/inbox/auto.org";
         archiveFile = "${notes}/inbox/archive.org";

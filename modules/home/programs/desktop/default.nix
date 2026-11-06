@@ -13,8 +13,11 @@ in
     ./niri
     ./vicinae
     ./dms.nix
+    ./dfiles.nix
     ./dcal.nix
     ./xremap.nix
+    ./niri-snap.nix
+    ./on-lock.nix
   ];
 
   services.kdeconnect.enable = true;
@@ -38,5 +41,14 @@ in
       sort-directories-first = true;
       show-hidden = true;
     };
+  };
+  services.session-hooks = {
+    enable = true;
+    onLock = [
+      "dms ipc orgClock pause"
+    ];
+    onUnlock = [
+      # "dms ipc orgClock resume"
+    ];
   };
 }
