@@ -10,6 +10,7 @@
   imports = [
     ../../system/common.nix
     ./lid.nix
+    ./linger.nix
     ./network.nix
   ];
 }
