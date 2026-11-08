@@ -106,7 +106,10 @@
       apps.${system} = {
         install = lib.mkApp {
           name = "install";
-          script = ./scripts/install.sh;
+          # bootstrap.sh clones the repo and execs the freshly cloned
+          # install.sh, so a cached `nix run github:...` app never runs
+          # stale installer logic.
+          script = ./scripts/bootstrap.sh;
           runtimeInputs = with pkgs; [
             nix
             git

@@ -12,10 +12,17 @@ REPO_URL="${REPO_URL:-https://github.com/adienox/arete}"
 
 export NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
-WORK="$(mktemp -d)"
+# When run through scripts/bootstrap.sh (the `nix run` entry point) the
+# repository is already cloned and handed over via ARETE_WORK. Running
+# install.sh directly still fetches its own copy.
+if [ -n "${ARETE_WORK:-}" ] && [ -d "${ARETE_WORK}" ]; then
+  WORK="${ARETE_WORK}"
+else
+  WORK="$(mktemp -d)"
+  echo "==> fetching arete into ${WORK}"
+  git clone --depth 1 "${REPO_URL}" "${WORK}"
+fi
 trap 'rm -rf "$WORK"' EXIT
-echo "==> fetching arete into ${WORK}"
-git clone --depth 1 "${REPO_URL}" "${WORK}"
 
 GENERATED_HW=0
 HW_WORK="${WORK}/hosts/${HOST}/hardware.nix"
