@@ -25,7 +25,7 @@ in
     imagemagick
     keylightd
     qutebrowser
-
+    brave-origin
     #freecad-wayland
     trash-cli
     gojq
