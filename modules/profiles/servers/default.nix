@@ -10,6 +10,5 @@
   imports = [
     ../../system/common.nix
     ./lid.nix
-    ./shell.nix
   ];
 }

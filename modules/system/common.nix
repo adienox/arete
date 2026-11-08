@@ -9,6 +9,7 @@
     ./network
     ./security
     ./hardware
+    ./development/shell.nix
     ./virtualisation/docker.nix
   ];
 }

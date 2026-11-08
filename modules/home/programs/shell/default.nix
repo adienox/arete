@@ -2,9 +2,6 @@
 {
   imports = [
     ./ghostty.nix
-    ./starship.nix
-    ./zoxide.nix
-    ./atuin.nix
     ./bat.nix
     ./lsd.nix
     ./fish

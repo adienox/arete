@@ -5,6 +5,12 @@
 }:
 let
   nu_scripts = "${pkgs.nu_scripts}/share/nu_scripts";
+
+  # The NixOS programs.zoxide module has no nushell integration, so keep it
+  # here for nushell now that the home-manager zoxide module is gone.
+  zoxideNushellInit = pkgs.runCommand "zoxide-nushell-config.nu" { } ''
+    ${pkgs.zoxide}/bin/zoxide init nushell >> "$out"
+  '';
 in
 {
   programs.nushell = {
@@ -61,6 +67,7 @@ in
 
       source ${nu_scripts}/custom-completions/nix/nix-completions.nu
       source ${nu_scripts}/custom-completions/dart/dart-completions.nu
+      source ${zoxideNushellInit}
 
       if $nu.is-interactive and (not ("INSIDE_EMACS" in $env)) {
           ${pkgs.fastfetch}/bin/fastfetch
