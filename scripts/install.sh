@@ -10,6 +10,8 @@ USER_NAME="${USER_NAME:-nox}"
 FLAKE_REF="${FLAKE_REF:-github:adienox/arete}"
 REPO_URL="https://github.com/adienox/arete"
 
+export NIX_CONFIG="extra-experimental-features = nix-command flakes"
+
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 echo "==> fetching arete into ${WORK}"
