@@ -8,7 +8,7 @@ set -euo pipefail
 HOST="${1:?usage: nix run github:adienox/arete#install <hostname> [role]}"
 USER_NAME="${USER_NAME:-nox}"
 FLAKE_REF="${FLAKE_REF:-github:adienox/arete}"
-REPO_URL="https://github.com/adienox/arete"
+REPO_URL="${REPO_URL:-https://github.com/adienox/arete}"
 
 export NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
@@ -42,9 +42,20 @@ sudo cp -a "${WORK}" "${TARGET_ARETE}"
 echo "==> detecting role for ${HOST}"
 ROLE="${2:-}"
 if [ -z "${ROLE}" ]; then
-  ROLE="$(nix eval --raw "${TARGET_ARETE}#nixosConfigurations.${HOST}.config.arete.role" 2>/dev/null || true)"
+  # Read the role straight from the host's meta.nix, which is the same
+  # source of truth flake.nix uses (`role = meta.role or "workstation"`).
+  # Evaluating the full NixOS configuration instead is fragile: it needs
+  # the flake inputs fetched and can fail for unrelated reasons, and the
+  # old code turned any failure into a silent "workstation" fallback.
+  META="${TARGET_ARETE}/hosts/${HOST}/meta.nix"
+  if [ -f "${META}" ]; then
+    ROLE="$(nix eval --impure --raw --file "${META}" role 2>/dev/null || true)"
+  fi
 fi
-ROLE="${ROLE:-workstation}"
+if [ -z "${ROLE}" ]; then
+  echo "    WARNING: could not determine role for ${HOST} (check hosts/${HOST}/meta.nix); defaulting to workstation"
+  ROLE="workstation"
+fi
 echo "    role: ${ROLE}"
 
 echo "==> installing NixOS for ${HOST}"
