@@ -1,6 +1,9 @@
 # ntfy topic used by _notify. Override with the NTFY_TOPIC env var.
 ntfy_topic := env_var_or_default("NTFY_TOPIC", "anomaly-alerts")
 
+# ssh user used by `deploy`. Override with the REMOTE_USER env var.
+remote_user := env_var_or_default("REMOTE_USER", "nox")
+
 # list all recipes
 _default:
     @just --list
@@ -13,6 +16,11 @@ update:
     #@gen=$(nixos-rebuild list-generations | awk '/True/ {print $1}');\
     #just _commit "nixos-rebuild: generation $gen"
     #@just _notify "system successfully updated"
+
+# build locally and deploy to a remote host (e.g. `just deploy anomaly`)
+deploy host:
+    @just _diff
+    @nh os switch .#{{ host }} -H {{ host }} --target-host {{ remote_user }}@{{ host }}
 
 vm host:
     @nixos-rebuild build-vm -F .#{{ host }}
