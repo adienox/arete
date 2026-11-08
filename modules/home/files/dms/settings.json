@@ -176,6 +176,7 @@
       "showOnLastDisplay": true,
       "position": 1,
       "mode": "compact",
+      "middleClickAction": "close",
       "taskbarAlign": "center",
       "widgetExpansion": "popout",
       "iconSize": 40,
@@ -481,8 +482,8 @@
     "media": {
       "animatedArt": true,
       "titleFont": "display",
-      "albumArtBackdrop": false,
-      "albumArtAccent": false
+      "artStyle": "rounded",
+      "panelRows": 5
     },
     "calendar": {
       "weekends": true
@@ -542,11 +543,14 @@
           "col": 1,
           "row": 2
         }
-      ]
+      ],
+      "panelRows": 5
     },
     "wallpaper": {
       "layout": "carousel",
-      "filename": false
+      "filename": false,
+      "rows": 5,
+      "panelRows": 5
     },
     "battery": {
       "style": "outline",
@@ -559,10 +563,14 @@
       "days": 3,
       "startHour": 5,
       "hourHeight": 40,
-      "stripRows": 2
+      "stripRows": 2,
+      "panelRows": 6
     },
     "plugin_dashBattery": {
       "health": true
+    },
+    "wellbeing": {
+      "panelRows": 5
     }
   },
   "networkPreference": "wifi",
@@ -680,6 +688,13 @@
       ],
       "rightWidgets": [
         {
+          "id": "privacyIndicator",
+          "enabled": true,
+          "privacyShowMicIcon": false,
+          "privacyShowScreenShareIcon": false,
+          "privacyShowCameraIcon": false
+        },
+        {
           "id": "orgClock",
           "enabled": true
         },
@@ -689,10 +704,6 @@
           "trayUseInlineExpansion": false,
           "trayPopupSingleLine": true,
           "trayAutoOverflow": true
-        },
-        {
-          "id": "privacyIndicator",
-          "enabled": true
         },
         {
           "id": "controlCenterButton",
@@ -968,5 +979,35 @@
   "osdWorkspaceEnabled": false,
   "greeterPamExternallyManaged": false,
   "greeterEnableFprint": true,
-  "batteryChargeLimit": 90
+  "batteryChargeLimit": 90,
+  "dashTabs": [
+    {
+      "id": "overview",
+      "enabled": true
+    },
+    {
+      "id": "media",
+      "enabled": true
+    },
+    {
+      "id": "wallpaper",
+      "enabled": true
+    },
+    {
+      "id": "weather",
+      "enabled": true
+    },
+    {
+      "id": "wellbeing",
+      "enabled": true
+    },
+    {
+      "id": "notifications",
+      "enabled": false
+    },
+    {
+      "id": "settings",
+      "enabled": false
+    }
+  ]
 }
