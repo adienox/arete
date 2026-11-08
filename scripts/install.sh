@@ -10,6 +10,10 @@ USER_NAME="${USER_NAME:-nox}"
 FLAKE_REF="${FLAKE_REF:-github:adienox/arete}"
 REPO_URL="${REPO_URL:-https://github.com/adienox/arete}"
 
+# `nix` subcommands below are run both directly and through sudo. sudo
+# resets the environment, so the config has to be handed to the privileged
+# commands explicitly (via `sudo env ...`) or nix-command comes back
+# disabled on the live environment.
 export NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
 # When run through scripts/bootstrap.sh (the `nix run` entry point) the
@@ -37,7 +41,7 @@ else
 fi
 
 echo "==> partitioning ${HOST} (destroy,format,mount)"
-sudo nix run github:nix-community/disko/latest -- \
+sudo env NIX_CONFIG="${NIX_CONFIG}" nix run github:nix-community/disko/latest -- \
   --mode destroy,format,mount --yes-wipe-all-disks \
   --flake "${WORK}#${HOST}"
 
@@ -66,7 +70,7 @@ fi
 echo "    role: ${ROLE}"
 
 echo "==> installing NixOS for ${HOST}"
-sudo nixos-install --flake "${TARGET_ARETE}#${HOST}" --no-root-passwd
+sudo env NIX_CONFIG="${NIX_CONFIG}" nixos-install --flake "${TARGET_ARETE}#${HOST}" --no-root-passwd
 
 read -rp "Fetch SSH key from Bitwarden? [y/N] " FETCH_SECRETS
 FETCH_SECRETS="${FETCH_SECRETS,,}"  # lowercase
