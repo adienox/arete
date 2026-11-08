@@ -25,8 +25,8 @@ let
     "Mod+D" = titled "Open Dired" {
       spawn-sh = [ "dired" ];
     };
-    "XF86AudioMedia" = titled "Open Dired" {
-      spawn-sh = [ "spotify" ];
+    "XF86AudioMedia" = titled "Framework Button" {
+      spawn-sh = [ "${scripts}/fw-button.sh" ];
     };
     "XF86Calculator" = titled "Open Calculator" {
       spawn-sh = [ "${pkgs.gnome-calculator}/bin/gnome-calculator" ];

@@ -2,13 +2,13 @@
   services = {
     upower.enable = true;
     udisks2.enable = true;
-    power-profiles-daemon.enable = false;
+    power-profiles-daemon.enable = true;
     tlp.enable = false;
   };
   powerManagement.powertop.enable = true;
   environment.systemPackages = [ pkgs.powertop ];
   services.auto-cpufreq = {
-    enable = true;
+    enable = false;
 
     settings = {
       battery = {

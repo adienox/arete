@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# @vicinae.schemaVersion 1
+# @vicinae.title Battery Wattage
+# @vicinae.refreshTime 2s
+# @vicinae.mode inline
+# @vicinae.icon 🔋
+
+BATTERY=/sys/class/power_supply/BAT1
+
+if [[ ! -r "$BATTERY/voltage_now" || ! -r "$BATTERY/current_now" ]]; then
+    printf "N/A"
+    exit 0
+fi
+
+read -r voltage < "$BATTERY/voltage_now"
+read -r current < "$BATTERY/current_now"
+
+(( current < 0 )) && current=$((-current))
+
+watts_x100=$(( voltage * current / 10000000000 ))
+
+printf '%d.%02d W\n' \
+    "$((watts_x100 / 100))" \
+    "$((watts_x100 % 100))"

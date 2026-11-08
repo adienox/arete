@@ -458,16 +458,23 @@
       "row": 5
     },
     {
-      "id": "battery",
+      "id": "plugin_dashWeek",
+      "w": 3,
+      "h": 3,
+      "col": 0,
+      "row": 2
+    },
+    {
+      "id": "plugin_dashBatteryReplica",
+      "w": 1,
+      "h": 1
+    },
+    {
+      "id": "plugin_dashBattery",
       "w": 1,
       "h": 1,
       "col": 2,
       "row": 5
-    },
-    {
-      "id": "plugin_dashWeek",
-      "w": 3,
-      "h": 3
     }
   ],
   "dashOptions": {
@@ -553,6 +560,9 @@
       "startHour": 5,
       "hourHeight": 40,
       "stripRows": 2
+    },
+    "plugin_dashBattery": {
+      "health": true
     }
   },
   "networkPreference": "wifi",
@@ -578,10 +588,10 @@
   "acSuspendBehavior": 2,
   "acProfileName": "1",
   "acPostLockMonitorTimeout": 30,
-  "batteryProfileName": "1",
+  "batteryProfileName": "0",
   "batteryCriticalNotificationType": 0,
-  "batteryAutoPowerSaver": false,
-  "lowerDisplayRefreshRateOnBattery": false,
+  "batteryAutoPowerSaver": true,
+  "lowerDisplayRefreshRateOnBattery": true,
   "lockBeforeSuspend": true,
   "matugenTemplateEmacs": false,
   "notificationOverlayEnabled": true,
@@ -920,7 +930,22 @@
   "frameBarInsetPadding": 8,
   "configVersion": 42,
   "bluetoothMprisEnabled": false,
-  "displayPreviousRefreshModes": {},
+  "displayPreviousRefreshModes": {
+    "niri": {
+      "eDP-1": {
+        "mode": "2880x1920@120.000"
+      },
+      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1 Unknown": {
+        "mode": "2880x1920@120.000"
+      },
+      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1": {
+        "mode": "2880x1920@120.000"
+      },
+      "desc:China Star Optoelectronics Technology Co. Ltd MND508ZB1-1": {
+        "mode": "2880x1920@120.000"
+      }
+    }
+  },
   "lockPamExternallyManaged": false,
   "enableFprint": true,
   "blurWallpaperOnOverview": false,

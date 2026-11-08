@@ -97,5 +97,11 @@
     "glyphOverrides": {
       "80:99:E7:FF:4A:2B": "headphonesPremium"
     }
+  },
+  "dashBatteryReplica": {
+    "enabled": true
+  },
+  "dashBattery": {
+    "enabled": true
   }
 }
