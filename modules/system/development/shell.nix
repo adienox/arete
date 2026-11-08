@@ -5,9 +5,7 @@
     transientPrompt.enable = true;
   };
 
-  programs.zoxide = {
-    enable = true;
-  };
+  programs.zoxide.enable = true;
 
   # System-managed (config lands in /etc/atuin/config.toml via
   # ATUIN_CONFIG_DIR), so it is available on servers without home-manager.
