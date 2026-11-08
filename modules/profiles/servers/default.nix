@@ -9,5 +9,6 @@
 {
   imports = [
     ../../system/common.nix
+    ./lid.nix
   ];
 }
