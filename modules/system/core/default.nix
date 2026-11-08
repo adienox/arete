@@ -7,5 +7,6 @@
     ./nix-ld.nix
     ./nixpkgs.nix
     ./users.nix
+    ./substituters.nix
   ];
 }
