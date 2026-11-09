@@ -1,16 +1,31 @@
-# Shared server base profile: barebones system for containers and services.
-#
-# Loaded automatically by lib.mkHost for hosts with `role = "server"`.
-# Per-machine overrides live in modules/profiles/servers/<hostname>.nix
-# and are picked up automatically when they exist.
-#
-# No desktop stack and no home-manager. The shared ./system/common.nix base
-# provides networking, SSH, Tailscale, sops, the admin user, Docker, etc.
-{
+{ hostname, ... }: {
   imports = [
     ../../system/common.nix
     ./lid.nix
     ./linger.nix
     ./network.nix
   ];
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 7d";
+    persistent = true;
+  };
+
+  nix.optimise.automatic = true;
+
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:adienox/arete#${hostname}";
+    flags = [
+      "--update-input"
+      "nixpkgs"
+      "--no-write-lock-file"
+      "-L"
+    ];
+    dates = "weekly";
+    randomizedDelaySec = "45min";
+    persistent = true;
+    allowReboot = false;
+  };
 }
