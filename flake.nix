@@ -66,15 +66,15 @@
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
 
-    nix-firefox-addons.url = "github:osipog/nix-firefox-addons";
+    # nix-firefox-addons.url = "github:osipog/nix-firefox-addons";
 
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        home-manager.follows = "home-manager";
-      };
-    };
+    # zen-browser = {
+    #   url = "github:0xc000022070/zen-browser-flake";
+    #   inputs = {
+    #     nixpkgs.follows = "nixpkgs";
+    #     home-manager.follows = "home-manager";
+    #   };
+    # };
 
     sops-nix = {
       url = "github:Mic92/sops-nix";

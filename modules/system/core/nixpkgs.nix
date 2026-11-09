@@ -1,7 +1,6 @@
 { inputs, ... }:
 {
   nixpkgs.overlays = [
-    inputs.nix-firefox-addons.overlays.default
     (import ../../../overlays)
   ];
 
