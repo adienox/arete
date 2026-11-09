@@ -71,6 +71,37 @@ in
       type = lib.types.port;
       default = 5000;
     };
+
+    postScript = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      example = ''
+        echo "built $TARGET_HOST: $TOPLEVEL (lock changed: $LOCK_CHANGED)"
+      '';
+      description = ''
+        Shell snippet run at the very end of the service, only after the build
+        succeeded and flake.lock was pushed (if it changed). Runs in the same
+        shell as the build, as the cache-builder user, in the repo checkout.
+
+        Available variables:
+          TARGET_HOST   name of the host that was built
+          TOPLEVEL      resolved store path of the built system closure
+          OLD_TOPLEVEL  closure from the previous run (empty on the first run)
+          LOCK_CHANGED  1 if flake.lock was updated and pushed, else 0
+          REPO          path to the repo checkout
+
+        A non-zero exit marks the unit as failed, but the build, the push and
+        the cache contents are unaffected. Append `|| true` to a command to
+        make it non-fatal.
+      '';
+    };
+
+    postScriptPackages = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [ ];
+      example = lib.literalExpression "[ pkgs.curl pkgs.jq ]";
+      description = "Extra packages available on PATH inside postScript.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -96,12 +127,14 @@ in
       description = "Build ${cfg.targetHost}'s system closure and publish flake.lock";
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
-      path = with pkgs; [
-        nix
-        git
-        openssh
-        coreutils
-      ];
+      path =
+        (with pkgs; [
+          nix
+          git
+          openssh
+          coreutils
+        ])
+        ++ cfg.postScriptPackages;
 
       environment = {
         HOME = stateDir;
@@ -136,12 +169,24 @@ in
 
         ${lib.optionalString cfg.updateInputs "nix flake update"}
 
+        # Remember the previous closure (for diffs in postScript) and keep it
+        # rooted, because the main out-link is overwritten by the build below.
+        old_toplevel=""
+        if [ -e ${stateDir}/${cfg.targetHost}-gcroot ]; then
+          old_toplevel="$(readlink -f ${stateDir}/${cfg.targetHost}-gcroot)"
+          nix-store --realise "$old_toplevel" \
+            --add-root ${stateDir}/${cfg.targetHost}-prev-gcroot --indirect \
+            >/dev/null || old_toplevel=""
+        fi
+
         # Build first. Out-link doubles as a GC root for the newest closure,
         # and it is overwritten each run, so older closures can be collected.
         nix build \
           ".#nixosConfigurations.${cfg.targetHost}.config.system.build.toplevel" \
           --out-link ${stateDir}/${cfg.targetHost}-gcroot \
           --print-build-logs
+
+        lock_changed=0
 
         # Only reached if the build succeeded (set -e).
         if ! git diff --quiet -- flake.lock; then
@@ -151,7 +196,19 @@ in
           # Fails (and the unit fails) if someone pushed in the meantime.
           # That is intentional: the closure we built no longer matches HEAD.
           git push origin HEAD:${lib.escapeShellArg cfg.branch}
+          lock_changed=1
         fi
+
+        ${lib.optionalString (cfg.postScript != "") ''
+          # ---- user-supplied postScript (build + push already succeeded) ----
+          export TARGET_HOST=${lib.escapeShellArg cfg.targetHost}
+          export TOPLEVEL="$(readlink -f ${stateDir}/${cfg.targetHost}-gcroot)"
+          export OLD_TOPLEVEL="$old_toplevel"
+          export LOCK_CHANGED="$lock_changed"
+          export REPO="$repo"
+
+          ${cfg.postScript}
+        ''}
       '';
     };
 
