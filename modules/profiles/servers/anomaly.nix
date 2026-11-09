@@ -53,4 +53,15 @@
 
   sops.secrets."anomaly/arete-deploy".owner = "cache-builder";
   sops.secrets."anomaly/harmonia" = { };
+
+  security.pam.sshAgentAuth.enable = true;
+  security.pam.services.sudo.sshAgentAuth = true;
+
+  security.sudo.extraConfig = ''
+    Defaults env_keep+=SSH_AUTH_SOCK
+  '';
+
+  users.users.nox.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILauKlCkhZTtkOyCmnz8YBZOeqGJhVhnRAgcwtMhAnVG nox@axiom"
+  ];
 }

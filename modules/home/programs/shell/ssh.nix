@@ -1,8 +1,4 @@
 {
-  vars,
-  ...
-}:
-{
   services.ssh-agent.enable = true;
   programs.ssh = {
     enable = true;
@@ -35,8 +31,8 @@
 
       "services" = {
         HostName = "impel";
-        User = vars.user;
-        RemoteCommand = "cd ${vars.home}/services && fish -l";
+        User = "nox";
+        RemoteCommand = "cd /home/nox/services && fish -l";
         RequestTTY = "yes";
       };
 
@@ -44,6 +40,13 @@
         HostName = "kindle";
         User = "root";
         Port = 2222;
+      };
+
+      "anomaly" = {
+        HostName = "anomaly";
+        User = "nox";
+        Port = 22;
+        ForwardAgent = true;
       };
     };
   };
