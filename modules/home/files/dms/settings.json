@@ -557,7 +557,8 @@
       "color": "theme"
     },
     "clock": {
-      "tone": ""
+      "tone": "",
+      "weight": 900
     },
     "plugin_dashWeek": {
       "days": 3,
