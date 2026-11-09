@@ -61,5 +61,5 @@ post_hook = "fish -c 'fish_config theme choose matugen'"
 
 [templates.qutebrowser]
 input_path = '~/.config/matugen/templates/qutebrowser.py'
-output_path = '~/.config/qutebrowser/matugen_palette.py'
+output_path = '~/.config/qutebrowser/matugen.py'
 post_hook = "~/.config/matugen/hooks/reload-qb.sh"

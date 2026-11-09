@@ -16,6 +16,7 @@
       trusted-users = [
         "root"
         "@wheel"
+        "nox"
       ];
       accept-flake-config = true;
       access-tokens = "!include ${config.sops.templates."access-tokens.conf".path}";
