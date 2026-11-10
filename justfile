@@ -22,6 +22,26 @@ deploy host:
     @just _diff
     @nh os switch .#{{ host }} -H {{ host }} --target-host {{ remote_user }}@{{ host }}
 
+# Fetch a day's report from anomaly and view it with glow
+report date=`date +%F`:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    host="anomaly"
+    src_dir="/var/lib/cache-builder/reports"
+    dest_dir="${TMPDIR:-/tmp}/cache-builder-reports"
+
+    src="$src_dir/{{date}}-axiom.md"
+    dest="$dest_dir/{{date}}.md"
+
+    mkdir -p "$dest_dir"
+
+    if [[ ! -e "$dest" ]]; then
+        scp -q "$host:$src" "$dest"
+    fi
+
+    cat "$dest"
+
 vm host:
     @nixos-rebuild build-vm -F .#{{ host }}
 
