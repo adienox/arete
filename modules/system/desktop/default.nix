@@ -1,4 +1,3 @@
-# Desktop/GUI cluster. Imported by modules/profiles/desktop.nix.
 {
   imports = [
     ./niri.nix
@@ -15,6 +14,10 @@
 
   programs.dconf.enable = true;
   modules.xremap.enable = true;
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
 
   services = {
     logind.settings.Login = {
