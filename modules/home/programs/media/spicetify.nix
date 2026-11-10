@@ -19,6 +19,16 @@ in
       copyLyrics
     ];
 
-    theme = spicePkgs.themes.hazy;
+    enabledSnippets = with spicePkgs.snippets; [
+      removeUnusedSpace
+      smoothProgressBar
+      hideAudiobooksButton
+      hideFullScreenButton
+      hideMiniPlayerButton
+      dynamicSearchBar
+      hideSidebarScrollbar
+    ];
+
+    theme = spicePkgs.themes.default;
   };
 }
