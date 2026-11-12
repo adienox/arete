@@ -1,6 +1,3 @@
-# ntfy topic used by _notify. Override with the NTFY_TOPIC env var.
-ntfy_topic := env_var_or_default("NTFY_TOPIC", "anomaly-alerts")
-
 # ssh user used by `deploy`. Override with the REMOTE_USER env var.
 remote_user := env_var_or_default("REMOTE_USER", "nox")
 
@@ -12,10 +9,6 @@ _default:
 update:
     @just _diff
     @nh os switch
-    #@git add --all
-    #@gen=$(nixos-rebuild list-generations | awk '/True/ {print $1}');\
-    #just _commit "nixos-rebuild: generation $gen"
-    #@just _notify "system successfully updated"
 
 # build locally and deploy to a remote host (e.g. `just deploy anomaly`)
 deploy host:
@@ -91,17 +84,6 @@ _commit msg:
     set -e
     echo "Committing: {{ msg }}"
     git commit -q -m "{{ msg }}" 2>/dev/null || true
-
-_notify msg:
-    #!/usr/bin/env bash
-    notify-send -a "system" -i "system-software-update" "Update complete" "{{ msg }}"
-    if tailscale status >/dev/null 2>&1; then
-        ntfy publish \
-            --title="Update complete" \
-            --priority=low \
-            {{ ntfy_topic }} \
-            "{{ msg }}"
-    fi
 
 # nh clean
 clean:
