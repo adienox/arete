@@ -45,6 +45,7 @@ let
   };
 in
 {
+  imports = [ ./bluetooth-restore.nix ];
 
   hardware.bluetooth.enable = true;
 
