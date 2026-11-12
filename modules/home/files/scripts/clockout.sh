@@ -1,13 +1,10 @@
 #!/usr/bin/env sh
 
-# Stop mpv focus music
-echo '{"command":["stop"]}' |
-    socat - /tmp/mpv-clockin.sock 2>/dev/null || true
-
 STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/org-clock-button-pause"
 
 # Exit if resuming from pause
 if [[ "$ORG_CLOCK_PAUSED" == "true" ]]; then
+    echo '{ "command": ["set_property", "pause", true] }' | socat - /tmp/mpv-clockin.sock
     touch "$STATE_FILE"
     exit 0
 fi
@@ -15,6 +12,10 @@ fi
 rm -f "$STATE_FILE"
 
 SETTINGS_FILE="$HOME/.cache/clockin-settings.json"
+
+# Stop mpv focus music
+echo '{"command":["stop"]}' |
+    socat - /tmp/mpv-clockin.sock 2>/dev/null || true
 
 # restore previous settings
 WALLPAPER=$(gojq -r '.wallpaper' "$SETTINGS_FILE")
