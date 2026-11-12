@@ -87,7 +87,8 @@
     "orgDir": "~/Documents/notes/inbox",
     "todoKeywords": "TODO NEXT WAIT PROG | DONE NOPE",
     "orgOpenCommand": "emacsclient -c -F '((name . \"emacs-float\"))' --eval '(+config/open-org-subtree {line} \"{file}\")'",
-    "jumpToDate": ""
+    "jumpToDate": "",
+    "notifSnoozeMinutes": 5
   },
   "orbitBluetooth": {
     "enabled": true,

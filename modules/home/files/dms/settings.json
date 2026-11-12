@@ -557,8 +557,8 @@
       "color": "theme"
     },
     "clock": {
-      "tone": "",
-      "weight": 900
+      "weight": 900,
+      "tone": ""
     },
     "plugin_dashWeek": {
       "days": 3,
@@ -1010,5 +1010,6 @@
       "id": "settings",
       "enabled": false
     }
-  ]
+  ],
+  "dashTabPosition": "auto"
 }

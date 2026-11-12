@@ -24,8 +24,6 @@ in
     mediainfo
     imagemagick
     keylightd
-    qutebrowser
-    ungoogled-chromium
     #freecad-wayland
     trash-cli
     gojq

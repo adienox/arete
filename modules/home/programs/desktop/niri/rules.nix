@@ -242,6 +242,7 @@
       clip-to-geometry = true;
       background-effect = {
         blur = true;
+        xray = false;
       };
     };
   }

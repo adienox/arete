@@ -27,6 +27,7 @@ in
       hideMiniPlayerButton
       dynamicSearchBar
       hideSidebarScrollbar
+      modernScrollbar
     ];
 
     theme = spicePkgs.themes.default;
