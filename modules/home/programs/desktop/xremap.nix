@@ -28,6 +28,16 @@
               "alone" = "esc";
               "alone_timeout_millis" = 350;
             };
+            "Shift_L" = {
+              held = "Shift_L";
+              alone = "F13";
+              alone_timeout_millis = 250;
+            };
+            "Shift_R" = {
+              held = "Shift_R";
+              alone = "F14";
+              alone_timeout_millis = 250;
+            };
           };
         }
       ];
@@ -56,6 +66,14 @@
             "F24" = {
               set_mode = "default";
             };
+          };
+        }
+        {
+          name = "Paren output";
+          mode = "default";
+          remap = {
+            "F13" = "Shift-KEY_9"; # (
+            "F14" = "Shift-KEY_0"; # )
           };
         }
       ];
