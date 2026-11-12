@@ -27,6 +27,11 @@
     config.sops.placeholder."services/github"
   }";
 
+  #FIXME: remove this once qutebrowser is updated to distrust emudhra certs
+  nixpkgs.config.permittedInsecurePackages = [
+    "qutebrowser-3.7.0"
+  ];
+
   environment = {
     systemPackages = with pkgs; [
       neovim
