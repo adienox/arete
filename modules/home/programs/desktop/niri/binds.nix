@@ -86,7 +86,20 @@ let
         "${pkgs.wl-kbptr}/bin/wl-kbptr"
       ];
     };
-  };
+  }
+  // (
+    let
+      sidebar = "${pkgs.niri-sidebar}/bin/niri-sidebar";
+    in
+    {
+      "Mod+S" = titled "Sidebar: Toggle Window" {
+        spawn-sh = [ "${sidebar} toggle-window" ];
+      };
+      "Mod+Shift+S" = titled "Sidebar: Toggle Visibility" {
+        spawn-sh = [ "${sidebar} toggle-visibility" ];
+      };
+    }
+  );
 
   # ── session / compositor ───────────────────────────────────────────────
   sessionBinds = {

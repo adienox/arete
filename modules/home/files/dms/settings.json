@@ -1011,5 +1011,6 @@
       "enabled": false
     }
   ],
-  "dashTabPosition": "auto"
+  "dashTabPosition": "auto",
+  "touchpadAccelProfile": "adaptive"
 }

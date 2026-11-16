@@ -1,7 +1,12 @@
-# Docker is available on every profile (workstations and servers).
 {
-  virtualisation.docker.rootless = {
-    enable = true;
-    setSocketVariable = true;
+  virtualisation.docker = {
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+    };
+    autoPrune = {
+      enable = true;
+      dates = "weekly";
+    };
   };
 }

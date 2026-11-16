@@ -1,5 +1,8 @@
 { config, ... }: {
-  imports = [ ./cache-builder.nix ];
+  imports = [
+    ./cache-builder.nix
+    ../../homelab
+  ];
 
   systemd.services.battery-conservation = {
     wantedBy = [ "multi-user.target" ];
