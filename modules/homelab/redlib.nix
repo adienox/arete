@@ -58,6 +58,10 @@
     serviceConfig.TimeoutStartSec = "60";
   };
 
+  services.caddy.virtualHosts."http://redlib.arete.io".extraConfig = ''
+    reverse_proxy 127.0.0.1:9090
+  '';
+
   sops.secrets."containers/redlib" = {
     owner = "nobody";
     mode = "0400";
