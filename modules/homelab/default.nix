@@ -6,5 +6,6 @@
     ./caddy.nix
     ./freshrss.nix
     ./audiobookshelf.nix
+    ./webdav.nix
   ];
 }
