@@ -68,7 +68,7 @@
     "saveAfterEdit": true,
     "alwaysShow": true,
     "pollSeconds": 60,
-    "calendarCommand": "! dms ipc call dash open plugin_orgAgenda",
+    "calendarCommand": "! dms ipc call dash open plugin_dashWeek",
     "editorCommand": "! emacsclient -c -F '((name . \"emacs-float\"))' --eval '(+config/open-org-subtree {line} \"{file}\")'",
     "showKeyHints": false,
     "clockInCommand": "~/.config/scripts/clockin.sh",
@@ -82,7 +82,7 @@
   "dashTestTab": {
     "enabled": true
   },
-  "orgAgenda": {
+  "dashWeek": {
     "enabled": true,
     "orgDir": "~/Documents/notes/inbox",
     "todoKeywords": "TODO NEXT WAIT PROG | DONE NOPE",
@@ -104,5 +104,10 @@
   },
   "dashBattery": {
     "enabled": true
+  },
+  "orgAgenda": {
+    "enabled": true,
+    "orgDir": "~/Documents/notes/inbox",
+    "notifSnoozeMinutes": 5
   }
 }
