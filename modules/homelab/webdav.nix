@@ -1,12 +1,20 @@
 { config, ... }:
 {
-  sops.secrets."services/webdav/rikka" = { };
-  sops.secrets."services/webdav/nox" = { };
+  sops.secrets."services/webdav/rikka" = {
+    owner = "webdav";
+    group = "webdav";
+    mode = "0400";
+  };
+  sops.secrets."services/webdav/nox" = {
+    owner = "webdav";
+    group = "webdav";
+    mode = "0400";
+  };
 
   sops.templates."webdav.env" = {
     content = ''
-      RIKKA_PASSWORD=${config.sops.placeholder."webdav/rikka"}
-      NOX_PASSWORD=${config.sops.placeholder."webdav/nox"}
+      RIKKA_PASSWORD=${config.sops.placeholder."services/webdav/rikka"}
+      NOX_PASSWORD=${config.sops.placeholder."services/webdav/nox"}
     '';
     restartUnits = [ "webdav.service" ];
   };
