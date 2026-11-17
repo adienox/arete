@@ -7,5 +7,6 @@
     ./freshrss.nix
     ./audiobookshelf.nix
     ./webdav.nix
+    ./qbittorrent.nix
   ];
 }
