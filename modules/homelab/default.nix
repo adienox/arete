@@ -5,5 +5,6 @@
     ./technitium.nix
     ./caddy.nix
     ./freshrss.nix
+    ./audiobookshelf.nix
   ];
 }
