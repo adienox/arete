@@ -10,4 +10,8 @@
     "127.0.0.1"
     "1.1.1.1" # fallback
   ];
+
+  services.caddy.virtualHosts."http://dns.arete.io".extraConfig = ''
+    reverse_proxy 127.0.0.1:5380
+  '';
 }
