@@ -9,5 +9,6 @@
     ./webdav.nix
     ./qbittorrent.nix
     ./prowlarr.nix
+    ./rmab.nix
   ];
 }
