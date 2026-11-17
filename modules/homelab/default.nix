@@ -8,5 +8,6 @@
     ./audiobookshelf.nix
     ./webdav.nix
     ./qbittorrent.nix
+    ./prowlarr.nix
   ];
 }
