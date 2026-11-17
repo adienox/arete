@@ -10,5 +10,6 @@
     ./qbittorrent.nix
     ./prowlarr.nix
     ./rmab.nix
+    ./ntfy.nix
   ];
 }
