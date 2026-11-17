@@ -6,12 +6,12 @@
     api.enable = true;
     passwordFile = config.sops.secrets."services/freshrss".path;
     webserver = "caddy";
-    virtualHost = "rss.arete.io";
+    virtualHost = "http://rss.arete.io";
   };
 
-  services.caddy.virtualHosts."rss.arete.io".extraConfig = ''
-    tls internal
-  '';
-
-  sops.secrets."services/freshrss" = { };
+  sops.secrets."services/freshrss" = {
+    owner = "freshrss";
+    group = "freshrss";
+    mode = "0400";
+  };
 }
