@@ -459,7 +459,7 @@
       "row": 5
     },
     {
-      "id": "plugin_dashWeek",
+      "id": "plugin_orgAgenda",
       "w": 3,
       "h": 3,
       "col": 0,
@@ -560,7 +560,7 @@
       "weight": 900,
       "tone": ""
     },
-    "plugin_dashWeek": {
+    "plugin_orgAgenda": {
       "days": 3,
       "startHour": 5,
       "hourHeight": 40,
@@ -595,10 +595,10 @@
   "acLockTimeout": 300,
   "acSuspendTimeout": 1800,
   "acSuspendBehavior": 2,
-  "acProfileName": "1",
+  "acProfileName": "2",
   "acPostLockMonitorTimeout": 30,
-  "batteryProfileName": "0",
-  "batteryCriticalNotificationType": 0,
+  "batteryProfileName": "1",
+  "batteryCriticalNotificationType": 1,
   "batteryAutoPowerSaver": true,
   "lowerDisplayRefreshRateOnBattery": true,
   "lockBeforeSuspend": true,
@@ -942,28 +942,13 @@
   "frameBarInsetPadding": 8,
   "configVersion": 42,
   "bluetoothMprisEnabled": false,
-  "displayPreviousRefreshModes": {
-    "niri": {
-      "eDP-1": {
-        "mode": "2880x1920@120.000"
-      },
-      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1 Unknown": {
-        "mode": "2880x1920@120.000"
-      },
-      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1": {
-        "mode": "2880x1920@120.000"
-      },
-      "desc:China Star Optoelectronics Technology Co. Ltd MND508ZB1-1": {
-        "mode": "2880x1920@120.000"
-      }
-    }
-  },
+  "displayPreviousRefreshModes": {},
   "lockPamExternallyManaged": false,
   "enableFprint": true,
   "blurWallpaperOnOverview": false,
   "avatarRing": "none",
   "iconThemePerMode": false,
-  "batteryCriticalThreshold": 15,
+  "batteryCriticalThreshold": 10,
   "acMonitorTimeout": 0,
   "fadeToLockGracePeriod": 10,
   "fadeToDpmsGracePeriod": 10,
@@ -1012,5 +997,7 @@
     }
   ],
   "dashTabPosition": "auto",
-  "touchpadAccelProfile": "adaptive"
+  "touchpadAccelProfile": "adaptive",
+  "batteryNotifyLow": true,
+  "batteryLowNotificationType": 1
 }
