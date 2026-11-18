@@ -1,8 +1,9 @@
-{ config, ... }: {
+{ pkgs, config, ... }: {
   imports = [
     ./cache-builder.nix
     ../../homelab
   ];
+  environment.systemPackages = [ pkgs.btop ];
 
   systemd.services.battery-conservation = {
     wantedBy = [ "multi-user.target" ];

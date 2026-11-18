@@ -9,9 +9,9 @@
     defaultSopsFile = ../secrets/secrets.sops.yaml;
   };
 
-  sops.secrets."services/karakeep" = { };
+  sops.secrets."services/karakeep/api-key" = { };
   xdg.configFile."karakeep/config.json".text = builtins.toJSON {
-    url = "https://karakeep.chipmunk-teeth.ts.net";
-    api_key_file = config.sops.secrets."services/karakeep".path;
+    url = "https://karakeep.arete.io";
+    api_key_file = config.sops.secrets."services/karakeep/api-key".path;
   };
 }

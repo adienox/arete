@@ -44,6 +44,9 @@ let
     "Mod+I" = titled "Open Launcher: Emoji" {
       spawn-sh = [ "vicinae vicinae://launch/core/search-emojis" ];
     };
+    "Alt+C" = titled "Open Launcher: Clipboard History" {
+      spawn-sh = [ "vicinae vicinae://launch/clipboard/history" ];
+    };
     "Mod+Backslash" = titled "Open Emacs: Journal" {
       spawn-sh = [
         "${emacs} emacs-float denote-journal-new-or-existing-entry"

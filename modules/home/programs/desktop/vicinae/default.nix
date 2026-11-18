@@ -63,7 +63,6 @@
       };
 
       favorites = [
-        "clipboard:history"
         "@adienox/org-todos:list-tasks"
         "@mattisssa/spotify-player:yourLibrary"
         "@knoopx/home-assistant:home-assistant"

@@ -115,7 +115,7 @@ in
       };
 
       touchpad = {
-        tap = { };
+        # tap = { };
         dwt = { };
         drag-lock = { };
         natural-scroll = { };

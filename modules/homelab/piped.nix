@@ -122,7 +122,6 @@ in
       reverse_proxy 127.0.0.1:8080
     '';
     "http://piped-api.arete.io".extraConfig = ''
-      log
       reverse_proxy 127.0.0.1:8081
     '';
     "http://piped-proxy.arete.io".extraConfig = ''
