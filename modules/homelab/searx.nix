@@ -10,7 +10,7 @@
   };
 
   services.caddy.virtualHosts."http://search.arete.io".extraConfig = ''
-    reverse_proxy 127.0.0.1:9898
+    reverse_proxy 127.0.0.1:${config.services.searx.settings.server.port}
   '';
 
   sops.secrets."services/searx/secret-key" = { };

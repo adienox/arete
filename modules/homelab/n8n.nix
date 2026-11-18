@@ -26,6 +26,6 @@
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "n8n" ];
 
   services.caddy.virtualHosts."http://n8n.arete.io".extraConfig = ''
-    reverse_proxy 127.0.0.1:5678
+    reverse_proxy 127.0.0.1:${config.services.n8n.environment.N8N_PORT}
   '';
 }

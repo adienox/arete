@@ -36,6 +36,6 @@
   };
 
   services.caddy.virtualHosts."http://karakeep.arete.io".extraConfig = ''
-    reverse_proxy 127.0.0.1:3000
+    reverse_proxy 127.0.0.1:${config.services.karakeep.extraEnvironment.PORT}
   '';
 }
