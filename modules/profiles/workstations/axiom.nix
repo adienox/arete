@@ -56,19 +56,19 @@
         ExecStart = "${config.systemd.package}/bin/systemctl restart fprintd.service";
       };
     };
-    haptic-touchpad = {
-      description = "Set Framework touchpad haptic intensity and click force";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "systemd-udev-settle.service" ];
+    # haptic-touchpad = {
+    #   description = "Set Framework touchpad haptic intensity and click force";
+    #   wantedBy = [ "multi-user.target" ];
+    #   after = [ "systemd-udev-settle.service" ];
 
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = [
-          "${pkgs.framework-tool}/bin/framework_tool --haptic-intensity 100"
-          "${pkgs.framework-tool}/bin/framework_tool --click-force low"
-        ];
-      };
-    };
+    #   serviceConfig = {
+    #     Type = "oneshot";
+    #     RemainAfterExit = true;
+    #     ExecStart = [
+    #       "${pkgs.framework-tool}/bin/framework_tool --haptic-intensity 100"
+    #       "${pkgs.framework-tool}/bin/framework_tool --click-force medium"
+    #     ];
+    #   };
+    # };
   };
 }
