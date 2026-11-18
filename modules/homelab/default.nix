@@ -11,5 +11,8 @@
     ./prowlarr.nix
     ./rmab.nix
     ./ntfy.nix
+    ./n8n.nix
+    ./searx.nix
+    ./karakeep.nix
   ];
 }
