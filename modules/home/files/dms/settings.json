@@ -294,7 +294,7 @@
     {
       "id": "brightnessSlider",
       "enabled": true,
-      "deviceName": "ddc:i2c-6",
+      "deviceName": "ddc:i2c-16",
       "w": 4,
       "h": 1,
       "col": 4,
@@ -593,7 +593,7 @@
   "acLockTimeout": 300,
   "acSuspendTimeout": 1800,
   "acSuspendBehavior": 2,
-  "acProfileName": "2",
+  "acProfileName": "1",
   "acPostLockMonitorTimeout": 30,
   "batteryProfileName": "1",
   "batteryCriticalNotificationType": 1,

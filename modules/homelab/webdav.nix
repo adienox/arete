@@ -43,7 +43,7 @@
   };
 
   services.caddy.virtualHosts."http://webdav.arete.io".extraConfig = ''
-    reverse_proxy 127.0.0.1:${config.services.webdav.settings.port}
+    reverse_proxy 127.0.0.1:${toString config.services.webdav.settings.port}
   '';
 
   systemd.tmpfiles.rules = [
