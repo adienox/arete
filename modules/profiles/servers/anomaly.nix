@@ -3,7 +3,10 @@
     ./cache-builder.nix
     ../../homelab
   ];
-  environment.systemPackages = [ pkgs.btop ];
+  environment.systemPackages = with pkgs; [
+    btop
+    dix # for diffs produced by nh
+  ];
 
   systemd.services.battery-conservation = {
     wantedBy = [ "multi-user.target" ];
