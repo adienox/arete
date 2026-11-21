@@ -15,5 +15,6 @@
     ./searx.nix
     ./karakeep.nix
     ./homeassistant.nix
+    ./radicale.nix
   ];
 }
