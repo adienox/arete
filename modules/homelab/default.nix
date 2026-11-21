@@ -14,5 +14,6 @@
     ./n8n.nix
     ./searx.nix
     ./karakeep.nix
+    ./homeassistant.nix
   ];
 }
