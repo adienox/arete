@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, vars, ... }:
 {
   services.home-assistant = {
     enable = true;
@@ -34,8 +34,8 @@
         name = "Home";
         unit_system = "metric";
         time_zone = "Asia/Kathmandu";
-        internal_url = "http://home.arete.io";
-        external_url = "http://home.arete.io";
+        internal_url = "http://home.${vars.domain}";
+        external_url = "http://home.${vars.domain}";
       };
       "automation ui" = "!include automations.yaml";
       "scene ui" = "!include scenes.yaml";
@@ -81,7 +81,7 @@
       ''}"
     ];
 
-  services.caddy.virtualHosts."http://home.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://home.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:8123
   '';
 }

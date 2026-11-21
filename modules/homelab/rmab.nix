@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, vars, ... }:
 let
   dataDir = "/var/lib/readmeabook";
   uid = config.users.users.readmeabook.uid;
@@ -52,7 +52,7 @@ in
         PUID = toString uid;
         PGID = toString gid;
         UMASK = "002"; # group-writable: files 664, dirs 775
-        PUBLIC_URL = "http://rmab.arete.io";
+        PUBLIC_URL = "http://rmab.${vars.domain}";
       };
 
       healthCmd = "curl -f http://localhost:3030/api/health";
@@ -70,7 +70,7 @@ in
     };
   };
 
-  services.caddy.virtualHosts."http://rmab.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://rmab.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:3030
   '';
 }

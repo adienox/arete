@@ -1,20 +1,18 @@
+{ homelab, ... }:
+let
+  resolveService =
+    name:
+    let
+      path = ./. + "/${name}.nix";
+    in
+    if builtins.pathExists path then
+      path
+    else
+      throw ''
+        No homelab service named "${name}".
+        Expected: ${toString path}
+      '';
+in
 {
-  imports = [
-    ./redlib.nix
-    ./piped.nix
-    ./technitium.nix
-    ./caddy.nix
-    ./freshrss.nix
-    ./audiobookshelf.nix
-    ./webdav.nix
-    ./qbittorrent.nix
-    ./prowlarr.nix
-    ./rmab.nix
-    ./ntfy.nix
-    ./n8n.nix
-    ./searx.nix
-    ./karakeep.nix
-    ./homeassistant.nix
-    ./radicale.nix
-  ];
+  imports = map resolveService homelab;
 }

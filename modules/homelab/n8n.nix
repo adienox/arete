@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  vars,
   ...
 }:
 {
@@ -11,9 +12,9 @@
     taskRunners.enable = true;
     environment = {
       N8N_PORT = "5678";
-      N8N_HOST = "n8n.arete.io";
+      N8N_HOST = "n8n.${vars.domain}";
       N8N_PROTOCOL = "http";
-      WEBHOOK_URL = "http://n8n.arete.io/";
+      WEBHOOK_URL = "http://n8n.${vars.domain}/";
       GENERIC_TIMEZONE = "Asia/Kathmandu";
       TZ = "Asia/Kathmandu";
       N8N_DIAGNOSTICS_ENABLED = "false";
@@ -25,7 +26,7 @@
   # n8n's license (Sustainable Use) is classed as unfree in nixpkgs
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "n8n" ];
 
-  services.caddy.virtualHosts."http://n8n.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://n8n.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:${config.services.n8n.environment.N8N_PORT}
   '';
 }

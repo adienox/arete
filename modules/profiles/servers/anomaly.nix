@@ -1,8 +1,31 @@
-{ pkgs, config, ... }: {
+{ pkgs, config, ... }:
+let
+  homelab = [
+    "caddy"
+    "redlib"
+    "piped"
+    "technitium"
+    "freshrss"
+    "audiobookshelf"
+    "webdav"
+    "qbittorrent"
+    "prowlarr"
+    "rmab"
+    "ntfy"
+    "n8n"
+    "searx"
+    "karakeep"
+    "homeassistant"
+    "radicale"
+    "speedtest-tracker"
+  ];
+in
+{
   imports = [
     ./cache-builder.nix
-    ../../homelab
+    (import ../../homelab { inherit homelab; })
   ];
+
   environment.systemPackages = with pkgs; [
     btop
     dix # for diffs produced by nh

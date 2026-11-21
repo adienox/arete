@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, vars, ... }: {
   services.radicale = {
     enable = true;
     settings = {
@@ -15,7 +15,7 @@
     restartUnits = [ "radicale.service" ];
   };
 
-  services.caddy.virtualHosts."http://cal.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://cal.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:5232
   '';
 }

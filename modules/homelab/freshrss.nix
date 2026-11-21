@@ -1,16 +1,16 @@
-{ pkgs, config, ... }:
+{ pkgs, config, vars, ... }:
 let
   buildExt = pkgs.freshrss-extensions.buildFreshRssExtension;
 in
 {
   services.freshrss = {
     enable = true;
-    baseUrl = "http://rss.arete.io";
+    baseUrl = "http://rss.${vars.domain}";
     defaultUser = "nox";
     api.enable = true;
     passwordFile = config.sops.secrets."services/freshrss".path;
     webserver = "caddy";
-    virtualHost = "http://rss.arete.io";
+    virtualHost = "http://rss.${vars.domain}";
     extensions = [
       (buildExt {
         FreshRssExtUniqueId = "af_readability";

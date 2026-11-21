@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, vars, ... }: {
   virtualisation.quadlet.containers.redlib = {
     autoStart = true;
     containerConfig = {
@@ -58,7 +58,7 @@
     serviceConfig.TimeoutStartSec = "60";
   };
 
-  services.caddy.virtualHosts."http://redlib.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://redlib.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:9090
   '';
 

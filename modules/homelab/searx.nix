@@ -1,4 +1,4 @@
-{ config, ... }: {
+{ config, vars, ... }: {
   services.searx = {
     enable = true;
     settings = {
@@ -9,7 +9,7 @@
     environmentFile = config.sops.templates."searx.env".path;
   };
 
-  services.caddy.virtualHosts."http://search.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://search.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:${toString config.services.searx.settings.server.port}
   '';
 

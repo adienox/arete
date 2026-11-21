@@ -1,11 +1,11 @@
-{ config, ... }:
+{ config, vars, ... }:
 {
   services.karakeep = {
     enable = true;
 
     extraEnvironment = {
       PORT = "3000";
-      NEXTAUTH_URL = "http://karakeep.arete.io";
+      NEXTAUTH_URL = "http://karakeep.${vars.domain}";
       DISABLE_SIGNUPS = "false";
       DISABLE_NEW_RELEASE_CHECK = "true";
 
@@ -35,7 +35,7 @@
     ];
   };
 
-  services.caddy.virtualHosts."http://karakeep.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://karakeep.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:${config.services.karakeep.extraEnvironment.PORT}
   '';
 }

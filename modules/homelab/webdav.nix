@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, vars, ... }:
 {
   sops.secrets."services/webdav/rikka" = {
     owner = "webdav";
@@ -42,7 +42,7 @@
     };
   };
 
-  services.caddy.virtualHosts."http://webdav.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://webdav.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:${toString config.services.webdav.settings.port}
   '';
 

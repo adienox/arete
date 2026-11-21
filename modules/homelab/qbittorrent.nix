@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, vars, ... }: {
   services.qbittorrent = {
     enable = true;
     webuiPort = 8888;
@@ -16,7 +16,7 @@
     };
   };
 
-  services.caddy.virtualHosts."http://qb.arete.io".extraConfig = ''
+  services.caddy.virtualHosts."http://qb.${vars.domain}".extraConfig = ''
     reverse_proxy 127.0.0.1:8888
   '';
 }

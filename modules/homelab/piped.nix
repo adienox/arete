@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  vars,
   ...
 }:
 let
@@ -80,8 +81,8 @@ in
             entrypoint = "/entrypoint.sh";
             volumes = [ "${frontendEntrypoint}:/entrypoint.sh:ro" ];
             environments = {
-              API_URL = "http://piped-api.arete.io";
-              BACKEND_HOSTNAME = "piped-api.arete.io";
+              API_URL = "http://piped-api.${vars.domain}";
+              BACKEND_HOSTNAME = "piped-api.${vars.domain}";
             };
           };
         }
@@ -100,9 +101,9 @@ in
     content = ''
       PORT:8080
       HTTP_WORKERS: 2
-      PROXY_PART: http://piped-proxy.arete.io
-      API_URL: http://piped-api.arete.io
-      FRONTEND_URL: http://piped.arete.io
+      PROXY_PART: http://piped-proxy.${vars.domain}
+      API_URL: http://piped-api.${vars.domain}
+      FRONTEND_URL: http://piped.${vars.domain}
 
       # Set true to disable new account registration
       DISABLE_REGISTRATION: false
@@ -118,13 +119,13 @@ in
   systemd.tmpfiles.rules = [ "d /var/lib/piped/postgres 0755 root root -" ];
 
   services.caddy.virtualHosts = {
-    "http://piped.arete.io".extraConfig = ''
+    "http://piped.${vars.domain}".extraConfig = ''
       reverse_proxy 127.0.0.1:8080
     '';
-    "http://piped-api.arete.io".extraConfig = ''
+    "http://piped-api.${vars.domain}".extraConfig = ''
       reverse_proxy 127.0.0.1:8081
     '';
-    "http://piped-proxy.arete.io".extraConfig = ''
+    "http://piped-proxy.${vars.domain}".extraConfig = ''
       reverse_proxy 127.0.0.1:8082
     '';
   };

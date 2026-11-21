@@ -11,7 +11,7 @@
 
   sops.secrets."services/karakeep/api-key" = { };
   xdg.configFile."karakeep/config.json".text = builtins.toJSON {
-    url = "https://karakeep.arete.io";
+    url = "https://karakeep.${vars.domain}";
     api_key_file = config.sops.secrets."services/karakeep/api-key".path;
   };
 }
