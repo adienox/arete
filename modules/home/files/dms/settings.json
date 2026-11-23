@@ -294,7 +294,7 @@
     {
       "id": "brightnessSlider",
       "enabled": true,
-      "deviceName": "ddc:i2c-16",
+      "deviceName": "backlight:amdgpu_bl1",
       "w": 4,
       "h": 1,
       "col": 4,
@@ -595,7 +595,7 @@
   "acSuspendBehavior": 2,
   "acProfileName": "1",
   "acPostLockMonitorTimeout": 30,
-  "batteryProfileName": "1",
+  "batteryProfileName": "0",
   "batteryCriticalNotificationType": 1,
   "batteryAutoPowerSaver": true,
   "lowerDisplayRefreshRateOnBattery": true,
@@ -940,22 +940,7 @@
   "frameBarInsetPadding": 8,
   "configVersion": 42,
   "bluetoothMprisEnabled": false,
-  "displayPreviousRefreshModes": {
-    "niri": {
-      "eDP-1": {
-        "mode": "2880x1920@120.000"
-      },
-      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1 Unknown": {
-        "mode": "2880x1920@120.000"
-      },
-      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1": {
-        "mode": "2880x1920@120.000"
-      },
-      "desc:China Star Optoelectronics Technology Co. Ltd MND508ZB1-1": {
-        "mode": "2880x1920@120.000"
-      }
-    }
-  },
+  "displayPreviousRefreshModes": {},
   "lockPamExternallyManaged": false,
   "enableFprint": true,
   "blurWallpaperOnOverview": false,
@@ -1014,5 +999,7 @@
   "batteryNotifyLow": true,
   "batteryLowNotificationType": 1,
   "focusFollowsMouse": 0,
-  "touchpadScrollFactor": 1
+  "touchpadScrollFactor": 1,
+  "batteryScaleToChargeLimit": true,
+  "batteryScaleAlertThresholds": true
 }
