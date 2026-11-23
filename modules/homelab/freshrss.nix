@@ -6,16 +6,17 @@
 }:
 let
   buildExt = pkgs.freshrss-extensions.buildFreshRssExtension;
+  host = "rss.${vars.domain}";
 in
 {
   services.freshrss = {
     enable = true;
-    baseUrl = "https://rss.${vars.domain}";
+    baseUrl = "https://${host}";
     defaultUser = "nox";
     api.enable = true;
     passwordFile = config.sops.secrets."services/freshrss".path;
+    virtualHost = host;
     webserver = "caddy";
-    virtualHost = "https://rss.${vars.domain}";
     extensions = [
       (buildExt {
         FreshRssExtUniqueId = "af_readability";
@@ -48,7 +49,12 @@ in
     mode = "0400";
   };
 
-  # FreshRSS manages its own Caddy vhost (webserver = "caddy"), so only
-  # request a DNS record here.
   homelab.dns.hosts.rss = { };
+
+  services.caddy.virtualHosts.${host}.extraConfig = config.homelab.dns.caddy.tls;
+
+  services.phpfpm.pools.freshrss.settings = {
+    "listen.owner" = config.services.caddy.user;
+    "listen.group" = config.services.caddy.group;
+  };
 }

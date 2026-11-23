@@ -21,13 +21,9 @@ in
     restartUnits = [ "speedtest-tracker.service" ];
   };
 
-  services.caddy.virtualHosts.${domain}.extraConfig = ''
+  homelab.dns.hosts.speedtest.extraConfig = ''
     root * ${cfg.package}/public
     php_fastcgi unix/${config.services.phpfpm.pools.speedtest-tracker.socket}
     file_server
   '';
-
-  # speedtest-tracker serves a PHP app (no reverse_proxy), so it manages its
-  # own Caddy vhost below; only request a DNS record here.
-  homelab.dns.hosts.speedtest = { };
 }

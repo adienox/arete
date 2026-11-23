@@ -7,7 +7,9 @@
 let
   cfg = config.homelab.dns;
   dns = cfg.caddy.dns;
-  caddyHosts = lib.filterAttrs (_: h: h.caddy && h.upstream != null) cfg.hosts;
+  caddyHosts = lib.filterAttrs (
+    _: h: h.caddy && (h.upstream != null || h.extraConfig != "")
+  ) cfg.hosts;
 in
 {
   options.homelab.dns = {
@@ -161,7 +163,7 @@ in
         lib.nameValuePair "${name}.${cfg.zone}" {
           extraConfig = ''
             ${cfg.caddy.tls}
-            reverse_proxy ${h.upstream}
+            ${lib.optionalString (h.upstream != null) "reverse_proxy ${h.upstream}"}
             ${h.extraConfig}
           '';
         }
