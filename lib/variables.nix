@@ -4,7 +4,7 @@ rec {
   user = "nox";
   home = "/home/${user}";
 
-  domain = "arete.io";
+  domain = "adhk.dev";
 
   # NixOS + home-manager state version. Bump intentionally on major upgrades.
   stateVersion = "26.11";
