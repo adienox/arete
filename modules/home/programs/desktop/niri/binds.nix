@@ -44,6 +44,9 @@ let
     "Mod+I" = titled "Open Launcher: Emoji" {
       spawn-sh = [ "vicinae vicinae://launch/core/search-emojis" ];
     };
+    "Mod+XF86AudioMedia" = titled "Dictation" {
+      spawn-sh = [ "vicinae vicinae://launch/dictation/dictate" ];
+    };
     "Alt+C" = titled "Open Launcher: Clipboard History" {
       spawn-sh = [ "vicinae vicinae://launch/clipboard/history" ];
     };
@@ -57,7 +60,7 @@ let
         "${emacs} emacs-journal +config/denote-journal-focused"
       ];
     };
-    "Mod+A" = titled "Open Emacs: Journal" {
+    "Mod+A" = titled "Open Emacs: Agenda" {
       spawn-sh = [
         "${emacs} emacs-float '(org-agenda nil \"a\")'"
       ];
