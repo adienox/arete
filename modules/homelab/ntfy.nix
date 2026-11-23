@@ -7,7 +7,5 @@
     };
   };
 
-  services.caddy.virtualHosts."http://ntfy.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:2020
-  '';
+  homelab.dns.hosts.ntfy = 2020;
 }

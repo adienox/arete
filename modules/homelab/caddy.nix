@@ -1,11 +1,9 @@
-{ vars, ... }: {
+{ ... }: {
   services.caddy = {
     enable = true;
-    email = "you@example.com";
+    email = "adwait@adhk.dev";
     openFirewall = true;
   };
 
-  services.caddy.virtualHosts."http://fitness.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:3004
-  '';
+  homelab.dns.hosts.fitness = 3004;
 }

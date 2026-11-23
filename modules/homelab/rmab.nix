@@ -70,7 +70,5 @@ in
     };
   };
 
-  services.caddy.virtualHosts."http://rmab.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:3030
-  '';
+  homelab.dns.hosts.rmab = 3030;
 }

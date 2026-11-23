@@ -81,8 +81,9 @@ in
             entrypoint = "/entrypoint.sh";
             volumes = [ "${frontendEntrypoint}:/entrypoint.sh:ro" ];
             environments = {
-              API_URL = "http://piped-api.${vars.domain}";
+              API_URL = "https://piped-api.${vars.domain}";
               BACKEND_HOSTNAME = "piped-api.${vars.domain}";
+              HTTP_MODE = "https";
             };
           };
         }
@@ -101,9 +102,9 @@ in
     content = ''
       PORT:8080
       HTTP_WORKERS: 2
-      PROXY_PART: http://piped-proxy.${vars.domain}
-      API_URL: http://piped-api.${vars.domain}
-      FRONTEND_URL: http://piped.${vars.domain}
+      PROXY_PART: https://piped-proxy.${vars.domain}
+      API_URL: https://piped-api.${vars.domain}
+      FRONTEND_URL: https://piped.${vars.domain}
 
       # Set true to disable new account registration
       DISABLE_REGISTRATION: false
@@ -118,15 +119,9 @@ in
 
   systemd.tmpfiles.rules = [ "d /var/lib/piped/postgres 0755 root root -" ];
 
-  services.caddy.virtualHosts = {
-    "http://piped.${vars.domain}".extraConfig = ''
-      reverse_proxy 127.0.0.1:8080
-    '';
-    "http://piped-api.${vars.domain}".extraConfig = ''
-      reverse_proxy 127.0.0.1:8081
-    '';
-    "http://piped-proxy.${vars.domain}".extraConfig = ''
-      reverse_proxy 127.0.0.1:8082
-    '';
+  homelab.dns.hosts = {
+    piped = 8080;
+    piped-api = 8081;
+    piped-proxy = 8082;
   };
 }

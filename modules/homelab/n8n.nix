@@ -26,7 +26,7 @@
   # n8n's license (Sustainable Use) is classed as unfree in nixpkgs
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "n8n" ];
 
-  services.caddy.virtualHosts."http://n8n.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:${config.services.n8n.environment.N8N_PORT}
-  '';
+  homelab.dns.hosts.n8n = {
+    upstream = "127.0.0.1:${config.services.n8n.environment.N8N_PORT}";
+  };
 }

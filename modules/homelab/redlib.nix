@@ -1,4 +1,4 @@
-{ config, vars, ... }: {
+{ config, ... }: {
   virtualisation.quadlet.containers.redlib = {
     autoStart = true;
     containerConfig = {
@@ -27,6 +27,7 @@
         REDLIB_SCRAPE_COMMENT_PREFETCH = "0";
         REDLIB_GQL_FEED_REQUESTS = "2";
         REDLIB_ENDPOINTS = "";
+        REDLIB_ENABLE_RSS = "on";
 
         # Default user settings
         REDLIB_DEFAULT_THEME = "system";
@@ -58,13 +59,11 @@
     serviceConfig.TimeoutStartSec = "60";
   };
 
-  services.caddy.virtualHosts."http://redlib.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:9090
-  '';
-
   sops.secrets."containers/redlib" = {
     owner = "nobody";
     mode = "0400";
     restartUnits = [ "redlib.service" ];
   };
+
+  homelab.dns.hosts.redlib = 9090;
 }

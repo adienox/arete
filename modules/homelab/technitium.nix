@@ -14,9 +14,7 @@
     "1.1.1.1" # fallback
   ];
 
-  services.caddy.virtualHosts."http://dns.arete.io".extraConfig = ''
-    reverse_proxy 127.0.0.1:5380
-  '';
+  homelab.dns.hosts.dns = 5380;
 
   networking.firewall.interfaces."tailscale0" = {
     allowedUDPPorts = [ 53 ];

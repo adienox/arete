@@ -1,4 +1,9 @@
-{ pkgs, config, vars, ... }:
+{
+  pkgs,
+  config,
+  vars,
+  ...
+}:
 {
   services.home-assistant = {
     enable = true;
@@ -34,8 +39,8 @@
         name = "Home";
         unit_system = "metric";
         time_zone = "Asia/Kathmandu";
-        internal_url = "http://home.${vars.domain}";
-        external_url = "http://home.${vars.domain}";
+        internal_url = "https://home.${vars.domain}";
+        external_url = "https://home.${vars.domain}";
       };
       "automation ui" = "!include automations.yaml";
       "scene ui" = "!include scenes.yaml";
@@ -81,7 +86,5 @@
       ''}"
     ];
 
-  services.caddy.virtualHosts."http://home.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:8123
-  '';
+  homelab.dns.hosts.home = 8123;
 }

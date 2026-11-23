@@ -1,4 +1,9 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  vars,
+  ...
+}:
 let
   homelab = [
     "caddy"
@@ -23,7 +28,7 @@ in
 {
   imports = [
     ./cache-builder.nix
-    (import ../../homelab { inherit homelab; })
+    (import ../../homelab { inherit homelab vars; })
   ];
 
   environment.systemPackages = with pkgs; [

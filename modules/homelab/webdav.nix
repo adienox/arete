@@ -1,4 +1,4 @@
-{ config, vars, ... }:
+{ config, ... }:
 {
   sops.secrets."services/webdav/rikka" = {
     owner = "webdav";
@@ -42,13 +42,11 @@
     };
   };
 
-  services.caddy.virtualHosts."http://webdav.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:${toString config.services.webdav.settings.port}
-  '';
-
   systemd.tmpfiles.rules = [
     "d /srv/webdav          0750 webdav webdav -"
     "d /srv/webdav/rikkahub 0750 webdav webdav -"
     "d /srv/webdav/nox      0750 webdav webdav -"
   ];
+
+  homelab.dns.hosts.webdav = config.services.webdav.settings.port;
 }

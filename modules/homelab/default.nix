@@ -1,4 +1,4 @@
-{ homelab, ... }:
+{ homelab, vars, ... }:
 let
   resolveService =
     name:
@@ -14,5 +14,10 @@ let
       '';
 in
 {
-  imports = map resolveService homelab;
+  imports = (map resolveService homelab) ++ [ ./networking.nix ];
+
+  homelab.dns = {
+    zone = vars.domain;
+    ip = "100.125.152.83";
+  };
 }

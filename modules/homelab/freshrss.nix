@@ -42,4 +42,8 @@ in
     group = "freshrss";
     mode = "0400";
   };
+
+  # FreshRSS manages its own Caddy vhost (webserver = "caddy"), so only
+  # request a DNS record here.
+  homelab.dns.hosts.rss = { };
 }

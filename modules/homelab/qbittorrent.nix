@@ -1,4 +1,4 @@
-{ pkgs, vars, ... }: {
+{ pkgs, ... }: {
   services.qbittorrent = {
     enable = true;
     webuiPort = 8888;
@@ -16,7 +16,5 @@
     };
   };
 
-  services.caddy.virtualHosts."http://qb.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:8888
-  '';
+  homelab.dns.hosts.qb = 8888;
 }

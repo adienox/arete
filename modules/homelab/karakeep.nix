@@ -35,7 +35,7 @@
     ];
   };
 
-  services.caddy.virtualHosts."http://karakeep.${vars.domain}".extraConfig = ''
-    reverse_proxy 127.0.0.1:${config.services.karakeep.extraEnvironment.PORT}
-  '';
+  homelab.dns.hosts.karakeep = {
+    upstream = "127.0.0.1:${config.services.karakeep.extraEnvironment.PORT}";
+  };
 }
