@@ -1,16 +1,21 @@
-{ pkgs, config, vars, ... }:
+{
+  pkgs,
+  config,
+  vars,
+  ...
+}:
 let
   buildExt = pkgs.freshrss-extensions.buildFreshRssExtension;
 in
 {
   services.freshrss = {
     enable = true;
-    baseUrl = "http://rss.${vars.domain}";
+    baseUrl = "https://rss.${vars.domain}";
     defaultUser = "nox";
     api.enable = true;
     passwordFile = config.sops.secrets."services/freshrss".path;
     webserver = "caddy";
-    virtualHost = "http://rss.${vars.domain}";
+    virtualHost = "https://rss.${vars.domain}";
     extensions = [
       (buildExt {
         FreshRssExtUniqueId = "af_readability";
