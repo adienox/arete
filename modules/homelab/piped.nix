@@ -53,6 +53,10 @@ in
             volumes = [
               "${config.sops.templates."piped-config.properties".path}:/app/config.properties:ro"
             ];
+            environments = {
+              DISABLE_PUBSUB = "true"; # disabling YouTube websub as this is a private instance
+              FEED_REFRESH = "true";
+            };
           };
           unitConfig = {
             Requires = [ "piped-postgres.service" ];
