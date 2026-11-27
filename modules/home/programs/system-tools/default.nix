@@ -1,10 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
-    ./nix-index.nix
-    ./taildrop.nix
     ./udiskie.nix
-    ./nh.nix
     ./commands-api.nix
     ./syncthing.nix
     ./wallpaper-git.nix

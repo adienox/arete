@@ -1,4 +1,12 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  helpers,
+  vars,
+  ...
+}:
+let
+  homeFiles = vars.paths.homeFiles;
+in
 {
   imports = [
     ./ghostty.nix
@@ -11,9 +19,28 @@
     ./ssh.nix
     ./tealdeer.nix
     ./ntfy.nix
+    ./nix-index.nix
+    ./taildrop.nix
+    ./nh.nix
+  ];
+
+  home.packages = with pkgs; [
+    witr
+    trash-cli
+    gojq
+    just
   ];
 
   home.shell.enableFishIntegration = true;
+
+  home.file = helpers.mkFiles {
+    symlinked = [
+      {
+        target = ".config/fastfetch";
+        source = "${homeFiles}/fastfetch";
+      }
+    ];
+  };
 
   home.shellAliases = {
     v = "${pkgs.neovim}/bin/nvim";
