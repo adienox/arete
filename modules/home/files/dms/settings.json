@@ -940,7 +940,22 @@
   "frameBarInsetPadding": 8,
   "configVersion": 42,
   "bluetoothMprisEnabled": false,
-  "displayPreviousRefreshModes": {},
+  "displayPreviousRefreshModes": {
+    "niri": {
+      "eDP-1": {
+        "mode": "2880x1920@120.000"
+      },
+      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1 Unknown": {
+        "mode": "2880x1920@120.000"
+      },
+      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1": {
+        "mode": "2880x1920@120.000"
+      },
+      "desc:China Star Optoelectronics Technology Co. Ltd MND508ZB1-1": {
+        "mode": "2880x1920@120.000"
+      }
+    }
+  },
   "lockPamExternallyManaged": false,
   "enableFprint": true,
   "blurWallpaperOnOverview": false,
@@ -1001,5 +1016,10 @@
   "focusFollowsMouse": 0,
   "touchpadScrollFactor": 1,
   "batteryScaleToChargeLimit": true,
-  "batteryScaleAlertThresholds": true
+  "batteryScaleAlertThresholds": true,
+  "batteryLockTimeout": 180,
+  "batteryMonitorTimeout": 0,
+  "batteryPostLockMonitorTimeout": 30,
+  "batterySuspendTimeout": 1800,
+  "batterySuspendBehavior": 2
 }
