@@ -6,4 +6,5 @@
   };
 
   homelab.dns.hosts.fitness = 3004;
+  homelab.dns.hosts.cache = 5000;
 }

@@ -110,6 +110,7 @@ in
       enable = true;
       signKeyPaths = [ cfg.signKeyFile ];
       settings.bind = "[::]:${toString cfg.port}";
+      settings.priority = 30;
     };
 
     networking.firewall.interfaces.${cfg.interface}.allowedTCPPorts = [ cfg.port ];
