@@ -28,7 +28,7 @@
     ddccontrol.enable = true;
   };
   services = {
-    gvfs.enable = true;
+    #gvfs.enable = true;
     tumbler.enable = true;
     gnome = {
       sushi.enable = true;

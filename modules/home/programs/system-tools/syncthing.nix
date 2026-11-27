@@ -38,7 +38,6 @@
         devices = [
           "hawk"
           "axiom"
-          "anomaly"
         ];
         id = "screenshots";
         path = "~/Pictures/Screenshots";

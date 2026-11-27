@@ -17,16 +17,26 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    extraSpecialArgs = { inherit inputs hostname vars role; };
+    extraSpecialArgs = {
+      inherit
+        inputs
+        hostname
+        vars
+        role
+        ;
+    };
+    backupFileExtension = "hm-bak";
 
     users.${vars.user} = {
       programs.home-manager.enable = true;
+
       home = {
         enableNixpkgsReleaseCheck = false;
         stateVersion = vars.stateVersion;
       };
 
       imports = [
+        inputs.nix-index-database.homeModules.default
         ../../../lib/helpers-module.nix
         ../../home
       ];

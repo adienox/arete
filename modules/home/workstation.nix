@@ -23,11 +23,8 @@ in
     imagemagick
     keylightd
     #freecad-wayland
-    trash-cli
-    gojq
     libnotify
     yad
-    just
     qbittorrent
   ];
 
@@ -36,10 +33,6 @@ in
       {
         target = ".config/scripts";
         source = scripts;
-      }
-      {
-        target = ".config/fastfetch";
-        source = "${homeFiles}/fastfetch";
       }
       {
         target = ".local/share/assets";

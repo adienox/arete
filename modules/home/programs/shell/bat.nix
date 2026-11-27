@@ -3,7 +3,7 @@
     enable = true;
     config = {
       style = "plain";
-      theme = if config.programs.dank-material-shell.enable then "dank" else "base16-256";
+      theme = if config.programs.dank-material-shell.enable or false then "dank" else "base16-256";
     };
   };
 }

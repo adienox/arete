@@ -1,7 +1,12 @@
-{ vars, config, ... }:
+{
+  vars,
+  config,
+  role,
+  ...
+}:
 {
   programs.ghostty = {
-    enable = true;
+    enable = role == "workstation";
     systemd.enable = true;
     settings = {
       font-size = 14;
@@ -9,7 +14,7 @@
         vars.fonts.monospace
         vars.fonts.emoji
       ];
-      theme = if config.programs.dank-material-shell.enable then "dankcolors" else "dark modern";
+      theme = if config.programs.dank-material-shell.enable or false then "dankcolors" else "dark modern";
       cursor-style = "bar";
       cursor-style-blink = true;
       quit-after-last-window-closed = false;

@@ -1,8 +1,13 @@
-{ pkgs, helpers, ... }:
+{
+  pkgs,
+  helpers,
+  vars,
+  ...
+}:
 let
   yamlFormat = pkgs.formats.yaml { };
   ntfyConfig = yamlFormat.generate "client.yml" {
-    default-host = "https://ntfy.chipmunk-teeth.ts.net";
+    default-host = "https://ntfy.${vars.domain}";
   };
 in
 {
