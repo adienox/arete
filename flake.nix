@@ -14,87 +14,12 @@
     ];
   };
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nixos-hardware = {
-      url = "github:NixOS/nixos-hardware/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    vicinae.url = "github:vicinaehq/vicinae";
-
-    vicinae-extensions = {
-      url = "github:vicinaehq/extensions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    dms = {
-      url = "github:duxlabs-dev/dux-shell/stable";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    dcal = {
-      url = "github:duxlabs-dev/dux-calendar";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    dfiles = {
-      url = "github:duxlabs-dev/dux-files";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    dms-plugin = {
-      url = "github:AvengeMedia/dms-plugin-registry";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    xremap = {
-      url = "github:xremap/nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
-
-    # nix-firefox-addons.url = "github:osipog/nix-firefox-addons";
-
-    # zen-browser = {
-    #   url = "github:0xc000022070/zen-browser-flake";
-    #   inputs = {
-    #     nixpkgs.follows = "nixpkgs";
-    #     home-manager.follows = "home-manager";
-    #   };
-    # };
-
-    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
-
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    niri-snap.url = "github:adienox/niri-snap";
-  };
-
   outputs =
-    { nixpkgs, ... }@inputs:
+    { ... }@args:
     let
+      inputs = (import ./.tack) { overrides = args.tackOverrides or { }; };
       system = "x86_64-linux";
+      nixpkgs = inputs.nixpkgs;
       pkgs = nixpkgs.legacyPackages.${system};
       lib = import ./lib {
         inherit

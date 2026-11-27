@@ -10,13 +10,13 @@ in
     group = config.services.caddy.group;
     settings = {
       APP_URL = domain;
-      APP_KEY_FILE = config.sops.secrets."services/speedtest-tracker".path;
+      APP_KEY_FILE = config.sops.secrets."homelab/speedtest".path;
       SPEEDTEST_SCHEDULE = "*/30 * * * *";
       DISPLAY_TIMEZONE = "Asia/Kathmandu";
     };
   };
 
-  sops.secrets."services/speedtest-tracker" = {
+  sops.secrets."homelab/speedtest" = {
     owner = "speedtest-tracker";
     restartUnits = [ "speedtest-tracker.service" ];
   };

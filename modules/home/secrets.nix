@@ -9,9 +9,9 @@
     defaultSopsFile = ../secrets/secrets.sops.yaml;
   };
 
-  sops.secrets."services/karakeep/api-key" = { };
+  sops.secrets."homelab/karakeep/api-key" = { };
   xdg.configFile."karakeep/config.json".text = builtins.toJSON {
     url = "https://karakeep.${vars.domain}";
-    api_key_file = config.sops.secrets."services/karakeep/api-key".path;
+    api_key_file = config.sops.secrets."homelab/karakeep/api-key".path;
   };
 }

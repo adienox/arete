@@ -19,13 +19,17 @@
         "nox"
       ];
       accept-flake-config = true;
-      access-tokens = "!include ${config.sops.templates."access-tokens.conf".path}";
     };
+    extraOptions = ''
+      !include ${config.sops.templates."access-tokens.conf".path}
+    '';
   };
 
-  sops.templates."access-tokens.conf".content = "github.com=${
-    config.sops.placeholder."services/github"
-  }";
+  sops.templates."access-tokens.conf" = {
+    content = "access-tokens = github.com=${config.sops.placeholder."services/github"}";
+    owner = "nox";
+    mode = "0400";
+  };
 
   #FIXME: remove this once qutebrowser is updated to distrust emudhra certs
   nixpkgs.config.permittedInsecurePackages = [

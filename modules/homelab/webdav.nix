@@ -13,8 +13,8 @@
 
   sops.templates."webdav.env" = {
     content = ''
-      RIKKA_PASSWORD=${config.sops.placeholder."services/webdav/rikka"}
-      NOX_PASSWORD=${config.sops.placeholder."services/webdav/nox"}
+      RIKKA_PASSWORD=${config.sops.placeholder."homelab/webdav/rikka"}
+      NOX_PASSWORD=${config.sops.placeholder."homelab/webdav/nox"}
     '';
     restartUnits = [ "webdav.service" ];
   };

@@ -5,7 +5,7 @@
   ...
 }:
 {
-  sops.secrets."services/n8n-runners-auth" = { };
+  sops.secrets."homelab/n8n-runners-auth" = { };
 
   services.n8n = {
     enable = true;
@@ -18,7 +18,7 @@
       GENERIC_TIMEZONE = "Asia/Kathmandu";
       TZ = "Asia/Kathmandu";
       N8N_DIAGNOSTICS_ENABLED = "false";
-      N8N_RUNNERS_AUTH_TOKEN_FILE = config.sops.secrets."services/n8n-runners-auth".path;
+      N8N_RUNNERS_AUTH_TOKEN_FILE = config.sops.secrets."homelab/n8n-runners-auth".path;
       N8N_SECURE_COOKIE = false;
     };
   };

@@ -59,9 +59,8 @@ in
   ];
 
   sops.secrets = {
-    "services/dmsOpenRouter" = { };
-    "services/homeassistant" = { };
-    "services/freshrss" = { };
+    "dms/open-router" = { };
+    "dms/sparky" = { };
   };
 
   programs.dank-material-shell = {

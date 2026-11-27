@@ -16,6 +16,11 @@
     ./providers.nix
   ];
 
+  sops.secrets = {
+    "services/homeassistant" = { };
+    "services/freshrss" = { };
+  };
+
   programs.vicinae = {
     enable = true;
     package = pkgs.vicinae; # FIXME: remove after vicinae is fixed upstream

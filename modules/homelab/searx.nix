@@ -9,11 +9,11 @@
     environmentFile = config.sops.templates."searx.env".path;
   };
 
-  sops.secrets."services/searx/secret-key" = { };
+  sops.secrets."homelab/searx-secret-key" = { };
 
   sops.templates."searx.env" = {
     content = ''
-      SEARX_SECRET_KEY=${config.sops.placeholder."services/searx/secret-key"}
+      SEARX_SECRET_KEY=${config.sops.placeholder."homelab/searx-secret-key"}
     '';
     restartUnits = [ "searx.service" ];
   };

@@ -131,7 +131,7 @@ in
 
   config = lib.mkMerge [
     {
-      sops.secrets."services/technitium-token" = { };
+      sops.secrets."homelab/technitium-token" = { };
 
       systemd.services.technitium-zones = {
         after = [ "technitium-dns-server.service" ];
@@ -142,7 +142,7 @@ in
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          LoadCredential = "token:${config.sops.secrets."services/technitium-token".path}";
+          LoadCredential = "token:${config.sops.secrets."homelab/technitium-token".path}";
         };
         script = ''
           TECH_TOKEN=$(< "$CREDENTIALS_DIRECTORY/token")
@@ -172,14 +172,14 @@ in
 
     (lib.mkIf (cfg.caddy.enable && dns.enable) {
       # secret file contents: CF_API_TOKEN=<token>  (variable name = caddy.dns.tokenVar)
-      sops.secrets."services/caddy-dns-env".restartUnits = [ "caddy.service" ];
+      sops.secrets."homelab/caddy-dns".restartUnits = [ "caddy.service" ];
 
       services.caddy = {
         package = pkgs.caddy.withPlugins {
           plugins = [ dns.plugin ];
           hash = dns.hash;
         };
-        environmentFile = config.sops.secrets."services/caddy-dns-env".path;
+        environmentFile = config.sops.secrets."homelab/caddy-dns".path;
       };
     })
   ];

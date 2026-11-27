@@ -5,6 +5,9 @@
     openFirewall = true;
   };
 
-  homelab.dns.hosts.fitness = 3004;
-  homelab.dns.hosts.cache = 5000;
+  homelab.dns.hosts = {
+    fitness = 3004;
+    cache = 5000;
+    nitter = 4567;
+  };
 }

@@ -58,7 +58,7 @@
   "aiUsage": {
     "enabled": true,
     "piSessionsDir": "~/.pi/agent/sessions",
-    "openRouterApiKeyFile": "~/.config/sops-nix/secrets/services/dmsOpenRouter"
+    "openRouterApiKeyFile": "~/.config/sops-nix/secrets/services/dms-open-router"
   },
   "dankClight": {
     "enabled": false
@@ -109,5 +109,13 @@
     "enabled": true,
     "orgDir": "~/Documents/notes/inbox",
     "notifSnoozeMinutes": 5
+  },
+  "hydrationWidget": {
+    "enabled": true,
+    "sparkyUrl": "https://fitness.adhk.dev",
+    "sparkyApiKey": "",
+    "logWaterAmountMl": 350,
+    "refreshInterval": 60,
+    "sparkyApiKeyFile": "~/.config/sops-nix/secrets/services/dms-sparky"
   }
 }

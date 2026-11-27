@@ -54,13 +54,13 @@ _git-flake:
 # update flake inputs
 flake:
     @echo "Updating flake inputs…"
-    @nix flake update
+    @tack update
     @just _git-flake
 
 # update a single input
 single-flake input:
     @echo "Updating {{ input }}…"
-    @nix flake update {{ input }}
+    @tack update {{ input }}
     @just _git-flake
 
 # update (flake/system) → switch → commit

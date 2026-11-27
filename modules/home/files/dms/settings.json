@@ -940,22 +940,7 @@
   "frameBarInsetPadding": 8,
   "configVersion": 42,
   "bluetoothMprisEnabled": false,
-  "displayPreviousRefreshModes": {
-    "niri": {
-      "eDP-1": {
-        "mode": "2880x1920@120.000"
-      },
-      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1 Unknown": {
-        "mode": "2880x1920@120.000"
-      },
-      "China Star Optoelectronics Technology Co., Ltd MND508ZB1-1": {
-        "mode": "2880x1920@120.000"
-      },
-      "desc:China Star Optoelectronics Technology Co. Ltd MND508ZB1-1": {
-        "mode": "2880x1920@120.000"
-      }
-    }
-  },
+  "displayPreviousRefreshModes": {},
   "lockPamExternallyManaged": false,
   "enableFprint": true,
   "blurWallpaperOnOverview": false,
@@ -965,7 +950,20 @@
   "acMonitorTimeout": 0,
   "fadeToLockGracePeriod": 10,
   "fadeToDpmsGracePeriod": 10,
-  "desktopWidgetInstances": [],
+  "desktopWidgetInstances": [
+    {
+      "id": "dw_1795789341899_3ueoc99qi",
+      "widgetType": "hydrationWidget",
+      "name": "Hydration",
+      "enabled": true,
+      "config": {
+        "displayPreferences": [
+          "all"
+        ],
+        "showOnOverlay": false
+      }
+    }
+  ],
   "touchpadAccelSpeed": 0,
   "touchpadMiddleEmulation": false,
   "touchpadDisableWhileTyping": true,
