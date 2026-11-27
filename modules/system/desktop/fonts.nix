@@ -13,6 +13,8 @@
       apple-color-emoji
       symbola
       maple-mono.NF-unhinted
+      ioskeley-mono.nf
+      ioskeley-mono.term-nf
     ];
   };
 }
