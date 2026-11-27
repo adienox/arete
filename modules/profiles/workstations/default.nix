@@ -1,13 +1,9 @@
-# Shared workstation base profile: full desktop system + home-manager.
-#
-# Loaded automatically by lib.mkHost for hosts with `role = "workstation"`.
-# Per-machine overrides live in modules/profiles/workstations/<hostname>.nix
-# and are picked up automatically when they exist.
 {
   pkgs,
   inputs,
   hostname,
   vars,
+  role,
   ...
 }:
 {
@@ -25,7 +21,7 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    extraSpecialArgs = { inherit inputs hostname vars; };
+    extraSpecialArgs = { inherit inputs hostname vars role; };
 
     backupCommand = pkgs.writeShellScript "hm-backup" ''
       file="$1"
@@ -50,13 +46,21 @@
       ${pkgs.trash-cli}/bin/trash "$file"
     '';
 
-    users.${vars.user}.imports = [
-      inputs.vicinae.homeManagerModules.default
-      inputs.nix-index-database.homeModules.default
-      inputs.sops-nix.homeManagerModules.sops
+    users.${vars.user} = {
+      programs.home-manager.enable = true;
+      home = {
+        enableNixpkgsReleaseCheck = false;
+        stateVersion = vars.stateVersion;
+      };
 
-      ../../../lib/helpers-module.nix
-      ../../home
-    ];
+      imports = [
+        inputs.vicinae.homeManagerModules.default
+        inputs.nix-index-database.homeModules.default
+        inputs.sops-nix.homeManagerModules.sops
+
+        ../../../lib/helpers-module.nix
+        ../../home
+      ];
+    };
   };
 }

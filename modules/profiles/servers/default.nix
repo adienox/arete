@@ -1,10 +1,38 @@
-{ hostname, ... }: {
+{
+  hostname,
+  inputs,
+  vars,
+  role,
+  ...
+}:
+{
   imports = [
     ../../system/common.nix
     ./lid.nix
     ./linger.nix
     ./network.nix
+    inputs.home-manager.nixosModules.home-manager
   ];
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = { inherit inputs hostname vars role; };
+
+    users.${vars.user} = {
+      programs.home-manager.enable = true;
+      home = {
+        enableNixpkgsReleaseCheck = false;
+        stateVersion = vars.stateVersion;
+      };
+
+      imports = [
+        ../../../lib/helpers-module.nix
+        ../../home
+      ];
+    };
+  };
+
   nix.gc = {
     automatic = true;
     dates = "daily";
