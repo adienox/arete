@@ -4,6 +4,7 @@
     ./ghostty.nix
     ./bat.nix
     ./lsd.nix
+    ./atuin.nix
     ./fish
     ./nushell
     ./btop.nix
