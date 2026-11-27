@@ -23,6 +23,7 @@ let
     "homeassistant"
     "radicale"
     "speedtest-tracker"
+    "dynacat"
   ];
 in
 {
