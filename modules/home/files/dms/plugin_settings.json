@@ -116,6 +116,7 @@
     "sparkyApiKey": "",
     "logWaterAmountMl": 350,
     "refreshInterval": 60,
-    "sparkyApiKeyFile": "~/.config/sops-nix/secrets/services/dms-sparky"
+    "sparkyApiKeyFile": "~/.config/sops-nix/secrets/services/dms-sparky",
+    "goalMl": "3500"
   }
 }

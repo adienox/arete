@@ -1,11 +1,11 @@
 { config, ... }:
 {
-  sops.secrets."services/webdav/rikka" = {
+  sops.secrets."homelab/webdav/rikka" = {
     owner = "webdav";
     group = "webdav";
     mode = "0400";
   };
-  sops.secrets."services/webdav/nox" = {
+  sops.secrets."homelab/webdav/nox" = {
     owner = "webdav";
     group = "webdav";
     mode = "0400";

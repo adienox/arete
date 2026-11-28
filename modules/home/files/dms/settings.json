@@ -952,7 +952,7 @@
   "fadeToDpmsGracePeriod": 10,
   "desktopWidgetInstances": [
     {
-      "id": "dw_1795789341899_3ueoc99qi",
+      "id": "dw_1795805785988_gnirwx6ae",
       "widgetType": "hydrationWidget",
       "name": "Hydration",
       "enabled": true,
@@ -960,6 +960,8 @@
         "displayPreferences": [
           "all"
         ],
+        "refreshInterval": 60,
+        "logWaterAmountMl": 350,
         "showOnOverlay": false
       }
     }
